@@ -7,16 +7,25 @@ import logging
 import sys
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-from config.config import BotConfig
+from config.config import AppConfig, BotConfig
+from services.api.endpoints.app import router as app_router
 from services.api.endpoints.bot import bot, bot_webhook_endpoint
+from services.api.endpoints.health import router as health_router
 
 # Настройка логирования для вывода информации в стандартный вывод
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 # Инициализация конфигурации бота
 bot_config = BotConfig()
+# Инициализация конфигурации веб-приложения
+app_config = AppConfig()
+
+# Настройка шаблонов Jinja2
+templates = Jinja2Templates(directory="services/web_app/templates")
 
 
 # Инициализация FastAPI приложения с lifespan событиями
@@ -43,8 +52,32 @@ async def lifespan(app: FastAPI):
 # Создание экземпляра FastAPI приложения с настроенным lifespan
 app = FastAPI(lifespan=lifespan)
 
+# Настройка статических файлов
+app.mount(
+    f"{app_config.app_path}/static",
+    StaticFiles(directory="services/web_app/static"),
+    name="static",
+)
+
 # Добавление маршрута для обработки входящих вебхуков от Telegram
 app.add_api_route(bot_config.webhook_path, bot_webhook_endpoint, methods=["POST"])
+
+# Добавление маршрутов для API веб-приложения
+app.include_router(health_router, prefix=app_config.api_path)
+app.include_router(app_router, prefix=app_config.api_path)
+
+
+# Маршрут для отображения основной страницы веб-приложения
+@app.get(app_config.app_path)
+async def web_app_root(request: Request):
+    """
+    Эндпоинт для отображения основной страницы веб-приложения.
+    Args:
+        request (Request): Объект запроса FastAPI.
+    Returns:
+        TemplateResponse: Шаблон Jinja2 для index.html.
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 if __name__ == "__main__":
