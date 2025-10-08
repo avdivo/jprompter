@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117;
+    /* Темно-серый фон (почти черный) */
+    color: #c9d1d9;
+    /* Светлый текст */
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #161b22;
+    /* Темно-синий/серый фон для контейнера */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+h1,
+h2 {
+    color: #58a6ff;
+    /* Синий заголовок */
+}
+
+button {
+    background-color: #58a6ff;
+    /* Синяя кнопка */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #448aff;
+    /* Более темный синий при наведении */
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
