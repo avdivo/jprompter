@@ -1,2 +1,4 @@
 aiogram 3.22.0
 fastapi 0.118.0
+python-dotenv 1.1.1
+uvicorn 0.37.0
