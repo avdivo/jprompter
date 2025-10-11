@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import os
 import tomllib
 
@@ -19,6 +21,9 @@ class BotConfig:
         self.webhook_path = self._load_bot_config("webhook_path")
         self.webhook_base_url = self._load_bot_config("webhook_url")
         self.webhook_url = f"{self.webhook_base_url}{self.webhook_path}"
+        self.secret_key = (
+            self._generate_secret_key()
+        )  # Добавляем генерацию секретного ключа
 
     def _load_bot_config(self, key: str) -> str:
         """
@@ -59,6 +64,18 @@ class BotConfig:
             raise ValueError("BOT_TOKEN not found in environment variables")
         return bot_token
 
+    def _generate_secret_key(self) -> bytes:
+        """
+        Генерирует секретный ключ для валидации tgWebAppData.
+        Args:
+            None
+        Returns:
+            bytes: Секретный ключ.
+        """
+        return hmac.new(
+            "WebAppData".encode(), self.bot_token.encode(), hashlib.sha256
+        ).digest()
+
 
 class AppConfig:
     """
@@ -75,14 +92,15 @@ class AppConfig:
         self.greeting_endpoint = f"{self.api_path}/greeting"
         self.status_endpoint = f"{self.api_path}/status"
         self.button_click_endpoint = f"{self.api_path}/button_click"
+        self.jwt_lifetime_days = self._load_app_config("jwt_lifetime_days")
 
-    def _load_app_config(self, key: str) -> str:
+    def _load_app_config(self, key: str) -> str | int:
         """
         Загружает параметр конфигурации веб-приложения из файла app_config.toml.
         Args:
             key (str): Ключ параметра конфигурации.
         Returns:
-            str: Значение параметра конфигурации.
+            str | int: Значение параметра конфигурации.
         Raises:
             ValueError: Если параметр конфигурации не найден.
         """

@@ -2,16 +2,65 @@ document.addEventListener('DOMContentLoaded', async () => {
     const greetingMessageElement = document.getElementById('greeting-message');
     const statusMessageElement = document.getElementById('status-message');
     const okButton = document.getElementById('ok-button');
+    const messageIdElement = document.getElementById('message-id');
+    let authenticated = false;
 
-    // Получение приветственного сообщения
-    try {
-        const greetingResponse = await fetch('/web_app/api/greeting');
-        const greetingData = await greetingResponse.json();
-        greetingMessageElement.textContent = greetingData.message;
-    } catch (error) {
-        console.error('Ошибка при получении приветствия:', error);
-        greetingMessageElement.textContent = 'Не удалось загрузить приветствие.';
+    // Инициализация Telegram WebApp
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const messageId = urlParams.get('message_id');
+    const chatId = urlParams.get('chat_id');
+    messageIdElement.textContent = `Message ID: ${messageId}`;
+
+    const initData = window.Telegram.WebApp.initData;
+
+    try {
+        const response = await fetch('/web_app/api/init', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ initData: initData, message_id: messageId }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            // Функция для рекурсивного извлечения данных из объекта в текст
+            function extractObjectData(obj, indent = '') {
+                let text = '';
+                for (const key in obj) {
+                    if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        text += `${indent}${key}:\n`;
+                        text += extractObjectData(obj[key], indent + '  ');
+                    } else {
+                        text += `${indent}${key}: ${obj[key]}\n`;
+                    }
+                }
+                return text;
+            }
+
+            if (typeof data.message === 'object' && data.message !== null) {
+                // Используем <pre>, чтобы сохранить форматирование текста
+                greetingMessageElement.innerHTML = `<pre>${extractObjectData(data.message)}</pre>`;
+            } else {
+                greetingMessageElement.textContent = data.message;
+            }
+            
+            authenticated = true;
+        } else {
+            const errorData = await response.json();
+            greetingMessageElement.textContent = `Ошибка авторизации: ${errorData.detail}`;
+        }
+    } catch (error) {
+        console.error('Ошибка при инициализации:', error);
+        greetingMessageElement.textContent = 'Не удалось выполнить авторизацию.';
+    }
+
 
     // Получение статуса приложения
     try {
@@ -25,21 +74,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Обработчик нажатия кнопки "OK"
     okButton.addEventListener('click', async () => {
-        try {
-            const response = await fetch('/web_app/api/button_click', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: 'Все хорошо' }),
-            });
-            if (response.ok) {
-                console.log('Сообщение "Все хорошо" успешно отправлено.');
-            } else {
-                console.error('Ошибка при отправке сообщения:', response.statusText);
+        if (authenticated) {
+            try {
+                const response = await fetch('/web_app/api/button_click', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: 'Все хорошо', chat_id: chatId }),
+                });
+                if (response.ok) {
+                    console.log('Сообщение "Все хорошо" успешно отправлено.');
+                } else {
+                    console.error('Ошибка при отправке сообщения:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Ошибка сети при отправке сообщения:', error);
             }
-        } catch (error) {
-            console.error('Ошибка сети при отправке сообщения:', error);
+        } else {
+            console.log("Не аутентифицирован. Сообщение не отправлено.");
         }
     });
 });

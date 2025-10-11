@@ -19,7 +19,7 @@ def web_app_keyboard(base_url: str, chat_id: int) -> InlineKeyboardMarkup:
                 InlineKeyboardButton(
                     text="Запустить Web App",
                     web_app=WebAppInfo(
-                        url=f"{base_url}{app_config.app_path}?chat_id={chat_id}"
+                        url=f"{base_url}{app_config.app_path}?message_id=123&chat_id={chat_id}"
                     ),
                 )
             ]
