@@ -36,15 +36,12 @@ def validate_telegram_data(init_data: str) -> dict:
 
     data_check_string.sort()
     data_check_string = "\n".join(data_check_string)
-    print(f"Data check string: {data_check_string}")  # Логирование
 
     # Вычисление HMAC-SHA256 хеша
     calculated_hash = hmac.new(
         bot_config.secret_key, data_check_string.encode(), hashlib.sha256
     ).hexdigest()
-    print(f"Calculated hash: {calculated_hash}")  # Логирование
-    print(f"Received hash: {data.get('hash')}")  # Логирование
-
+ 
     # Сравнение хешей
     if calculated_hash != data["hash"]:
         raise ValueError("Invalid hash")
