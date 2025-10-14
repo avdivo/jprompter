@@ -116,3 +116,21 @@ class AppConfig:
         if not value:
             raise ValueError(f"{key} not found in config/app_config.toml")
         return value
+
+
+class DBConfig:
+    """
+    Класс для загрузки конфигурации базы данных.
+    """
+
+    def __init__(self):
+        load_dotenv()
+        self.driver = "postgresql+asyncpg"
+        self.user = os.getenv("POSTGRES_USER")
+        self.password = os.getenv("POSTGRES_PASSWORD")
+        self.name = os.getenv("POSTGRES_DB")
+        self.host = os.getenv("POSTGRES_HOST")
+        self.port = os.getenv("POSTGRES_PORT")
+
+        if not all([self.user, self.password, self.name, self.host, self.port]):
+            raise ValueError("Не все переменные окружения для базы данных определены.")
