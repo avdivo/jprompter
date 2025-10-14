@@ -3,7 +3,7 @@ import hmac
 import json
 import time
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import jwt
 
@@ -67,6 +67,6 @@ def create_jwt_token(user_id: int) -> str:
     """
     payload = {
         "user_id": user_id,
-        "exp": datetime.utcnow() + timedelta(days=7),  # Токен действует 7 дней
+        "exp": datetime.now(timezone.utc) + timedelta(days=7),  # Токен действует 7 дней
     }
     return jwt.encode(payload, bot_config.secret_key, algorithm="HS256")

@@ -39,6 +39,13 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     extra: Mapped[dict] = mapped_column(JSONB, nullable=True)
     fsm_data: Mapped[dict] = mapped_column(JSONB, nullable=True)
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        if self.is_active is None:
+            self.is_active = True
+        if self.is_bot is None:
+            self.is_bot = False
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now()
     )
