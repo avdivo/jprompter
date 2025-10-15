@@ -5,14 +5,14 @@ from aiogram.types import Update
 from fastapi import Request, Response
 
 from config.config import BotConfig
-from services.bot.handlers import router
+from services.bot import handlers
 
 bot_config = BotConfig()
 bot = Bot(
     token=bot_config.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
 dp = Dispatcher()
-dp.include_router(router)
+dp.include_router(handlers.router)
 
 
 async def bot_webhook_endpoint(request: Request):

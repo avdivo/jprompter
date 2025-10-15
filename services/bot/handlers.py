@@ -1,37 +1,52 @@
-from aiogram import Router, types
-from aiogram.filters import CommandStart
+from aiogram import F, Router, types
+from aiogram.filters import Command, CommandStart
 
-from config.config import AppConfig, BotConfig
-from services.bot.keyboards import web_app_keyboard
-
-app_config = AppConfig()
-bot_config = BotConfig()
+from config.config import BotConfig
+from services.bot.keyboards import main_inline_keyboard, web_app_keyboard
 
 router = Router()
+bot_config = BotConfig()
 
 
 @router.message(CommandStart())
 async def command_start_handler(message: types.Message) -> None:
     """
-    This handler receives messages with `/start` command
+    Этот хендлер обрабатывает команду /start.
     """
     user_name = message.from_user.full_name if message.from_user else "Guest"
     chat_id = message.chat.id
     await message.answer(
-        f"Hello, {user_name}!",
+        f"Привет, {user_name}!",
         reply_markup=web_app_keyboard(
             base_url=bot_config.webhook_base_url, chat_id=chat_id
         ),
     )
+    await message.answer(
+        "Вот основная клавиатура:", reply_markup=main_inline_keyboard()
+    )
 
 
-@router.message()
-async def echo_handler(message: types.Message) -> None:
+@router.message(Command("help"))
+async def command_help_handler(message: types.Message) -> None:
     """
-    Handler will forward all your messages back to you
+    Этот хендлер обрабатывает команду /help.
     """
-    try:
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        # But not all the types is supported to be copied so need to handle it
-        await message.answer("Nice try!")
+    await message.answer(
+        "Это справочное сообщение. Здесь будет описание команд бота."
+    )
+
+
+@router.callback_query()
+async def inline_button_handler(callback_query: types.CallbackQuery):
+    """
+    Этот хендлер обрабатывает все нажатия на инлайн-кнопки.
+    """
+    await callback_query.answer(f"Вы нажали на кнопку с данными: {callback_query.data}")
+
+
+@router.message(F.text)
+async def text_message_handler(message: types.Message):
+    """
+    Этот хендлер обрабатывает любые текстовые сообщения.
+    """
+    await message.reply(f"Вы написали: {message.text}")
