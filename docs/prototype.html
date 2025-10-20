@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип редактора промптов</title>
+    <!-- Подключаем иконки Font Awesome -->
+    <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --panel-height: 64px;
+            --border-color: #444;
+            --primary-glow: rgba(70, 130, 255, 0.5);
+            --background-color: #1a1a1a;
+            --panel-bg: #252525;
+            --form-bg: #2c2c2c;
+            --text-color: #e0e0e0;
+            --text-muted-color: #999;
+            --button-bg: #3a3a3a;
+            --button-hover-bg: #4a4a4a;
+            --button-active-bg: #5a5a5a;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .control-panel {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--panel-height);
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+       .control-group-separator {
+           width: 1px;
+           height: 24px;
+           background-color: var(--border-color);
+           margin: 0 8px;
+       }
+
+        .btn, .segmented-control-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #404040, #303030);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 16px; /* Увеличиваем шрифт для кнопки и иконки */
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s ease-out;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border-color: #777;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Стили для .btn .icon удалены, чтобы flexbox родителя работал корректно */
+        
+        .btn-icon-only {
+            padding: 10px;
+        }
+
+        .segmented-control {
+            display: flex;
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 4px;
+            border: 1px solid #444;
+        }
+
+        .segmented-control-btn {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 6px 14px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .segmented-control-btn:hover {
+             transform: none;
+             box-shadow: none;
+             color: #fff;
+        }
+
+        .segmented-control-btn.active {
+            background-color: #555;
+            color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #007bff, #0056b3);
+            border-color: #0056b3;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #0088ff, #0060c5);
+        }
+
+        .content-wrapper {
+            padding: 24px;
+        }
+
+        .form-container {
+            max-width: 80%;
+            margin: 0 auto;
+            background-color: var(--form-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            min-height: calc(100vh - var(--panel-height) - 48px);
+        }
+        
+        .form-container h2 {
+            margin-top: 0;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .form-container p {
+            color: var(--text-muted-color);
+        }
+
+        .form-view {
+            display: none; /* Все формы по умолчанию скрыты */
+        }
+
+        .form-view.active {
+            display: block; /* Показываем только активную */
+        }
+        
+        /* Стили для полей формы */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted-color);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 300px;
+            resize: vertical;
+        }
+
+        .mobile-menu-toggle {
+            display: none; /* Скрыт по умолчанию */
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        .mobile-menu-toggle i {
+            font-size: 24px;
+            color: var(--text-color);
+        }
+
+        .mobile-quick-access {
+            display: none; /* Скрыто на десктопе */
+        }
+
+        /* ----- Адаптивность ----- */
+        @media (max-width: 1024px) {
+            .control-panel {
+                padding: 0 16px;
+                flex-wrap: wrap;
+                justify-content: flex-start; /* Выравниваем по левому краю */
+            }
+            .control-group .btn span, .control-group.center, .control-group.right {
+                display: none; /* Скрываем текст и группы по умолчанию */
+            }
+            .mobile-quick-access {
+                display: flex; /* Показываем группу быстрого доступа */
+                gap: 10px;
+                margin-left: 10px;
+            }
+            .mobile-quick-access .btn {
+                padding: 10px; /* Делаем кнопки-иконки компактнее */
+            }
+
+            .control-panel.mobile-menu-open {
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                padding-bottom: 16px;
+                background-color: #303030;
+            }
+             .control-panel.mobile-menu-open .control-group {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                gap: 10px;
+            }
+            .control-panel.mobile-menu-open .control-group:not(:first-child) {
+                 padding-top: 16px;
+            }
+             .control-panel.mobile-menu-open .control-group.center,
+             .control-panel.mobile-menu-open .control-group.right {
+                display: flex;
+            }
+             .control-panel.mobile-menu-open .btn span {
+                display: inline; /* Показываем текст в открытом меню */
+            }
+            .mobile-menu-toggle {
+                display: block;
+                position: absolute;
+                right: 24px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            .form-container {
+                max-width: 95%;
+                padding: 20px;
+            }
+        }
+
+        /* ----- Цвета для иконок ----- */
+        .fa-file-alt { color: #5DADE2; } /* Голубой - для файла */
+        .fa-language { color: #58D68D; } /* Зеленый - для перевода */
+        .fa-eye { color: #F5B041; }      /* Оранжевый - для видимости */
+        .fa-eraser { color: #EC7063; }   /* Красный - для очистки */
+        .fa-undo { color: #A569BD; }     /* Фиолетовый - для отмены */
+        .fa-redo { color: #A569BD; }     /* Фиолетовый - для повтора */
+        .fa-copy { color: #48C9B0; }     /* Бирюзовый - для копирования */
+        .fa-save { color: #FFFFFF; }     /* Белый - для сохранения (на синем фоне) */
+        .fa-bars { color: #E0E0E0; }     /* Стандартный цвет текста для меню */
+
+    </style>
+</head>
+<body>
+
+    <header class="control-panel" id="control-panel">
+        <!-- Группа 1: Формат -->
+        <div class="control-group left">
+            <div id="view-switcher" class="segmented-control" data-segmented-control>
+                <button class="segmented-control-btn active" data-view="format">Формат</button>
+                <button class="segmented-control-btn" data-view="text">Текст</button>
+            </div>
+        </div>
+
+        <!-- Центральная группа с разделителями -->
+        <div class="control-group center">
+            <!-- Группа 2: Текстовые операции -->
+            <button class="btn btn-icon-only" title="Переделать в текст">
+                <i class="fa-solid fa-file-alt icon"></i>
+            </button>
+            <button class="btn btn-icon-only" title="Перевести (RU/EN)">
+                <i class="fa-solid fa-language icon"></i>
+            </button>
+            <div class="control-group-separator"></div>
+            
+            <!-- Группа 3: Управление формой -->
+            <button class="btn btn-icon-only" title="Показать/скрыть спойлеры">
+                 <i class="fa-solid fa-eye icon"></i>
+            </button>
+            <button class="btn btn-icon-only" title="Очистить форму">
+                <i class="fa-solid fa-eraser icon"></i>
+            </button>
+            <div class="control-group-separator"></div>
+
+            <!-- Группа 4: История -->
+            <button class="btn btn-icon-only" title="Откат">
+                <i class="fa-solid fa-undo icon"></i>
+            </button>
+            <button class="btn btn-icon-only" title="Повтор">
+                <i class="fa-solid fa-redo icon"></i>
+            </button>
+        </div>
+
+        <!-- Группа 5: Действия с файлом -->
+        <div class="control-group right">
+            <div class="segmented-control" data-segmented-control>
+                <button class="segmented-control-btn active">JSON</button>
+                <button class="segmented-control-btn">XML</button>
+                <button class="segmented-control-btn">MD</button>
+            </div>
+            <button class="btn btn-icon-only" title="Копировать">
+                <i class="fa-solid fa-copy icon"></i>
+            </button>
+            <button class="btn btn-primary btn-icon-only" title="Сохранить">
+                <i class="fa-solid fa-save icon"></i>
+            </button>
+        </div>
+        
+        <button class="btn mobile-menu-toggle" id="mobile-menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <main class="content-wrapper">
+        <div class="form-container">
+            <!-- Форма "Формат" -->
+            <div id="form-view-format" class="form-view active">
+                <h2>Форма редактирования промпта</h2>
+                <div class="form-group">
+                    <label for="prompt-title">Название</label>
+                    <input type="text" id="prompt-title" class="form-control" placeholder="Введите название промпта">
+                </div>
+                <div class="form-group">
+                    <label for="prompt-description">Описание</label>
+                    <textarea id="prompt-description" class="form-control" rows="3" placeholder="Краткое описание"></textarea>
+                </div>
+                 <div class="form-group">
+                    <label for="prompt-scene">Сцена</label>
+                    <input type="text" id="prompt-scene" class="form-control" placeholder="Место, время, окружение">
+                </div>
+            </div>
+
+            <!-- Форма "Текст" -->
+            <div id="form-view-text" class="form-view">
+                 <h2>Текстовое представление</h2>
+                 <div class="form-group">
+                    <label for="prompt-full-text">Полный текст промпта</label>
+                    <textarea id="prompt-full-text" class="form-control" placeholder="Здесь будет полный текст промпта для редактирования..."></textarea>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Логика для переключателей ---
+            const segmentedControls = document.querySelectorAll('[data-segmented-control]');
+            
+            segmentedControls.forEach(control => {
+                // Специальная логика для переключателя вида "Формат/Текст"
+                if (control.id === 'view-switcher') {
+                    control.addEventListener('click', function(event) {
+                        const targetButton = event.target.closest('.segmented-control-btn');
+                        if (!targetButton || targetButton.classList.contains('active')) return;
+
+                        // Управление активным состоянием кнопки
+                        control.querySelectorAll('.segmented-control-btn').forEach(btn => btn.classList.remove('active'));
+                        targetButton.classList.add('active');
+
+                        // Переключение видимости форм
+                        const viewToShow = targetButton.dataset.view;
+                        document.querySelectorAll('.form-view').forEach(view => {
+                            view.classList.remove('active');
+                        });
+                        document.getElementById(`form-view-${viewToShow}`).classList.add('active');
+                    });
+                } else {
+                    // Общая логика для всех остальных переключателей
+                    control.addEventListener('click', function(event) {
+                        const targetButton = event.target.closest('.segmented-control-btn');
+                        if (!targetButton || targetButton.classList.contains('active')) return;
+
+                        control.querySelectorAll('.segmented-control-btn').forEach(btn => btn.classList.remove('active'));
+                        targetButton.classList.add('active');
+                    });
+                }
+            });
+
+            // --- Логика для мобильного меню ---
+            const menuToggle = document.getElementById('mobile-menu-toggle');
+            const controlPanel = document.getElementById('control-panel');
+
+            menuToggle.addEventListener('click', function() {
+                controlPanel.classList.toggle('mobile-menu-open');
+            });
+        });
+    </script>
+
+</body>
+</html>
