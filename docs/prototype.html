@@ -176,9 +176,52 @@
         .form-view {
             display: none; /* Все формы по умолчанию скрыты */
         }
-
+        
         .form-view.active {
             display: block; /* Показываем только активную */
+        }
+        
+        /* Стили для спойлеров */
+        details {
+            border: none;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background-color: var(--background-color);
+            overflow: hidden;
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            padding: 12px 16px;
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border-radius: 6px;
+            list-style: revert;
+            transition: background-color 0.2s;
+        }
+        
+        summary:hover {
+            background-color: var(--button-hover-bg);
+        }
+        
+        .content {
+            padding: 16px;
+            background-color: var(--background-color);
+        }
+        
+        .form-field {
+            margin-bottom: 16px;
+        }
+        
+        .form-field:last-child {
+            margin-bottom: 0;
+        }
+        
+        details[open] > summary {
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 6px 6px 0 0;
         }
         
         /* Стили для полей формы */
@@ -189,10 +232,17 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: var(--text-muted-color);
+            color: #777; /* Более тусклый цвет для подписей */
             font-size: 14px;
         }
-
+        
+        .form-field label {
+            color: #777; /* Более тусклый цвет для подписей полей */
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
         .form-control {
             width: 100%;
             padding: 12px;
@@ -210,9 +260,14 @@
             border-color: var(--primary-glow);
             box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
         }
+        
+        .form-control:hover {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
+        }
 
         textarea.form-control {
-            min-height: 300px;
+            min-height: 150px;
             resize: vertical;
         }
 
@@ -323,8 +378,8 @@
             <div class="control-group-separator"></div>
             
             <!-- Группа 3: Управление формой -->
-            <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Показать/скрыть спойлеры">
-                 <i class="fa-solid fa-eye icon"></i>
+            <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Свернуть все спойлеры">
+                 <i class="fa-solid fa-compress icon"></i>
             </button>
             <button class="btn btn-icon-only" title="Очистить форму">
                 <i class="fa-solid fa-eraser icon"></i>
@@ -365,18 +420,236 @@
             <!-- Форма "Формат" -->
             <div id="form-view-format" class="form-view active">
                 <h2>Форма редактирования промпта</h2>
-                <div class="form-group">
-                    <label for="prompt-title">Название</label>
-                    <input type="text" id="prompt-title" class="form-control" placeholder="Введите название промпта">
-                </div>
-                <div class="form-group">
-                    <label for="prompt-description">Описание</label>
-                    <textarea id="prompt-description" class="form-control" rows="3" placeholder="Краткое описание"></textarea>
-                </div>
-                 <div class="form-group">
-                    <label for="prompt-scene">Сцена</label>
-                    <input type="text" id="prompt-scene" class="form-control" placeholder="Место, время, окружение">
-                </div>
+                
+                <details open>
+                    <summary>Общие параметры ролика</summary>
+                    <div class="content">
+                        <div class="form-field"><label for="title">Название и/или короткое описание ролика</label><input type="text" id="title" name="title" class="form-control"></div>
+                        <div class="form-field"><label for="duration">Общая длительность в секундах</label><input type="number" id="duration" name="duration" class="form-control"></div>
+                        <div class="form-field"><label for="style">Визуальный стиль</label><select id="style" name="style" class="form-control">
+                                <option value="realistic">фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option>
+                                <option value="cinematic">киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option>
+                                <option value="cartoon">мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option>
+                                <option value="anime">японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option>
+                                <option value="stylized">художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option>
+                                <option value="low-poly">упрощённая геометрия с минимальным числом полигонов</option>
+                                <option value="pixel-art">пиксельная графика в ретро-стиле</option>
+                                <option value="sketch">ручная прорисовка: карандашный, чернильный или маркерный стиль</option>
+                                <option value="abstract">художественный стиль без реализма, акцент на форму, цвет и движение</option>
+                                <option value="isometric">псевдо-3D с фиксированной перспективой</option>
+                                <option value="minimalist">минимализм: простые формы, ограниченная палитра</option>
+                                <option value="surreal">сюрреализм: нелогичные сцены, метафоры, сны</option>
+                                <option value="mixed">смешанный стиль, комбинирующий несколько подходов</option>
+                            </select></div>
+                        <div class="form-field"><label for="custom_style">Описание кастомного стиля</label><input type="text" id="custom_style" name="custom_style" class="form-control"></div>
+                        <div class="form-field"><label for="prompt">Глобальное краткое описание ролика</label><textarea id="prompt" name="prompt" class="form-control"></textarea></div>
+                    </div>
+                </details>
+
+                <details open>
+                    <summary>Сцены</summary>
+                    <div class="content">
+                        <details open>
+                            <summary>Сцена 1</summary>
+                            <div class="content">
+                                <details open><summary>Основное</summary><div class="content">
+                                    <div class="form-field"><label for="s1_duration">Длительность сцены (в секундах)</label><input type="number" id="s1_duration" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_transition">Тип перехода</label><select id="s1_transition" name="s1_transition" class="form-control">
+                                        <option value="none">отсутствие перехода, сцены сменяются напрямую</option>
+                                        <option value="cut">резкий монтажный переход без эффекта</option>
+                                        <option value="fade">плавное затемнение или проявление между сценами</option>
+                                        <option value="crossfade">наложение одной сцены на другую</option>
+                                        <option value="zoom">переход с эффектом приближения или отдаления</option>
+                                        <option value="slide">сдвиг сцены в сторону</option>
+                                        <option value="wipe">сцена «стирается» другой по направлению</option>
+                                        <option value="dissolve">постепенное растворение одной сцены в другой</option>
+                                        <option value="flash">краткая вспышка между сценами</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_custom_transition">Описание кастомного перехода</label><input type="text" id="s1_custom_transition" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_description">Текстовое описание сцены</label><textarea id="s1_description" class="form-control"></textarea></div>
+                                </div></details>
+                                <details><summary>Камера</summary><div class="content">
+                                    <div class="form-field"><label for="s1_cam_pos">Позиция камеры</label><input type="text" id="s1_cam_pos" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_shot">Размер кадра</label><select id="s1_cam_shot" class="form-control">
+                                        <option value="extreme-wide">вид «ант-земля», большая сцена, мелкие детали</option>
+                                        <option value="wide">по колено и выше, окружение в кадре</option>
+                                        <option value="medium">пояс и выше, стандартный диалоговый план</option>
+                                        <option value="close-up">грудь и лицо, эмоции читаются</option>
+                                        <option value="extreme-close-up">глаза/губы, максимальная детализация</option>
+                                        <option value="full-body">весь рост, ноги точно в кадре</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_cam_custom_shot">Кастомный размер кадра</label><input type="text" id="s1_cam_custom_shot" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_move">Движение</label><select id="s1_cam_move" class="form-control">
+                                        <option value="static">неподвижная камера, фиксированная точка обзора</option>
+                                        <option value="pan">горизонтальное вращение камеры (влево/вправо)</option>
+                                        <option value="tilt">вертикальное вращение камеры вверх или вниз</option>
+                                        <option value="dolly">перемещение камеры вперёд или назад</option>
+                                        <option value="zoom">изменение фокусного расстояния</option>
+                                        <option value="truck">горизонтальное перемещение камеры</option>
+                                        <option value="pedestal">вертикальное перемещение камеры</option>
+                                        <option value="orbit">круговое движение камеры вокруг объекта</option>
+                                        <option value="follow">камера следует за объектом</option>
+                                        <option value="handheld">имитация ручной съёмки</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_cam_custom_move">Кастомное движение</label><input type="text" id="s1_cam_custom_move" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_focus">Фокус</label><input type="text" id="s1_cam_focus" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_angle">Угол обзора</label><select id="s1_cam_angle" class="form-control">
+                                        <option value="eye-level">нейтральный угол, камера на уровне глаз</option>
+                                        <option value="low-angle">камера смотрит снизу вверх</option>
+                                        <option value="high-angle">камера смотрит сверху вниз</option>
+                                        <option value="top-down">строго вертикальный вид сверху</option>
+                                        <option value="over-the-shoulder">камера за плечом персонажа</option>
+                                        <option value="first-person">вид от первого лица</option>
+                                        <option value="bird-eye">высокий обзор с большой высоты</option>
+                                        <option value="worm-eye">экстремально низкий угол</option>
+                                        <option value="Dutch-angle">наклонённая камера</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_cam_custom_angle">Кастомный вид</label><input type="text" id="s1_cam_custom_angle" class="form-control"></div>
+                                </div></details>
+                                <details><summary>Освещение</summary><div class="content">
+                                    <div class="form-field"><label for="s1_light_type">Тип освещения</label><select id="s1_light_type" class="form-control">
+                                        <option value="natural">естественное освещение: солнце, небо</option>
+                                        <option value="ambient">общее фоновое освещение без явного источника</option>
+                                        <option value="studio">контролируемое студийное освещение</option>
+                                        <option value="dramatic">контрастное освещение с акцентами и тенями</option>
+                                        <option value="volumetric">свет с видимыми лучами и глубиной</option>
+                                        <option value="neon">яркое цветное неоновое освещение</option>
+                                        <option value="backlight">источник света позади объекта</option>
+                                        <option value="spotlight">направленный световой луч</option>
+                                        <option value="firelight">тёплое, мерцающее освещение от огня</option>
+                                        <option value="moonlight">холодное, мягкое освещение луны</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_light_custom">Кастомное освещение</label><input type="text" id="s1_light_custom" class="form-control"></div>
+                                </div></details>
+                                <details><summary>Объекты</summary><div class="content">
+                                    <details open><summary>Объект 1</summary><div class="content">
+                                        <div class="form-field"><label for="s1_o1_type">Тип объекта</label><select id="s1_o1_type" class="form-control">
+                                            <option value="person">человек или персонаж</option>
+                                            <option value="animal">любое животное</option>
+                                            <option value="vehicle">транспортное средство</option>
+                                            <option value="prop">предмет окружения</option>
+                                            <option value="environment">элемент сцены: дерево, скала, здание</option>
+                                            <option value="text">текстовый объект, надпись</option>
+                                            <option value="effect">визуальный эффект: дым, огонь, магия</option>
+                                            <option value="structure">архитектурный объект</option>
+                                            <option value="creature">фантастическое существо</option>
+                                            <option value="symbol">логотип, знак, иконка</option>
+                                        </select></div>
+                                        <div class="form-field"><label for="s1_o1_custom">Описание</label><textarea id="s1_o1_custom" class="form-control"></textarea></div>
+                                        <div class="form-field"><label for="s1_o1_pos">Расположение</label><input type="text" id="s1_o1_pos" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_o1_anim">Анимация</label><select id="s1_o1_anim" class="form-control">
+                                            <option value="none">объект статичен</option>
+                                            <option value="idle">лёгкое фоновое движение</option>
+                                            <option value="walk">ходьба</option>
+                                            <option value="run">бег</option>
+                                            <option value="fly">полёт</option>
+                                            <option value="rotate">вращение</option>
+                                            <option value="scale">изменение размера</option>
+                                            <option value="fade-in">плавное появление</option>
+                                            <option value="fade-out">плавное исчезновение</option>
+                                            <option value="bounce">подпрыгивание</option>
+                                            <option value="interact">взаимодействие</option>
+                                            <option value="gesture">жесты</option>
+                                        </select></div>
+                                        <div class="form-field"><label for="s1_o1_custom_anim">Кастомная анимация</label><textarea id="s1_o1_custom_anim" class="form-control"></textarea></div>
+                                        <div class="form-field"><label for="s1_o1_material">Материал</label><select id="s1_o1_material" class="form-control">
+                                            <option value="metal">металл</option>
+                                            <option value="wood">древесина</option>
+                                            <option value="glass">стекло</option>
+                                            <option value="plastic">пластик</option>
+                                            <option value="fabric">ткань</option>
+                                            <option value="stone">камень</option>
+                                            <option value="skin">кожа/поверхность</option>
+                                            <option value="liquid">жидкость</option>
+                                            <option value="rubber">резина</option>
+                                            <option value="paper">бумага</option>
+                                            <option value="organic">органическая структура</option>
+                                        </select></div>
+                                        <div class="form-field"><label for="s1_o1_custom_material">Кастомный материал</label><input type="text" id="s1_o1_custom_material" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_o1_style">Визуальный стиль</label><select id="s1_o1_style" class="form-control">
+                                            <option value="realistic">фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option>
+                                            <option value="cinematic">киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option>
+                                            <option value="cartoon">мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option>
+                                            <option value="anime">японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option>
+                                            <option value="stylized">художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option>
+                                            <option value="low-poly">упрощённая геометрия с минимальным числом полигонов</option>
+                                            <option value="pixel-art">пиксельная графика в ретро-стиле</option>
+                                            <option value="sketch">ручная прорисовка: карандашный, чернильный или маркерный стиль</option>
+                                            <option value="abstract">художественный стиль без реализма, акцент на форму, цвет и движение</option>
+                                            <option value="isometric">псевдо-3D с фиксированной перспективой</option>
+                                            <option value="minimalist">минимализм: простые формы, ограниченная палитра</option>
+                                            <option value="surreal">сюрреализм: нелогичные сцены, метафоры, сны</option>
+                                            <option value="mixed">смешанный стиль, комбинирующий несколько подходов</option>
+                                        </select></div>
+                                        <div class="form-field"><label for="s1_o1_custom_style">Кастомный стиль</label><input type="text" id="s1_o1_custom_style" class="form-control"></div>
+                                    </div></details>
+                                </div></details>
+                                <details><summary>Аудио</summary><div class="content">
+                                    <div class="form-field"><label for="s1_audio_ambient">Фоновый звук</label><select id="s1_audio_ambient" class="form-control">
+                                        <option value="footsteps">звук шагов</option>
+                                        <option value="door">скрип, удар, открытие/закрытие двери</option>
+                                        <option value="glass_break">звон разбивающегося стекла</option>
+                                        <option value="gunshot">выстрел</option>
+                                        <option value="magic">энергетический импульс, вспышка, искры</option>
+                                        <option value="heartbeat">биение сердца</option>
+                                        <option value="scream">крик</option>
+                                        <option value="laugh">смех</option>
+                                        <option value="roar">рёв</option>
+                                        <option value="engine">звук мотора</option>
+                                        <option value="rain">дождь</option>
+                                        <option value="fire">огонь</option>
+                                        <option value="typing">щелчки клавиш</option>
+                                        <option value="beep">короткий сигнал</option>
+                                        <option value="breath">дыхание</option>
+                                        <option value="whisper">шёпот</option>
+                                        <option value="growl">рычание</option>
+                                        <option value="clang">металлический удар</option>
+                                        <option value="rustle">шорох</option>
+                                        <option value="splash">всплеск</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_audio_custom">Описание звука</label><input type="text" id="s1_audio_custom" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_ambient_vol">Громкость фона (1-10)</label><input type="number" id="s1_audio_ambient_vol" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_music">Музыка</label><input type="text" id="s1_audio_music" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_music_vol">Громкость музыки (1-10)</label><input type="number" id="s1_audio_music_vol" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_effects">Эффекты</label><select id="s1_audio_effects" class="form-control">
+                                        <option value="echo">эхо</option>
+                                        <option value="reverb">пространственная гулкость</option>
+                                        <option value="distortion">искажение звука</option>
+                                        <option value="muffle">приглушение</option>
+                                        <option value="robotic">синтезированный тембр</option>
+                                        <option value="fade-in">плавное появление звука</option>
+                                        <option value="fade-out">плавное исчезновение звука</option>
+                                        <option value="vibration">дрожание, резонанс</option>
+                                        <option value="pitch-shift">изменение высоты звука</option>
+                                        <option value="speed-change">ускорение или замедление звука</option>
+                                        <option value="stereo-pan">перемещение звука между каналами</option>
+                                        <option value="layered">наложение нескольких звуков</option>
+                                        <option value="loop">зацикливание звука</option>
+                                        <option value="stereo-pan">перемещение звука между каналами</option>
+                                        <option value="layered">наложение нескольких звуков</option>
+                                        <option value="loop">зацикливание звука</option>
+                                    </select></div>
+                                    <div class="form-field"><label for="s1_audio_custom_effects">Описание эффектов</label><input type="text" id="s1_audio_custom_effects" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_talk">Речь</label><textarea id="s1_audio_talk" class="form-control"></textarea></div>
+                                    <div class="form-field"><label for="s1_audio_lang">Язык</label><input type="text" id="s1_audio_lang" value="Русский, язык не менять" class="form-control"></div>
+                                </div></details>
+                                <details><summary>Надписи</summary><div class="content">
+                                    <details open><summary>Надпись 1</summary><div class="content">
+                                        <div class="form-field"><label for="s1_txt1_content">Текст</label><input type="text" id="s1_txt1_content" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_txt1_lang">Язык</label><input type="text" id="s1_txt1_lang" value="Русский, язык не менять" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_txt1_pos">Расположение</label><input type="text" id="s1_txt1_pos" class="form-control"></div>
+                                        <details><summary>Стиль текста</summary><div class="content">
+                                            <div class="form-field"><label for="s1_txt1_font">Шрифт</label><input type="text" id="s1_txt1_font" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_size">Размер</label><input type="number" id="s1_txt1_size" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_color">Цвет</label><input type="color" id="s1_txt1_color" value="#000000" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_custom_style">Кастомный стиль</label><input type="text" id="s1_txt1_custom_style" class="form-control"></div>
+                                        </div></details>
+                                    </div></details>
+                                </div></details>
+                            </div>
+                        </details>
+                    </div>
+                </details>
             </div>
 
             <!-- Форма "Текст" -->
@@ -394,6 +667,41 @@
         document.addEventListener('DOMContentLoaded', function() {
             // --- Логика для переключателей ---
             const segmentedControls = document.querySelectorAll('[data-segmented-control]');
+            
+            // --- Функции для управления спойлерами ---
+            function collapseAllSpoilers() {
+                const allDetails = document.querySelectorAll('details');
+                allDetails.forEach(detail => {
+                    detail.removeAttribute('open');
+                });
+            }
+            
+            function expandAllSpoilers() {
+                const allDetails = document.querySelectorAll('details');
+                allDetails.forEach(detail => {
+                    detail.setAttribute('open', '');
+                });
+            }
+            
+            // --- Переменная для отслеживания состояния спойлеров ---
+            let spoilersExpanded = true;
+            
+            // --- Обработчик для кнопки "Показать/скрыть спойлеры" ---
+            const spoilerToggleBtn = document.getElementById('spoiler-toggle-btn');
+            if (spoilerToggleBtn) {
+                spoilerToggleBtn.addEventListener('click', function() {
+                    if (spoilersExpanded) {
+                        collapseAllSpoilers();
+                        this.title = 'Развернуть все спойлеры';
+                        this.querySelector('i').className = 'fa-solid fa-expand icon'; // Иконка развертывания
+                    } else {
+                        expandAllSpoilers();
+                        this.title = 'Свернуть все спойлеры';
+                        this.querySelector('i').className = 'fa-solid fa-compress icon'; // Иконка свертывания
+                    }
+                    spoilersExpanded = !spoilersExpanded;
+                });
+            }
             
             // --- Вспомогательная функция для обновления UI при переключении вида ---
             function updateUIForView(isFormatView) {
