@@ -92,6 +92,11 @@
         .btn-icon-only {
             padding: 10px;
         }
+        
+        .btn .icon {
+            width: 16px; /* Фиксированная ширина для иконки */
+            text-align: center; /* Центрируем иконку */
+        }
 
         .segmented-control {
             display: flex;
@@ -128,6 +133,19 @@
         }
         .btn-primary:hover {
             background: linear-gradient(145deg, #0088ff, #0060c5);
+        }
+        
+        .btn:disabled, .segmented-control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn:disabled:hover, .segmented-control-btn:disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border-color: #555;
         }
 
         .content-wrapper {
@@ -270,7 +288,7 @@
         }
 
         /* ----- Цвета для иконок ----- */
-        .fa-file-alt { color: #5DADE2; } /* Голубой - для файла */
+        .fa-file-alt, .fa-list { color: #5DADE2; } /* Голубой - для файла и списка */
         .fa-language { color: #58D68D; } /* Зеленый - для перевода */
         .fa-eye { color: #F5B041; }      /* Оранжевый - для видимости */
         .fa-eraser { color: #EC7063; }   /* Красный - для очистки */
@@ -296,8 +314,8 @@
         <!-- Центральная группа с разделителями -->
         <div class="control-group center">
             <!-- Группа 2: Текстовые операции -->
-            <button class="btn btn-icon-only" title="Переделать в текст">
-                <i class="fa-solid fa-file-alt icon"></i>
+            <button id="transform-btn" class="btn btn-icon-only" title="Форматировать">
+                <i class="fa-solid fa-list icon"></i>
             </button>
             <button class="btn btn-icon-only" title="Перевести (RU/EN)">
                 <i class="fa-solid fa-language icon"></i>
@@ -305,7 +323,7 @@
             <div class="control-group-separator"></div>
             
             <!-- Группа 3: Управление формой -->
-            <button class="btn btn-icon-only" title="Показать/скрыть спойлеры">
+            <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Показать/скрыть спойлеры">
                  <i class="fa-solid fa-eye icon"></i>
             </button>
             <button class="btn btn-icon-only" title="Очистить форму">
@@ -324,7 +342,7 @@
 
         <!-- Группа 5: Действия с файлом -->
         <div class="control-group right">
-            <div class="segmented-control" data-segmented-control>
+            <div id="format-selector" class="segmented-control" data-segmented-control>
                 <button class="segmented-control-btn active">JSON</button>
                 <button class="segmented-control-btn">XML</button>
                 <button class="segmented-control-btn">MD</button>
@@ -377,6 +395,31 @@
             // --- Логика для переключателей ---
             const segmentedControls = document.querySelectorAll('[data-segmented-control]');
             
+            // --- Вспомогательная функция для обновления UI при переключении вида ---
+            function updateUIForView(isFormatView) {
+                const transformBtn = document.getElementById('transform-btn');
+                const spoilerBtn = document.getElementById('spoiler-toggle-btn');
+                const formatSelector = document.getElementById('format-selector');
+
+                if (isFormatView) {
+                    // Режим "Формат"
+                    transformBtn.title = 'Переделать в текст';
+                    transformBtn.querySelector('i').className = 'fa-solid fa-file-alt icon'; // Иконка файла
+                    spoilerBtn.disabled = false; // Активируем кнопку спойлеров
+                    formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
+                        btn.disabled = false; // Активируем кнопки форматов
+                    });
+                } else {
+                    // Режим "Текст"
+                    transformBtn.title = 'Форматировать';
+                    transformBtn.querySelector('i').className = 'fa-solid fa-list icon'; // Иконка списка
+                    spoilerBtn.disabled = true; // Деактивируем кнопку спойлеров
+                    formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
+                        btn.disabled = true; // Деактивируем кнопки форматов
+                    });
+                }
+            }
+
             segmentedControls.forEach(control => {
                 // Специальная логика для переключателя вида "Формат/Текст"
                 if (control.id === 'view-switcher') {
@@ -394,6 +437,9 @@
                             view.classList.remove('active');
                         });
                         document.getElementById(`form-view-${viewToShow}`).classList.add('active');
+
+                        // Обновляем UI в зависимости от выбранного вида
+                        updateUIForView(viewToShow === 'format');
                     });
                 } else {
                     // Общая логика для всех остальных переключателей
@@ -405,6 +451,11 @@
                         targetButton.classList.add('active');
                     });
                 }
+            });
+
+            // Инициализируем состояние UI при загрузке страницы (предполагаем, что активен "Формат")
+            document.addEventListener('DOMContentLoaded', function() {
+                updateUIForView(true);
             });
 
             // --- Логика для мобильного меню ---
