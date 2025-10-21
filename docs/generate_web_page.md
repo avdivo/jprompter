@@ -112,6 +112,20 @@
       "type": "textarea",
       "label": "Глобальное краткое описание ролика: о чем, смысл, какие сцены (коротко), желаемый эффект на зрителя.",
       "default": ""
+    },
+    "target_audience": {
+      "type": "checkbox",
+      "label": "Целевая аудитория",
+      "options": [
+        { "value": "all", "label": "Все" },
+        { "value": "adults", "label": "Взрослые" },
+        { "value": "elderly", "label": "Пожилые" },
+        { "value": "children", "label": "Дети" },
+        { "value": "teenagers", "label": "Подростки" },
+        { "value": "women", "label": "Женщины" },
+        { "value": "men", "label": "Мужчины" }
+      ],
+      "default": ["all"]
     }
   },
 
