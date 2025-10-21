@@ -1,0 +1,81 @@
+{
+  "main": {
+    "title": "",
+    "duration": "",
+    "style": "realistic",
+    "custom_style": "",
+    "prompt": "",
+    "target_audience": [
+      "all"
+    ]
+  },
+  "scenes": [
+    {
+      "main": {
+        "duration": "",
+        "transition_from_previous": "none",
+        "custom_transition": "",
+        "description": ""
+      },
+      "camera": {
+        "position": "",
+        "shot": "extreme-wide",
+        "custom_shot": "",
+        "movement": "static",
+        "custom_movement": "",
+        "focus": "",
+        "angle": "eye-level",
+        "custom_angle": ""
+      },
+      "lighting": {
+        "lighting_type": "natural",
+        "custom_light": ""
+      },
+      "objects": [
+        {
+          "id": 1,
+          "object_type": "person",
+          "custom_object": "",
+          "position": "",
+          "animation": "none",
+          "custom_animation": "",
+          "material": "metal",
+          "custom_material": "",
+          "objects_style": "realistic",
+          "custom_style": ""
+        }
+      ],
+      "audio": {
+        "ambient": "footsteps",
+        "custom_sounds": "",
+        "ambient_volume": "",
+        "music": "",
+        "music_volume": "",
+        "effects": "echo",
+        "custom_effects": "",
+        "talk": "",
+        "language": "Русский, язык не менять"
+      },
+      "text_overlay": [
+        {
+          "id": 1,
+          "content": "",
+          "language": "Русский, язык не менять",
+          "position": "",
+          "style": {
+            "font": "",
+            "size": "",
+            "color": "#000000",
+            "custom_style": ""
+          }
+        }
+      ],
+      "style": {
+        "font": "",
+        "size": "",
+        "color": "#000000",
+        "custom_style": ""
+      }
+    }
+  ]
+}

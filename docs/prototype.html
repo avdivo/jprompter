@@ -296,6 +296,11 @@
             min-height: auto;
         }
         
+        /* В режиме "Текст" textarea занимает всю высоту экрана */
+        #form-view-text.active textarea#prompt-full-text {
+            height: calc(100vh - 100px);
+        }
+        
         .mobile-menu-toggle {
             display: none; /* Скрыт по умолчанию */
             background: none;
@@ -421,11 +426,35 @@
         .fa-save { color: #FFFFFF; }     /* Белый - для сохранения (на синем фоне) */
         .fa-bars { color: #E0E0E0; }     /* Стандартный цвет текста для меню */
 
-    </style>
-</head>
-<body>
+        /* Стили для уведомления о копировании */
+        .copy-notification {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 101;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none; /* Чтобы не мешал кликам */
+        }
 
-    <header class="control-panel" id="control-panel">
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+    </style>
+    
+    <!-- Элемент для уведомления -->
+    <div id="copy-notification" class="copy-notification">Скопировано</div>
+    
+    </head>
+    <body>
+    
+        <header class="control-panel" id="control-panel">
         <!-- Группа 1: Формат -->
         <div class="control-group left">
             <div id="view-switcher" class="segmented-control" data-segmented-control>
@@ -470,7 +499,7 @@
                 <button class="segmented-control-btn">XML</button>
                 <button class="segmented-control-btn">MD</button>
             </div>
-            <button class="btn btn-icon-only" title="Копировать">
+            <button id="copy-btn" class="btn btn-icon-only" title="Копировать">
                 <i class="fa-solid fa-copy icon"></i>
             </button>
             <button class="btn btn-primary btn-icon-only" title="Сохранить">
@@ -489,7 +518,7 @@
             <div id="form-view-format" class="form-view active">
                 <h2>Форма редактирования промпта</h2>
                 
-                <details open>
+                <details open data-section="main">
                     <summary>Общие параметры ролика</summary>
                     <div class="content">
                         <div class="form-field"><label for="title">Название и/или короткое описание ролика</label><input type="text" id="title" name="title" class="form-control"></div>
@@ -540,15 +569,15 @@
                     </div>
                 </details>
 
-                <details open>
+                <details open data-section-type="scenes-container">
                     <summary>Сцены</summary>
                     <div class="content">
-                        <details open>
+                        <details open data-section-type="scene" data-id="1">
                             <summary>Сцена 1</summary>
                             <div class="content">
-                                <details open><summary>Основное</summary><div class="content">
-                                    <div class="form-field"><label for="s1_duration">Длительность сцены (в секундах)</label><input type="number" id="s1_duration" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_transition">Тип перехода</label><select id="s1_transition" name="s1_transition" class="form-control">
+                                <details open data-section="main"><summary>Основное</summary><div class="content">
+                                    <div class="form-field"><label for="s1_duration">Длительность сцены (в секундах)</label><input type="number" id="s1_duration" name="duration" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_transition">Тип перехода</label><select id="s1_transition" name="transition_from_previous" class="form-control">
                                         <option value="none">отсутствие перехода, сцены сменяются напрямую</option>
                                         <option value="cut">резкий монтажный переход без эффекта</option>
                                         <option value="fade">плавное затемнение или проявление между сценами</option>
@@ -559,12 +588,12 @@
                                         <option value="dissolve">постепенное растворение одной сцены в другой</option>
                                         <option value="flash">краткая вспышка между сценами</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_custom_transition">Описание кастомного перехода</label><input type="text" id="s1_custom_transition" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_description">Текстовое описание сцены</label><textarea id="s1_description" class="form-control"></textarea></div>
+                                    <div class="form-field"><label for="s1_custom_transition">Описание кастомного перехода</label><input type="text" id="s1_custom_transition" name="custom_transition" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_description">Текстовое описание сцены</label><textarea id="s1_description" name="description" class="form-control"></textarea></div>
                                 </div></details>
-                                <details><summary>Камера</summary><div class="content">
-                                    <div class="form-field"><label for="s1_cam_pos">Позиция камеры</label><input type="text" id="s1_cam_pos" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_cam_shot">Размер кадра</label><select id="s1_cam_shot" class="form-control">
+                                <details data-section="camera"><summary>Камера</summary><div class="content">
+                                    <div class="form-field"><label for="s1_cam_pos">Позиция камеры</label><input type="text" id="s1_cam_pos" name="position" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_shot">Размер кадра</label><select id="s1_cam_shot" name="shot" class="form-control">
                                         <option value="extreme-wide">вид «ант-земля», большая сцена, мелкие детали</option>
                                         <option value="wide">по колено и выше, окружение в кадре</option>
                                         <option value="medium">пояс и выше, стандартный диалоговый план</option>
@@ -572,8 +601,8 @@
                                         <option value="extreme-close-up">глаза/губы, максимальная детализация</option>
                                         <option value="full-body">весь рост, ноги точно в кадре</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_cam_custom_shot">Кастомный размер кадра</label><input type="text" id="s1_cam_custom_shot" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_cam_move">Движение</label><select id="s1_cam_move" class="form-control">
+                                    <div class="form-field"><label for="s1_cam_custom_shot">Кастомный размер кадра</label><input type="text" id="s1_cam_custom_shot" name="custom_shot" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_move">Движение</label><select id="s1_cam_move" name="movement" class="form-control">
                                         <option value="static">неподвижная камера, фиксированная точка обзора</option>
                                         <option value="pan">горизонтальное вращение камеры (влево/вправо)</option>
                                         <option value="tilt">вертикальное вращение камеры вверх или вниз</option>
@@ -585,9 +614,9 @@
                                         <option value="follow">камера следует за объектом</option>
                                         <option value="handheld">имитация ручной съёмки</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_cam_custom_move">Кастомное движение</label><input type="text" id="s1_cam_custom_move" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_cam_focus">Фокус</label><input type="text" id="s1_cam_focus" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_cam_angle">Угол обзора</label><select id="s1_cam_angle" class="form-control">
+                                    <div class="form-field"><label for="s1_cam_custom_move">Кастомное движение</label><input type="text" id="s1_cam_custom_move" name="custom_movement" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_focus">Фокус</label><input type="text" id="s1_cam_focus" name="focus" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_angle">Угол обзора</label><select id="s1_cam_angle" name="angle" class="form-control">
                                         <option value="eye-level">нейтральный угол, камера на уровне глаз</option>
                                         <option value="low-angle">камера смотрит снизу вверх</option>
                                         <option value="high-angle">камера смотрит сверху вниз</option>
@@ -598,10 +627,10 @@
                                         <option value="worm-eye">экстремально низкий угол</option>
                                         <option value="Dutch-angle">наклонённая камера</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_cam_custom_angle">Кастомный вид</label><input type="text" id="s1_cam_custom_angle" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_cam_custom_angle">Кастомный вид</label><input type="text" id="s1_cam_custom_angle" name="custom_angle" class="form-control"></div>
                                 </div></details>
-                                <details><summary>Освещение</summary><div class="content">
-                                    <div class="form-field"><label for="s1_light_type">Тип освещения</label><select id="s1_light_type" class="form-control">
+                                <details data-section="lighting"><summary>Освещение</summary><div class="content">
+                                    <div class="form-field"><label for="s1_light_type">Тип освещения</label><select id="s1_light_type" name="lighting_type" class="form-control">
                                         <option value="natural">естественное освещение: солнце, небо</option>
                                         <option value="ambient">общее фоновое освещение без явного источника</option>
                                         <option value="studio">контролируемое студийное освещение</option>
@@ -613,11 +642,11 @@
                                         <option value="firelight">тёплое, мерцающее освещение от огня</option>
                                         <option value="moonlight">холодное, мягкое освещение луны</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_light_custom">Кастомное освещение</label><input type="text" id="s1_light_custom" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_light_custom">Кастомное освещение</label><input type="text" id="s1_light_custom" name="custom_light" class="form-control"></div>
                                 </div></details>
-                                <details><summary>Объекты</summary><div class="content">
-                                    <details open><summary>Объект 1</summary><div class="content">
-                                        <div class="form-field"><label for="s1_o1_type">Тип объекта</label><select id="s1_o1_type" class="form-control">
+                                <details data-section="objects"><summary>Объекты</summary><div class="content">
+                                    <details open data-section-type="object-item" data-id="1"><summary>Объект 1</summary><div class="content">
+                                        <div class="form-field"><label for="s1_o1_type">Тип объекта</label><select id="s1_o1_type" name="object_type" class="form-control">
                                             <option value="person">человек или персонаж</option>
                                             <option value="animal">любое животное</option>
                                             <option value="vehicle">транспортное средство</option>
@@ -629,9 +658,9 @@
                                             <option value="creature">фантастическое существо</option>
                                             <option value="symbol">логотип, знак, иконка</option>
                                         </select></div>
-                                        <div class="form-field"><label for="s1_o1_custom">Описание</label><textarea id="s1_o1_custom" class="form-control"></textarea></div>
-                                        <div class="form-field"><label for="s1_o1_pos">Расположение</label><input type="text" id="s1_o1_pos" class="form-control"></div>
-                                        <div class="form-field"><label for="s1_o1_anim">Анимация</label><select id="s1_o1_anim" class="form-control">
+                                        <div class="form-field"><label for="s1_o1_custom">Описание</label><textarea id="s1_o1_custom" name="custom_object" class="form-control"></textarea></div>
+                                        <div class="form-field"><label for="s1_o1_pos">Расположение</label><input type="text" id="s1_o1_pos" name="position" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_o1_anim">Анимация</label><select id="s1_o1_anim" name="animation" class="form-control">
                                             <option value="none">объект статичен</option>
                                             <option value="idle">лёгкое фоновое движение</option>
                                             <option value="walk">ходьба</option>
@@ -645,8 +674,8 @@
                                             <option value="interact">взаимодействие</option>
                                             <option value="gesture">жесты</option>
                                         </select></div>
-                                        <div class="form-field"><label for="s1_o1_custom_anim">Кастомная анимация</label><textarea id="s1_o1_custom_anim" class="form-control"></textarea></div>
-                                        <div class="form-field"><label for="s1_o1_material">Материал</label><select id="s1_o1_material" class="form-control">
+                                        <div class="form-field"><label for="s1_o1_custom_anim">Кастомная анимация</label><textarea id="s1_o1_custom_anim" name="custom_animation" class="form-control"></textarea></div>
+                                        <div class="form-field"><label for="s1_o1_material">Материал</label><select id="s1_o1_material" name="material" class="form-control">
                                             <option value="metal">металл</option>
                                             <option value="wood">древесина</option>
                                             <option value="glass">стекло</option>
@@ -659,8 +688,8 @@
                                             <option value="paper">бумага</option>
                                             <option value="organic">органическая структура</option>
                                         </select></div>
-                                        <div class="form-field"><label for="s1_o1_custom_material">Кастомный материал</label><input type="text" id="s1_o1_custom_material" class="form-control"></div>
-                                        <div class="form-field"><label for="s1_o1_style">Визуальный стиль</label><select id="s1_o1_style" class="form-control">
+                                        <div class="form-field"><label for="s1_o1_custom_material">Кастомный материал</label><input type="text" id="s1_o1_custom_material" name="custom_material" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_o1_style">Визуальный стиль</label><select id="s1_o1_style" name="objects_style" class="form-control">
                                             <option value="realistic">фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option>
                                             <option value="cinematic">киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option>
                                             <option value="cartoon">мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option>
@@ -675,11 +704,11 @@
                                             <option value="surreal">сюрреализм: нелогичные сцены, метафоры, сны</option>
                                             <option value="mixed">смешанный стиль, комбинирующий несколько подходов</option>
                                         </select></div>
-                                        <div class="form-field"><label for="s1_o1_custom_style">Кастомный стиль</label><input type="text" id="s1_o1_custom_style" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_o1_custom_style">Кастомный стиль</label><input type="text" id="s1_o1_custom_style" name="custom_style" class="form-control"></div>
                                     </div></details>
                                 </div></details>
-                                <details><summary>Аудио</summary><div class="content">
-                                    <div class="form-field"><label for="s1_audio_ambient">Фоновый звук</label><select id="s1_audio_ambient" class="form-control">
+                                <details data-section="audio"><summary>Аудио</summary><div class="content">
+                                    <div class="form-field"><label for="s1_audio_ambient">Фоновый звук</label><select id="s1_audio_ambient" name="ambient" class="form-control">
                                         <option value="footsteps">звук шагов</option>
                                         <option value="door">скрип, удар, открытие/закрытие двери</option>
                                         <option value="glass_break">звон разбивающегося стекла</option>
@@ -701,11 +730,11 @@
                                         <option value="rustle">шорох</option>
                                         <option value="splash">всплеск</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_audio_custom">Описание звука</label><input type="text" id="s1_audio_custom" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_audio_ambient_vol">Громкость фона (1-10)</label><input type="number" id="s1_audio_ambient_vol" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_audio_music">Музыка</label><input type="text" id="s1_audio_music" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_audio_music_vol">Громкость музыки (1-10)</label><input type="number" id="s1_audio_music_vol" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_audio_effects">Эффекты</label><select id="s1_audio_effects" class="form-control">
+                                    <div class="form-field"><label for="s1_audio_custom">Описание звука</label><input type="text" id="s1_audio_custom" name="custom_sounds" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_ambient_vol">Громкость фона (1-10)</label><input type="number" id="s1_audio_ambient_vol" name="ambient_volume" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_music">Музыка</label><input type="text" id="s1_audio_music" name="music" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_music_vol">Громкость музыки (1-10)</label><input type="number" id="s1_audio_music_vol" name="music_volume" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_effects">Эффекты</label><select id="s1_audio_effects" name="effects" class="form-control">
                                         <option value="echo">эхо</option>
                                         <option value="reverb">пространственная гулкость</option>
                                         <option value="distortion">искажение звука</option>
@@ -723,20 +752,20 @@
                                         <option value="layered">наложение нескольких звуков</option>
                                         <option value="loop">зацикливание звука</option>
                                     </select></div>
-                                    <div class="form-field"><label for="s1_audio_custom_effects">Описание эффектов</label><input type="text" id="s1_audio_custom_effects" class="form-control"></div>
-                                    <div class="form-field"><label for="s1_audio_talk">Речь</label><textarea id="s1_audio_talk" class="form-control"></textarea></div>
-                                    <div class="form-field"><label for="s1_audio_lang">Язык</label><input type="text" id="s1_audio_lang" value="Русский, язык не менять" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_custom_effects">Описание эффектов</label><input type="text" id="s1_audio_custom_effects" name="custom_effects" class="form-control"></div>
+                                    <div class="form-field"><label for="s1_audio_talk">Речь</label><textarea id="s1_audio_talk" name="talk" class="form-control"></textarea></div>
+                                    <div class="form-field"><label for="s1_audio_lang">Язык</label><input type="text" id="s1_audio_lang" name="language" value="Русский, язык не менять" class="form-control"></div>
                                 </div></details>
-                                <details><summary>Надписи</summary><div class="content">
-                                    <details open><summary>Надпись 1</summary><div class="content">
-                                        <div class="form-field"><label for="s1_txt1_content">Текст</label><input type="text" id="s1_txt1_content" class="form-control"></div>
-                                        <div class="form-field"><label for="s1_txt1_lang">Язык</label><input type="text" id="s1_txt1_lang" value="Русский, язык не менять" class="form-control"></div>
-                                        <div class="form-field"><label for="s1_txt1_pos">Расположение</label><input type="text" id="s1_txt1_pos" class="form-control"></div>
-                                        <details><summary>Стиль текста</summary><div class="content">
-                                            <div class="form-field"><label for="s1_txt1_font">Шрифт</label><input type="text" id="s1_txt1_font" class="form-control"></div>
-                                            <div class="form-field"><label for="s1_txt1_size">Размер</label><input type="number" id="s1_txt1_size" class="form-control"></div>
-                                            <div class="form-field"><label for="s1_txt1_color">Цвет</label><input type="color" id="s1_txt1_color" value="#000000" class="form-control"></div>
-                                            <div class="form-field"><label for="s1_txt1_custom_style">Кастомный стиль</label><input type="text" id="s1_txt1_custom_style" class="form-control"></div>
+                                <details data-section="text_overlay"><summary>Надписи</summary><div class="content">
+                                    <details open data-section-type="text-overlay-item" data-id="1"><summary>Надпись 1</summary><div class="content">
+                                        <div class="form-field"><label for="s1_txt1_content">Текст</label><input type="text" id="s1_txt1_content" name="content" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_txt1_lang">Язык</label><input type="text" id="s1_txt1_lang" name="language" value="Русский, язык не менять" class="form-control"></div>
+                                        <div class="form-field"><label for="s1_txt1_pos">Расположение</label><input type="text" id="s1_txt1_pos" name="position" class="form-control"></div>
+                                        <details data-section="style"><summary>Стиль текста</summary><div class="content">
+                                            <div class="form-field"><label for="s1_txt1_font">Шрифт</label><input type="text" id="s1_txt1_font" name="font" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_size">Размер</label><input type="number" id="s1_txt1_size" name="size" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_color">Цвет</label><input type="color" id="s1_txt1_color" name="color" value="#000000" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_custom_style">Кастомный стиль</label><input type="text" id="s1_txt1_custom_style" name="custom_style" class="form-control"></div>
                                         </div></details>
                                     </div></details>
                                 </div></details>
@@ -881,7 +910,135 @@
                 const icon = menuToggle.querySelector('i');
                 icon.className = 'fa-solid fa-bars';
             });
+            
+            // Функция для установки высоты textarea в режиме "Текст"
+            function setTextareaHeight() {
+                const textView = document.getElementById('form-view-text');
+                const textarea = document.getElementById('prompt-full-text');
+                
+                if (textView && textView.classList.contains('active') && textarea) {
+                    // В режиме "Текст" textarea занимает всю высоту экрана
+                    textarea.style.height = 'calc(100vh - 100px)';
+                } else if (textarea) {
+                    // В других режимах возвращаем обычную высоту
+                    textarea.style.height = 'calc(100vh - 200px)';
+                }
+            }
+            
+            // Вызываем функцию при загрузке страницы
+            document.addEventListener('DOMContentLoaded', setTextareaHeight);
+            
+            // Вызываем функцию при изменении размера окна
+            window.addEventListener('resize', setTextareaHeight);
+            
+            // Вызываем функцию при переключении режимов
+            const viewSwitcher = document.getElementById('view-switcher');
+            if (viewSwitcher) {
+                viewSwitcher.addEventListener('click', function() {
+                    // Небольшая задержка, чтобы дать время для переключения классов
+                    setTimeout(setTextareaHeight, 10);
+                });
+            }
         });
+
+        // --- Логика для кнопки "Копировать" ---
+        const copyBtn = document.getElementById('copy-btn');
+        const notification = document.getElementById('copy-notification');
+
+        if (copyBtn && notification) {
+            copyBtn.addEventListener('click', function() {
+                const formData = {
+                    main: {},
+                    scenes: []
+                };
+
+                // --- Сбор данных из секции "main" ---
+                const mainSection = document.querySelector('details[data-section="main"]');
+                if (mainSection) {
+                    mainSection.querySelectorAll('input, select, textarea').forEach(field => {
+                        if (field.name && !field.name.startsWith('_')) {
+                            if (field.type === 'checkbox') {
+                                if (!formData.main[field.name]) {
+                                    formData.main[field.name] = [];
+                                }
+                                if (field.checked) {
+                                    formData.main[field.name].push(field.value);
+                                }
+                            } else {
+                                formData.main[field.name] = field.value;
+                            }
+                        }
+                    });
+                }
+
+                // --- Сбор данных из секции "scenes" ---
+                const scenesContainer = document.querySelector('details[data-section-type="scenes-container"]');
+                if (scenesContainer) {
+                    scenesContainer.querySelectorAll('details[data-section-type="scene"]').forEach(sceneEl => {
+                        const sceneData = {
+                            main: {},
+                            camera: {},
+                            lighting: {},
+                            objects: [],
+                            audio: {},
+                            text_overlay: []
+                        };
+
+                        // Собираем данные из всех подсекций сцены
+                        sceneEl.querySelectorAll('[data-section]').forEach(subSection => {
+                            const sectionName = subSection.dataset.section;
+                            
+                            if (sectionName === 'objects' || sectionName === 'text_overlay') {
+                                subSection.querySelectorAll('[data-section-type="object-item"], [data-section-type="text-overlay-item"]').forEach(itemEl => {
+                                    const itemData = {
+                                        id: parseInt(itemEl.dataset.id, 10)
+                                    };
+                                    itemEl.querySelectorAll('input, select, textarea').forEach(field => {
+                                        if (field.name && !field.name.startsWith('_')) {
+                                            // Handle nested style section for text_overlay
+                                            if (sectionName === 'text_overlay' && field.closest('[data-section="style"]')) {
+                                                if (!itemData.style) {
+                                                    itemData.style = {};
+                                                }
+                                                itemData.style[field.name] = field.value;
+                                            } else {
+                                                itemData[field.name] = field.value;
+                                            }
+                                        }
+                                    });
+                                    sceneData[sectionName].push(itemData);
+                                });
+                            } else {
+                                const sectionData = {};
+                                subSection.querySelectorAll('input, select, textarea').forEach(field => {
+                                    if (field.name && !field.name.startsWith('_')) {
+                                        sectionData[field.name] = field.value;
+                                    }
+                                });
+                                sceneData[sectionName] = sectionData;
+                            }
+                        });
+                        formData.scenes.push(sceneData);
+                    });
+                }
+
+                const jsonString = JSON.stringify(formData, null, 2);
+
+                // Копирование в буфер обмена
+                navigator.clipboard.writeText(jsonString).then(() => {
+                    // Показываем уведомление
+                    notification.classList.add('show');
+                }).catch(err => {
+                    console.error('Не удалось скопировать текст: ', err);
+                });
+
+
+                // Скрываем уведомление через 2 секунды
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+        }
     </script>
 
 </body>
