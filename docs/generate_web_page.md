@@ -462,15 +462,6 @@
           }
         },
 
-        "objects": {
-          "_section": "Объекты",
-          "items": [
-            {
-              "_section": "Объект ",
-              "_id": 1,
-
-
-
 
         "text_overlay": {
           "_section": "Надписи",

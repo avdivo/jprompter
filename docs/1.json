@@ -1,10 +1,10 @@
 {
   "main": {
-    "title": "",
+    "title": "1",
     "duration": "",
     "style": "realistic",
     "custom_style": "",
-    "prompt": "",
+    "prompt": "Один",
     "target_audience": [
       "all"
     ]
@@ -15,7 +15,7 @@
         "duration": "",
         "transition_from_previous": "none",
         "custom_transition": "",
-        "description": ""
+        "description": "Перваф"
       },
       "camera": {
         "position": "",
@@ -33,7 +33,6 @@
       },
       "objects": [
         {
-          "id": 1,
           "object_type": "person",
           "custom_object": "",
           "position": "",
@@ -42,7 +41,8 @@
           "material": "metal",
           "custom_material": "",
           "objects_style": "realistic",
-          "custom_style": ""
+          "custom_style": "",
+          "id": 1
         }
       ],
       "audio": {
@@ -58,7 +58,6 @@
       },
       "text_overlay": [
         {
-          "id": 1,
           "content": "",
           "language": "Русский, язык не менять",
           "position": "",
@@ -67,15 +66,159 @@
             "size": "",
             "color": "#000000",
             "custom_style": ""
-          }
+          },
+          "id": 1
         }
       ],
-      "style": {
-        "font": "",
-        "size": "",
-        "color": "#000000",
-        "custom_style": ""
-      }
+      "id": 1
+    },
+    {
+      "main": {
+        "duration": "",
+        "transition_from_previous": "none",
+        "custom_transition": "",
+        "description": "Вторая"
+      },
+      "camera": {
+        "position": "",
+        "shot": "extreme-wide",
+        "custom_shot": "",
+        "movement": "static",
+        "custom_movement": "",
+        "focus": "",
+        "angle": "eye-level",
+        "custom_angle": ""
+      },
+      "lighting": {
+        "lighting_type": "natural",
+        "custom_light": ""
+      },
+      "objects": [
+        {
+          "object_type": "person",
+          "custom_object": "",
+          "position": "",
+          "animation": "none",
+          "custom_animation": "Объект 1",
+          "material": "metal",
+          "custom_material": "",
+          "objects_style": "realistic",
+          "custom_style": "",
+          "id": 1
+        },
+        {
+          "object_type": "person",
+          "custom_object": "Объект 2",
+          "position": "",
+          "animation": "none",
+          "custom_animation": "",
+          "material": "metal",
+          "custom_material": "",
+          "objects_style": "realistic",
+          "custom_style": "",
+          "id": 2
+        }
+      ],
+      "audio": {
+        "ambient": "footsteps",
+        "custom_sounds": "",
+        "ambient_volume": "",
+        "music": "",
+        "music_volume": "",
+        "effects": "echo",
+        "custom_effects": "",
+        "talk": "",
+        "language": "Русский, язык не менять"
+      },
+      "text_overlay": [
+        {
+          "content": "",
+          "language": "Русский, язык не менять",
+          "position": "",
+          "style": {
+            "font": "",
+            "size": "",
+            "color": "#000000",
+            "custom_style": ""
+          },
+          "id": 1
+        }
+      ],
+      "id": 2
+    },
+    {
+      "main": {
+        "duration": "",
+        "transition_from_previous": "none",
+        "custom_transition": "",
+        "description": "Третья"
+      },
+      "camera": {
+        "position": "",
+        "shot": "extreme-wide",
+        "custom_shot": "",
+        "movement": "static",
+        "custom_movement": "",
+        "focus": "",
+        "angle": "eye-level",
+        "custom_angle": ""
+      },
+      "lighting": {
+        "lighting_type": "natural",
+        "custom_light": ""
+      },
+      "objects": [
+        {
+          "object_type": "person",
+          "custom_object": "",
+          "position": "",
+          "animation": "none",
+          "custom_animation": "",
+          "material": "metal",
+          "custom_material": "",
+          "objects_style": "realistic",
+          "custom_style": "",
+          "id": 1
+        }
+      ],
+      "audio": {
+        "ambient": "footsteps",
+        "custom_sounds": "",
+        "ambient_volume": "",
+        "music": "",
+        "music_volume": "",
+        "effects": "echo",
+        "custom_effects": "",
+        "talk": "",
+        "language": "Русский, язык не менять"
+      },
+      "text_overlay": [
+        {
+          "content": "Надпись 1",
+          "language": "Русский, язык не менять",
+          "position": "",
+          "style": {
+            "font": "",
+            "size": "",
+            "color": "#000000",
+            "custom_style": ""
+          },
+          "id": 1
+        },
+        {
+          "content": "Надпись 2",
+          "language": "Русский, язык не менять",
+          "position": "",
+          "style": {
+            "font": "",
+            "size": "",
+            "color": "#000000",
+            "custom_style": ""
+          },
+          "id": 2
+        }
+      ],
+      "id": 3
     }
   ]
 }

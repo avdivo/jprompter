@@ -220,6 +220,9 @@
             border-radius: 6px;
             list-style: revert;
             transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         summary:hover {
@@ -426,8 +429,8 @@
         .fa-save { color: #FFFFFF; }     /* Белый - для сохранения (на синем фоне) */
         .fa-bars { color: #E0E0E0; }     /* Стандартный цвет текста для меню */
 
-        /* Стили для уведомления о копировании */
-        .copy-notification {
+        /* Стили для уведомления */
+        .notification {
             position: fixed;
             top: 80px;
             left: 50%;
@@ -442,15 +445,18 @@
             pointer-events: none; /* Чтобы не мешал кликам */
         }
 
-        .copy-notification.show {
+        .notification.show {
             opacity: 1;
         }
 
     </style>
     
     <!-- Элемент для уведомления -->
-    <div id="copy-notification" class="copy-notification">Скопировано</div>
-    
+    <div id="notification" class="notification">Скопировано</div>
+
+    <!-- Подключаем скрипт для генерации JSON -->
+    <script src="make_answer.js"></script>
+
     </head>
     <body>
     
@@ -570,7 +576,7 @@
                 </details>
 
                 <details open data-section-type="scenes-container">
-                    <summary>Сцены</summary>
+                    <summary>Сцены <button class="btn btn-icon-only add-item-btn" data-target="scenes"><i class="fa-solid fa-plus" style="color: #FFD700;"></i></button></summary>
                     <div class="content">
                         <details open data-section-type="scene" data-id="1">
                             <summary>Сцена 1</summary>
@@ -644,20 +650,23 @@
                                     </select></div>
                                     <div class="form-field"><label for="s1_light_custom">Кастомное освещение</label><input type="text" id="s1_light_custom" name="custom_light" class="form-control"></div>
                                 </div></details>
-                                <details data-section="objects"><summary>Объекты</summary><div class="content">
-                                    <details open data-section-type="object-item" data-id="1"><summary>Объект 1</summary><div class="content">
-                                        <div class="form-field"><label for="s1_o1_type">Тип объекта</label><select id="s1_o1_type" name="object_type" class="form-control">
-                                            <option value="person">человек или персонаж</option>
-                                            <option value="animal">любое животное</option>
-                                            <option value="vehicle">транспортное средство</option>
-                                            <option value="prop">предмет окружения</option>
-                                            <option value="environment">элемент сцены: дерево, скала, здание</option>
-                                            <option value="text">текстовый объект, надпись</option>
-                                            <option value="effect">визуальный эффект: дым, огонь, магия</option>
-                                            <option value="structure">архитектурный объект</option>
-                                            <option value="creature">фантастическое существо</option>
-                                            <option value="symbol">логотип, знак, иконка</option>
-                                        </select></div>
+                                <details data-section="objects"><summary>Объекты <button class="btn btn-icon-only add-item-btn" data-target="objects"><i class="fa-solid fa-plus" style="color: #FFD700;"></i></button></summary><div class="content">
+                                    <details open data-section-type="object-item" data-id="1">
+                                        <summary>Объект 1</summary>
+                                        <div class="content">
+                                            <div class="form-field"><label for="s1_o1_type">Тип объекта</label><select id="s1_o1_type" name="object_type" class="form-control">
+                                                <option value="person">человек или персонаж</option>
+                                                <option value="animal">любое животное</option>
+                                                <option value="vehicle">транспортное средство</option>
+                                                <option value="prop">предмет окружения</option>
+                                                <option value="environment">элемент сцены: дерево, скала, здание</option>
+                                                <option value="text">текстовый объект, надпись</option>
+                                                <option value="effect">визуальный эффект: дым, огонь, магия</option>
+                                                <option value="structure">архитектурный объект</option>
+                                                <option value="creature">фантастическое существо</option>
+                                                <option value="symbol">логотип, знак, иконка</option>
+                                            </select>
+                                        </div>
                                         <div class="form-field"><label for="s1_o1_custom">Описание</label><textarea id="s1_o1_custom" name="custom_object" class="form-control"></textarea></div>
                                         <div class="form-field"><label for="s1_o1_pos">Расположение</label><input type="text" id="s1_o1_pos" name="position" class="form-control"></div>
                                         <div class="form-field"><label for="s1_o1_anim">Анимация</label><select id="s1_o1_anim" name="animation" class="form-control">
@@ -756,7 +765,7 @@
                                     <div class="form-field"><label for="s1_audio_talk">Речь</label><textarea id="s1_audio_talk" name="talk" class="form-control"></textarea></div>
                                     <div class="form-field"><label for="s1_audio_lang">Язык</label><input type="text" id="s1_audio_lang" name="language" value="Русский, язык не менять" class="form-control"></div>
                                 </div></details>
-                                <details data-section="text_overlay"><summary>Надписи</summary><div class="content">
+                                <details data-section="text_overlay"><summary>Надписи <button class="btn btn-icon-only add-item-btn" data-target="text_overlay"><i class="fa-solid fa-plus" style="color: #FFD700;"></i></button></summary><div class="content">
                                     <details open data-section-type="text-overlay-item" data-id="1"><summary>Надпись 1</summary><div class="content">
                                         <div class="form-field"><label for="s1_txt1_content">Текст</label><input type="text" id="s1_txt1_content" name="content" class="form-control"></div>
                                         <div class="form-field"><label for="s1_txt1_lang">Язык</label><input type="text" id="s1_txt1_lang" name="language" value="Русский, язык не менять" class="form-control"></div>
@@ -941,102 +950,93 @@
             }
         });
 
+        // --- Функция для показа уведомления ---
+        function showNotification(message, duration = 1500) {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.textContent = message;
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, duration);
+            }
+        }
+
+        // --- Логика для добавления элементов ---
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.add-item-btn')) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const button = event.target.closest('.add-item-btn');
+
+                // Находим контейнер (ближайший details с data-section или data-section-type)
+                const containerDetails = button.closest('details[data-section], details[data-section-type]');
+                if (!containerDetails) return;
+
+                const container = containerDetails.querySelector('.content');
+                if (!container) return;
+
+                // Определяем тип элементов в этом контейнере
+                const existingItems = container.querySelectorAll('details[data-section-type][data-id]');
+                if (existingItems.length === 0) return;
+
+                // Находим максимальный ID среди существующих элементов
+                let maxId = 0;
+                existingItems.forEach(item => {
+                    const id = parseInt(item.dataset.id, 10);
+                    if (id > maxId) maxId = id;
+                });
+
+                // Используем первый элемент как шаблон для клонирования
+                const templateItem = existingItems[0];
+                const newItem = templateItem.cloneNode(true);
+                const newId = maxId + 1;
+                newItem.dataset.id = newId;
+
+                // Функция для обновления ID в строке
+                function updateIdInString(str, oldId, newId) {
+                    // Заменяем _старыйID на _новыйID в конце строки
+                    return str.replace(new RegExp('_' + oldId + '$'), '_' + newId);
+                }
+
+                // Обновляем id и name для всех полей внутри нового элемента
+                newItem.querySelectorAll('[id]').forEach(el => {
+                    el.id = updateIdInString(el.id, templateItem.dataset.id, newId);
+                });
+                newItem.querySelectorAll('[name]').forEach(el => {
+                    el.name = updateIdInString(el.name, templateItem.dataset.id, newId);
+                });
+
+                // Обновляем заголовок спойлера (заменяем число в конце на новый id)
+                const summary = newItem.querySelector('summary');
+                if (summary) {
+                    summary.textContent = summary.textContent.replace(/[0-9]+$/, newId);
+                }
+
+                // Добавляем новый элемент в контейнер
+                container.appendChild(newItem);
+
+                // Показываем уведомление
+                showNotification('Добавлено');
+            }
+        });
+
         // --- Логика для кнопки "Копировать" ---
         const copyBtn = document.getElementById('copy-btn');
-        const notification = document.getElementById('copy-notification');
 
-        if (copyBtn && notification) {
+        if (copyBtn) {
             copyBtn.addEventListener('click', function() {
-                const formData = {
-                    main: {},
-                    scenes: []
-                };
-
-                // --- Сбор данных из секции "main" ---
-                const mainSection = document.querySelector('details[data-section="main"]');
-                if (mainSection) {
-                    mainSection.querySelectorAll('input, select, textarea').forEach(field => {
-                        if (field.name && !field.name.startsWith('_')) {
-                            if (field.type === 'checkbox') {
-                                if (!formData.main[field.name]) {
-                                    formData.main[field.name] = [];
-                                }
-                                if (field.checked) {
-                                    formData.main[field.name].push(field.value);
-                                }
-                            } else {
-                                formData.main[field.name] = field.value;
-                            }
-                        }
-                    });
-                }
-
-                // --- Сбор данных из секции "scenes" ---
-                const scenesContainer = document.querySelector('details[data-section-type="scenes-container"]');
-                if (scenesContainer) {
-                    scenesContainer.querySelectorAll('details[data-section-type="scene"]').forEach(sceneEl => {
-                        const sceneData = {
-                            main: {},
-                            camera: {},
-                            lighting: {},
-                            objects: [],
-                            audio: {},
-                            text_overlay: []
-                        };
-
-                        // Собираем данные из всех подсекций сцены
-                        sceneEl.querySelectorAll('[data-section]').forEach(subSection => {
-                            const sectionName = subSection.dataset.section;
-                            
-                            if (sectionName === 'objects' || sectionName === 'text_overlay') {
-                                subSection.querySelectorAll('[data-section-type="object-item"], [data-section-type="text-overlay-item"]').forEach(itemEl => {
-                                    const itemData = {
-                                        id: parseInt(itemEl.dataset.id, 10)
-                                    };
-                                    itemEl.querySelectorAll('input, select, textarea').forEach(field => {
-                                        if (field.name && !field.name.startsWith('_')) {
-                                            // Handle nested style section for text_overlay
-                                            if (sectionName === 'text_overlay' && field.closest('[data-section="style"]')) {
-                                                if (!itemData.style) {
-                                                    itemData.style = {};
-                                                }
-                                                itemData.style[field.name] = field.value;
-                                            } else {
-                                                itemData[field.name] = field.value;
-                                            }
-                                        }
-                                    });
-                                    sceneData[sectionName].push(itemData);
-                                });
-                            } else {
-                                const sectionData = {};
-                                subSection.querySelectorAll('input, select, textarea').forEach(field => {
-                                    if (field.name && !field.name.startsWith('_')) {
-                                        sectionData[field.name] = field.value;
-                                    }
-                                });
-                                sceneData[sectionName] = sectionData;
-                            }
-                        });
-                        formData.scenes.push(sceneData);
-                    });
-                }
-
-                const jsonString = JSON.stringify(formData, null, 2);
+                // Вызываем функцию из make_answer.js для генерации JSON
+                const jsonString = generateAnswerJSON();
 
                 // Копирование в буфер обмена
                 navigator.clipboard.writeText(jsonString).then(() => {
                     // Показываем уведомление
-                    notification.classList.add('show');
+                    showNotification('Скопировано');
                 }).catch(err => {
                     console.error('Не удалось скопировать текст: ', err);
                 });
-
-
-                // Скрываем уведомление через 2 секунды
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 2000);
             });
         }
     </script>
