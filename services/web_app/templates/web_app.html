@@ -8,7 +8,9 @@
     <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
+    <script src="../static/templates.js"></script>
     <script src="../static/script.js"></script>
+    <script src="../static/media.js"></script>
 </head>
 <body>
 
@@ -92,7 +94,11 @@
         <!-- Форма "Медиа" -->
         <div id="form-view-media" class="form-view">
             <h2>Прикрепленные медиафайлы</h2>
-            <!-- Здесь будет содержимое раздела медиа -->
+            <button id="add-media-btn" class="btn btn-primary">
+                <i class="fa-solid fa-plus icon"></i> Выбрать файл
+            </button>
+            <input type="file" id="media-upload" accept="image/*,video/*" multiple style="display: none;">
+            <div id="media-container" class="media-container"></div>
         </div>
     </div>
 </main>
