@@ -1,150 +1,150 @@
-{
-  "main": {
-    "title": "",
-    "duration": "",
-    "style": "realistic",
-    "custom_style": "",
-    "prompt": "",
-    "target_audience": [
-      "all"
-    ]
-  },
-  "scenes": [
-    {
-      "main": {
-        "duration": "",
-        "transition_from_previous": "none",
-        "custom_transition": "",
-        "description": ""
-      },
-      "camera": {
-        "position": "",
-        "shot": "extreme-wide",
-        "custom_shot": "",
-        "movement": "static",
-        "custom_movement": "",
-        "focus": "",
-        "angle": "eye-level",
-        "custom_angle": ""
-      },
-      "lighting": {
-        "lighting_type": "natural",
-        "custom_light": ""
-      },
-      "objects": [
         {
-          "object_type": "person",
-          "custom_object": "",
-          "position": "",
-          "animation": "none",
-          "custom_animation": "",
-          "material": "metal",
-          "custom_material": "",
-          "objects_style": "realistic",
-          "custom_style": "",
-          "id": 1
-        }
-      ],
-      "audio": {
-        "ambient": "footsteps",
-        "custom_sounds": "",
-        "ambient_volume": "",
-        "music": "",
-        "music_volume": "",
-        "effects": "echo",
-        "custom_effects": "",
-        "talk": "",
-        "language": "Русский, язык не менять"
-      },
-      "text_overlay": [
-        {
-          "content": "",
-          "language": "Русский, язык не менять",
-          "position": "",
-          "style": {
-            "font": "",
-            "size": "",
-            "color": "#000000",
-            "custom_style": ""
+          "transition": {
+            "type": "select",
+            "label": "Тип перехода от предыдущей сцены",
+            "options": [
+              { "value": "none", "label": "Один"},
+              { "value": "cut", "label": "Два"}
+            ],
+            "default": null
           },
-          "id": 1
+          "custom_transition": {
+            "type": "text",
+            "label": "Описание кастомного перехода",
+            "default": ""
+          }, 
+          "new": {
+            "text_overlay": {
+              "_section": "Надписи",
+              "items": [
+                {
+                  "_section": "Объект ",
+                  "_id": 1,
+                  "color": {
+                    "type": "color",
+                    "label": "Цвет текста в HEX-формате (`#ff0000`)",
+                    "default": ""
+                  }
+                }
+              ]
+            }
+          }
         }
-      ],
-      "id": 1
-    },
-    {
-      "main": {
-        "duration": "",
-        "transition_from_previous": "none",
-        "custom_transition": "",
-        "description": ""
-      },
-      "camera": {
-        "position": "",
-        "shot": "extreme-wide",
-        "custom_shot": "",
-        "movement": "static",
-        "custom_movement": "",
-        "focus": "",
-        "angle": "eye-level",
-        "custom_angle": ""
-      },
-      "lighting": {
-        "lighting_type": "natural",
-        "custom_light": ""
-      },
-      "objects": [
+
+
         {
-          "object_type": "person",
-          "custom_object": "",
-          "position": "",
-          "animation": "none",
-          "custom_animation": "",
-          "material": "metal",
-          "custom_material": "",
-          "objects_style": "realistic",
-          "custom_style": "",
-          "id": 1
+          "transition": "none",
+          "custom_transition": "Простой переход", 
+          "new": {
+            "text_overlay": [
+              {
+                "id": 1,
+                "color": "0"
+              }, 
+              {
+                "id": 2,
+                "color": "1"
+              }
+            ]
+          }
         }
-      ],
-      "audio": {
-        "ambient": "footsteps",
-        "custom_sounds": "",
-        "ambient_volume": "",
-        "music": "",
-        "music_volume": "",
-        "effects": "echo",
-        "custom_effects": "",
-        "talk": "",
-        "language": "Русский, язык не менять"
-      },
-      "text_overlay": [
+        
+
+
+
+Помоги найти решение для задачи или посоветуй готовые, если есть.
+
+Есть некий шаблон в формате json, служащий для описания формы html для заполнения и одновременно формат выходного (из формы) объекта. Пример:
+
         {
-          "content": "",
-          "language": "Русский, язык не менять",
-          "position": "",
-          "style": {
-            "font": "",
-            "size": "",
-            "color": "#000000",
-            "custom_style": ""
+          "transition": {
+            "type": "select",
+            "label": "Тип перехода от предыдущей сцены",
+            "options": [
+              { "value": "none", "label": "Один"},
+              { "value": "cut", "label": "Два"}
+            ],
+            "default": null
           },
-          "id": 1
-        },
-        {
-          "content": "",
-          "language": "Русский, язык не менять",
-          "position": "",
-          "style": {
-            "font": "",
-            "size": "",
-            "color": "#000000",
-            "custom_style": ""
-          },
-          "id": 2
+          "custom_transition": {
+            "type": "text",
+            "label": "Описание кастомного перехода",
+            "default": ""
+          }, 
+          "new": {
+            "text_overlay": {
+              "_section": "Надписи",
+              "items": [
+                {
+                  "_section": "Объект ",
+                  "_id": 1,
+                  "color": {
+                    "type": "color",
+                    "label": "Цвет текста в HEX-формате (`#ff0000`)",
+                    "default": ""
+                  }
+                }
+              ]
+            }
+          }
         }
-      ],
-      "id": 2
-    }
-  ]
-}
+
+При сборке страницы на Python на сервере по этому шаблону строится форма.
+Эта форма вставляется в готовый шаблон страницы со стилями, скриптами и дизайном.
+
+Страница передается клиенту.
+
+Клиент запрашивает данные для заполнения и получает json объект построенный по тому же шаблону. Пример:
+        {
+          "transition": "none",
+          "custom_transition": "Простой переход", 
+          "new": {
+            "text_overlay": [
+              {
+                "id": 1,
+                "color": "0"
+              }, 
+              {
+                "id": 2,
+                "color": "1"
+              }
+            ]
+          }
+        }
+
+Скрипт на клиенте подставляет в нужные поля нужные данные, добавляет в dom дерево элементы списка, если они есть в данных.
+
+Затем пользователь может с помощью формы менять данные в полях, добавлять и удалять элементы списков и менять в них данные.
+При этом все управление осуществляется через элементы управления интерфейса, а действия с деревом выполняет js скрипт.
+По окончании пользователь нажимает кнопку и получает выходной json в требуемом формате в буфер обмена.
+
+Вопрос.
+Поскольку шаблон создается пользователем, то имена полей, данные и структура в нем могут быть разными.
+Скрипт Python, форминующий html страницу создавая форму вписывает названия полей из шаблона.
+Скрипт js, меняющий dom дерево должен как то ссылаться на его элементы.
+Но элементы каждый раз имеют разные названия полей, структура и вложенность элементов тоже может быть разной. Постоянна только структура базовых элементов по их типу:
+    - "text" — однострочное текстовое поле
+    - "number" — числовой ввод
+    - "textarea" — многострочное текстовое поле (по вертикали принимает размер необходимый для содержимого)
+    - "select" — выпадающий список
+    - "checkbox" — множественный выбор (чекбоксы с вариантами)
+    - "color" — выбор цвета
+
+Как скрипту обрабатывать элементы дерева при таком раскладе. И как в итоге формировать json объект с нужными названиями полей и нужной структурой и вложенностью (ну структура и вложенность правда есть в форме, ее можно брать оттуда).
+
+
+Хорошо. Мне нужно описать такие объекты: 
+- "text" — однострочное текстовое поле
+- "number" — числовой ввод
+- "textarea" — многострочное текстовое поле (по вертикали принимает размер необходимый для содержимого)
+- "select" — выпадающий список
+- "checkbox" — множественный выбор (чекбоксы с вариантами)
+- "color" — выбор цвета
+- "array" - массив с объектами json
+- "spoiler" - не знаю, нужен ли, он должен дать команду построителю форм в каких местах ставить спойлер, чтобы объекты можно было свернуть
+- "version" - это просто версия шаблона в шаблоне, а в выходном объекте тоже версия шаблона по которому он построен
+
+Все объекты со значениями Должны иметь тип, метку и значение по умолчанию.
+Для объектов выбора дополнительно список вариантов.
+
+И построить из них пример моего шаблона, формы и ответа.

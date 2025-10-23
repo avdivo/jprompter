@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип редактора промптов</title>
+    <!-- Подключаем иконки Font Awesome -->
+    <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="../static/script.js"></script>
+</head>
+<body>
+
+    <header class="control-panel" id="control-panel">
+    <!-- Группа 1: Формат -->
+    <div class="control-group left">
+        <div id="view-switcher" class="segmented-control" data-segmented-control>
+            <button class="segmented-control-btn active" data-view="format">Формат</button>
+            <button class="segmented-control-btn" data-view="text">Текст</button>
+        </div>
+    </div>
+
+    <!-- Центральная группа с разделителями -->
+    <div class="control-group center">
+        <!-- Группа 2: Текстовые операции -->
+        <button id="transform-btn" class="btn btn-icon-only" title="Форматировать">
+            <i class="fa-solid fa-list icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Перевести (RU/EN)">
+            <i class="fa-solid fa-language icon"></i>
+        </button>
+        <div class="control-group-separator"></div>
+
+        <!-- Группа 3: Управление формой -->
+        <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Свернуть все спойлеры">
+             <i class="fa-solid fa-compress icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Очистить форму">
+            <i class="fa-solid fa-eraser icon"></i>
+        </button>
+        <div class="control-group-separator"></div>
+
+        <!-- Группа 4: История -->
+        <button class="btn btn-icon-only" title="Откат">
+            <i class="fa-solid fa-undo icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Повтор">
+            <i class="fa-solid fa-redo icon"></i>
+        </button>
+    </div>
+
+    <!-- Группа 5: Действия с файлом -->
+    <div class="control-group right">
+        <div id="format-selector" class="segmented-control" data-segmented-control>
+            <button class="segmented-control-btn active">JSON</button>
+            <button class="segmented-control-btn">XML</button>
+            <button class="segmented-control-btn">MD</button>
+        </div>
+        <button id="copy-btn" class="btn btn-icon-only" title="Копировать">
+            <i class="fa-solid fa-copy icon"></i>
+        </button>
+        <button class="btn btn-primary btn-icon-only" title="Сохранить">
+            <i class="fa-solid fa-save icon"></i>
+        </button>
+    </div>
+
+    <button class="btn mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</header>
+
+<main class="content-wrapper">
+    <div class="form-container">
+        <!-- Форма "Формат" -->
+        <div id="form-view-format" class="form-view active">
+            <h2>Форма редактирования промпта</h2>
+
+            <!-- Здесь будет генерироваться новая форма -->
+        </div>
+
+        <!-- Форма "Текст" -->
+        <div id="form-view-text" class="form-view">
+             <h2>Текстовое представление</h2>
+             <div class="form-group">
+                <label for="prompt-full-text">Полный текст промпта</label>
+                <textarea id="prompt-full-text" class="form-control" placeholder="Сюда можно вставить промпт в любом формате. И сохранить как есть или нажать кнопку "Форматировать", чтобы перенести его в поля режима "Формат"."></textarea>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Элемент для уведомления -->
+<div id="notification" class="notification">Скопировано</div>
+
+</body>
+</html>

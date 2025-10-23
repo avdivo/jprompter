@@ -1,3 +1,14 @@
+/* Временный файл со стилями из docs/pritotype/prototype.html */
+/* Справочник стилей для компонентов. Когда пользователь скажет "создай кнопку", применять классы .btn, .btn-primary и т.д. */
+/* Примеры использования:
+   - Кнопка: <button class="btn">Текст</button> или <button class="btn btn-primary">Сохранить</button>
+   - Иконка-кнопка: <button class="btn btn-icon-only" title="Подсказка"><i class="fa-solid fa-save icon"></i></button>
+   - Поле формы: <input type="text" class="form-control">
+   - Спойлер: <details><summary>Заголовок</summary><div class="content">Содержимое</div></details>
+   - Группа полей: <div class="form-field"><label>Метка</label><input class="form-control"></div>
+*/
+
+/* CSS-переменные для цветов и размеров */
 :root {
     --panel-height: 64px;
     --border-color: #444;
@@ -12,6 +23,7 @@
     --button-active-bg: #5a5a5a;
 }
 
+/* Общие стили для тела документа */
 body {
     margin: 0;
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
@@ -19,6 +31,7 @@ body {
     color: var(--text-color);
 }
 
+/* Стили для контрольной панели (верхняя панель с кнопками) */
 .control-panel {
     position: sticky;
     top: 0;
@@ -48,6 +61,7 @@ body {
     margin: 0 8px;
 }
 
+/* Стили для кнопок */
 .btn, .segmented-control-btn {
     display: inline-flex;
     align-items: center;
@@ -86,6 +100,7 @@ body {
     text-align: center;
 }
 
+/* Стили для сегментированных кнопок (переключатели) */
 .segmented-control {
     display: flex;
     background: #2a2a2a;
@@ -103,9 +118,9 @@ body {
 }
 
 .segmented-control-btn:hover {
-     transform: none;
-     box-shadow: none;
-     color: #fff;
+    transform: none;
+    box-shadow: none;
+    color: #fff;
 }
 
 .segmented-control-btn.active {
@@ -115,6 +130,7 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
+/* Стили для первичных кнопок (синие) */
 .btn-primary {
     background: linear-gradient(145deg, #007bff, #0056b3);
     border-color: #0056b3;
@@ -123,6 +139,7 @@ body {
     background: linear-gradient(145deg, #0088ff, #0060c5);
 }
 
+/* Стили для отключенных кнопок */
 .btn:disabled, .segmented-control-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -136,6 +153,7 @@ body {
     border-color: #555;
 }
 
+/* Стили для основного контента */
 .content-wrapper {
     padding: 24px;
 }
@@ -146,6 +164,7 @@ body {
     }
 }
 
+/* Стили для контейнера формы */
 .form-container {
     max-width: 80%;
     margin: 0 auto;
@@ -164,10 +183,6 @@ body {
         padding: 16px;
         min-height: calc(100vh - var(--panel-height) - 32px);
     }
-
-    .content-wrapper {
-        padding: 0;
-    }
 }
 
 .form-container h2 {
@@ -181,6 +196,7 @@ body {
     color: var(--text-muted-color);
 }
 
+/* Стили для видов форм (скрыты по умолчанию, активный показывается) */
 .form-view {
     display: none;
 }
@@ -189,6 +205,7 @@ body {
     display: block;
 }
 
+/* Стили для спойлеров (details/summary) */
 details {
     border: none;
     border-radius: 6px;
@@ -221,6 +238,7 @@ summary:hover {
     background-color: var(--background-color);
 }
 
+/* Стили для полей формы */
 .form-field {
     margin-bottom: 16px;
 }
@@ -289,6 +307,7 @@ textarea#prompt-full-text {
     height: calc(100vh - 100px);
 }
 
+/* Стили для мобильного меню */
 .mobile-menu-toggle {
     display: none;
     background: none;
@@ -305,6 +324,7 @@ textarea#prompt-full-text {
     display: none;
 }
 
+/* Адаптивные стили */
 @media (max-width: 1024px) {
     .control-panel {
         padding: 0 16px;
@@ -338,33 +358,33 @@ textarea#prompt-full-text {
         gap: 10px;
     }
     .control-panel.mobile-menu-open .control-group:not(:first-child) {
-         padding-top: 16px;
+        padding-top: 16px;
     }
-     .control-panel.mobile-menu-open .control-group.center,
-     .control-panel.mobile-menu-open .control-group.right {
+    .control-panel.mobile-menu-open .control-group.center,
+    .control-panel.mobile-menu-open .control-group.right {
         display: flex;
     }
-     .control-panel.mobile-menu-open .btn span {
-         display: inline;
+    .control-panel.mobile-menu-open .btn span {
+        display: inline;
     }
 
-     .control-panel.mobile-menu-open .btn.btn-icon-only {
-         justify-content: flex-start;
-         padding: 10px 18px;
-         position: relative;
+    .control-panel.mobile-menu-open .btn.btn-icon-only {
+        justify-content: flex-start;
+        padding: 10px 18px;
+        position: relative;
     }
 
-     .control-panel.mobile-menu-open .btn.btn-icon-only .icon {
-         margin-right: 8px;
+    .control-panel.mobile-menu-open .btn.btn-icon-only .icon {
+        margin-right: 8px;
     }
 
-     .control-panel.mobile-menu-open .btn.btn-icon-only::after {
-         content: attr(title);
-         margin-left: 8px;
-         white-space: nowrap;
+    .control-panel.mobile-menu-open .btn.btn-icon-only::after {
+        content: attr(title);
+        margin-left: 8px;
+        white-space: nowrap;
     }
 
-     .mobile-menu-toggle {
+    .mobile-menu-toggle {
         display: block;
         position: absolute;
         right: 24px;
@@ -385,6 +405,7 @@ textarea#prompt-full-text {
     }
 }
 
+/* Цвета для иконок */
 .fa-file-alt, .fa-list { color: #5DADE2; }
 .fa-language { color: #58D68D; }
 .fa-eye { color: #F5B041; }
@@ -395,6 +416,7 @@ textarea#prompt-full-text {
 .fa-save { color: #FFFFFF; }
 .fa-bars { color: #E0E0E0; }
 
+/* Стили для уведомлений */
 .notification {
     position: fixed;
     top: 80px;
