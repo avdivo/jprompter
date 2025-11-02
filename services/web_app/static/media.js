@@ -139,7 +139,7 @@ class MediaGallery {
         this.mediaContainer.insertAdjacentHTML('beforeend', itemHtml);
 
         // Сохраняем данные о файле
-        const newItem = mediaContainer.lastElementChild;
+        const newItem = this.mediaContainer.lastElementChild;
         newItem._mediaData = mediaData;
         this.mediaItems.push(mediaData);
 

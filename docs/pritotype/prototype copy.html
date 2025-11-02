@@ -8,6 +8,7 @@
     <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* CSS-переменные для цветов и размеров */
         :root {
             --panel-height: 64px;
             --border-color: #444;
@@ -22,6 +23,7 @@
             --button-active-bg: #5a5a5a;
         }
 
+        /* Стили для тела страницы */
         body {
             margin: 0;
             font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
@@ -29,6 +31,7 @@
             color: var(--text-color);
         }
 
+        /* Панель управления в верхней части */
         .control-panel {
             position: sticky;
             top: 0;
@@ -45,19 +48,22 @@
             z-index: 100;
         }
 
+        /* Группы элементов управления */
         .control-group {
             display: flex;
             align-items: center;
             gap: 16px;
         }
-        
-       .control-group-separator {
-           width: 1px;
-           height: 24px;
-           background-color: var(--border-color);
-           margin: 0 8px;
-       }
 
+        /* Разделитель между группами */
+        .control-group-separator {
+            width: 1px;
+            height: 24px;
+            background-color: var(--border-color);
+            margin: 0 8px;
+        }
+
+        /* Общие стили для кнопок и сегментированных элементов */
         .btn, .segmented-control-btn {
             display: inline-flex;
             align-items: center;
@@ -70,34 +76,42 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
             color: var(--text-color);
             cursor: pointer;
-            font-size: 16px; /* Увеличиваем шрифт для кнопки и иконки */
+            font-size: 16px;
             font-weight: 500;
             white-space: nowrap;
             transition: all 0.2s ease-out;
         }
-        
+
+        /* Эффект при наведении на кнопки */
+        .btn:hover, .segmented-control-btn:hover {
+            color: #fff;
+        }
+
+        /* Эффект при наведении на обычные кнопки */
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
             border-color: #777;
         }
 
+        /* Эффект при нажатии на кнопку */
         .btn:active {
             transform: translateY(1px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.2);
         }
-        
-        /* Стили для .btn .icon удалены, чтобы flexbox родителя работал корректно */
-        
+
+        /* Стили для кнопок только с иконками */
         .btn-icon-only {
             padding: 10px;
         }
-        
+
+        /* Стили для иконок внутри кнопок */
         .btn .icon {
-            width: 16px; /* Фиксированная ширина для иконки */
-            text-align: center; /* Центрируем иконку */
+            width: 16px;
+            text-align: center;
         }
 
+        /* Стили для сегментированного переключателя */
         .segmented-control {
             display: flex;
             background: #2a2a2a;
@@ -106,6 +120,7 @@
             border: 1px solid #444;
         }
 
+        /* Стили для кнопок сегментированного переключателя */
         .segmented-control-btn {
             background: transparent;
             border: none;
@@ -113,13 +128,8 @@
             padding: 6px 14px;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        
-        .segmented-control-btn:hover {
-             transform: none;
-             box-shadow: none;
-             color: #fff;
-        }
 
+        /* Активное состояние сегментированной кнопки */
         .segmented-control-btn.active {
             background-color: #555;
             color: #fff;
@@ -127,37 +137,73 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
+        /* Стили для первичных кнопок */
         .btn-primary {
             background: linear-gradient(145deg, #007bff, #0056b3);
             border-color: #0056b3;
         }
+
+        /* Эффект при наведении на первичные кнопки */
         .btn-primary:hover {
             background: linear-gradient(145deg, #0088ff, #0060c5);
         }
-        
+
+        /* Стили для кнопок опасности */
+        .btn-danger {
+            background: linear-gradient(145deg, #dc3545, #c82333);
+            border-color: #c82333;
+        }
+
+        /* Эффект при наведении на кнопки опасности */
+        .btn-danger:hover {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        /* Стили для кнопок предупреждения */
+        .btn-warning {
+            background: linear-gradient(145deg, #ffc107, #e0a800);
+            border-color: #e0a800;
+        }
+
+        /* Эффект при наведении на кнопки предупреждения */
+        .btn-warning:hover {
+            background: linear-gradient(145deg, #ffb300, #cc9900);
+        }
+
+        /* Стили для заголовочных строк */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Стили для кнопок в заголовках */
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Стили для отключенных кнопок */
         .btn:disabled, .segmented-control-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
-        
+
+        /* Эффект при наведении на отключенные кнопки */
         .btn:disabled:hover, .segmented-control-btn:disabled:hover {
             transform: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
             border-color: #555;
         }
 
+        /* Обертка для содержимого */
         .content-wrapper {
             padding: 24px;
         }
-        
-        @media (max-width: 768px) {
-            .content-wrapper {
-                padding: 0;
-            }
-        }
-        
+
+        /* Контейнер формы */
         .form-container {
             max-width: 80%;
             margin: 0 auto;
@@ -167,41 +213,31 @@
             padding: 40px;
             min-height: calc(100vh - var(--panel-height) - 48px);
         }
-        
-        @media (max-width: 768px) {
-            .form-container {
-                max-width: 100%;
-                margin: 0;
-                border-radius: 0;
-                padding: 16px;
-                min-height: calc(100vh - var(--panel-height) - 32px);
-            }
-            
-            .content-wrapper {
-                padding: 0;
-            }
-        }
-        
+
+        /* Стили для заголовков в контейнере формы */
         .form-container h2 {
             margin-top: 0;
             color: var(--text-color);
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
         }
-        
+
+        /* Стили для параграфов в контейнере формы */
         .form-container p {
             color: var(--text-muted-color);
         }
 
+        /* Скрытые виды форм по умолчанию */
         .form-view {
-            display: none; /* Все формы по умолчанию скрыты */
+            display: none;
         }
-        
+
+        /* Активный вид формы */
         .form-view.active {
-            display: block; /* Показываем только активную */
+            display: block;
         }
-        
-        /* Стили для спойлеров */
+
+        /* Стили для спойлеров (details) */
         details {
             border: none;
             border-radius: 6px;
@@ -209,7 +245,8 @@
             background-color: var(--background-color);
             overflow: hidden;
         }
-        
+
+        /* Стили для заголовков спойлеров (summary) */
         summary {
             cursor: pointer;
             font-weight: 600;
@@ -224,48 +261,53 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
+        /* Эффект при наведении на заголовок спойлера */
         summary:hover {
             background-color: var(--button-hover-bg);
         }
-        
+
+        /* Стили для содержимого спойлеров */
         .content {
             padding: 16px;
             background-color: var(--background-color);
         }
-        
+
+        /* Стили для полей формы */
         .form-field {
             margin-bottom: 16px;
         }
-        
+
+        /* Убираем отступ у последнего поля */
         .form-field:last-child {
             margin-bottom: 0;
         }
-        
+
+        /* Стили для открытых спойлеров */
         details[open] > summary {
             border-bottom: 1px solid var(--border-color);
             border-radius: 6px 6px 0 0;
         }
-        
-        /* Стили для полей формы */
+
+        /* Стили для групп форм */
         .form-group {
             margin-bottom: 20px;
         }
 
-        .form-group label {
+        /* Стили для меток в группах форм и полях */
+        .form-group label, .form-field label {
             display: block;
             margin-bottom: 8px;
-            color: #777; /* Более тусклый цвет для подписей */
+            color: #777;
             font-size: 14px;
         }
-        
+
+        /* Меньший отступ для меток полей */
         .form-field label {
-            color: #777; /* Более тусклый цвет для подписей полей */
-            font-size: 14px;
             margin-bottom: 6px;
-            display: block;
         }
-        
+
+        /* Стили для элементов управления формой */
         .form-control {
             width: 100%;
             padding: 12px;
@@ -278,158 +320,180 @@
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .form-control:focus {
+        /* Стили для группы чекбоксов */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        /* Стили для чекбоксов */
+        .checkbox-input {
+            margin-right: 5px;
+        }
+
+        /* Стили для иконки добавления */
+        .add-icon {
+            color: #FFD700;
+        }
+
+        /* Специальный стиль для поля выбора цвета */
+        input[type="color"] {
+            border: 1px solid var(--border-color);
+        }
+
+        /* Эффект при фокусе и наведении на элементы управления */
+        .form-control:focus, .form-control:hover {
             outline: none;
             border-color: var(--primary-glow);
             box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
         }
-        
-        .form-control:hover {
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
-        }
 
+        /* Стили для textarea */
         textarea.form-control {
             min-height: 150px;
             resize: vertical;
         }
-        
+
+        /* Стили для основного textarea */
         textarea#prompt-full-text {
             height: calc(100vh - 200px);
             min-height: auto;
         }
-        
-        /* В режиме "Текст" textarea занимает всю высоту экрана */
+
+        /* Высота textarea в режиме текста */
         #form-view-text.active textarea#prompt-full-text {
             height: calc(100vh - 100px);
         }
-        
+
+        /* Переключатель мобильного меню */
         .mobile-menu-toggle {
-            display: none; /* Скрыт по умолчанию */
+            display: none;
             background: none;
             border: none;
             padding: 0;
             cursor: pointer;
         }
+
+        /* Иконка переключателя мобильного меню */
         .mobile-menu-toggle i {
             font-size: 24px;
             color: var(--text-color);
         }
 
+        /* Быстрый доступ на мобильных */
         .mobile-quick-access {
-            display: none; /* Скрыто на десктопе */
+            display: none;
         }
 
-        /* ----- Адаптивность ----- */
+        /* Адаптивность для планшетов */
         @media (max-width: 1024px) {
             .control-panel {
                 padding: 0 16px;
                 flex-wrap: wrap;
-                justify-content: flex-start; /* Выравниваем по левому краю */
+                justify-content: flex-start;
             }
+
             .control-group .btn span, .control-group.center, .control-group.right {
-                display: none; /* Скрываем текст и группы по умолчанию */
+                display: none;
             }
+
             .mobile-quick-access {
-                display: flex; /* Показываем группу быстрого доступа */
+                display: flex;
                 gap: 10px;
                 margin-left: 10px;
             }
+
             .mobile-quick-access .btn {
-                padding: 10px; /* Делаем кнопки-иконки компактнее */
+                padding: 10px;
             }
- 
-            .control-panel {
-                position: sticky;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: var(--panel-height);
-                background-color: var(--panel-bg);
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 24px;
-                box-sizing: border-box;
-                z-index: 100;
-            }
-            
+
             .control-panel.mobile-menu-open {
                 height: auto;
                 flex-direction: column;
                 align-items: stretch;
                 padding-bottom: 16px;
-                background-color: #1a1a1a; /* Черный фон для мобильного меню */
+                background-color: #1a1a1a;
             }
-            
+
             .control-panel.mobile-menu-open .control-group {
                 flex-direction: column;
                 align-items: stretch;
                 width: 100%;
                 gap: 10px;
             }
+
             .control-panel.mobile-menu-open .control-group:not(:first-child) {
-                 padding-top: 16px;
+                padding-top: 16px;
             }
-             .control-panel.mobile-menu-open .control-group.center,
-             .control-panel.mobile-menu-open .control-group.right {
+
+            .control-panel.mobile-menu-open .control-group.center,
+            .control-panel.mobile-menu-open .control-group.right {
                 display: flex;
             }
-             .control-panel.mobile-menu-open .btn span {
-                 display: inline; /* Показываем текст в открытом меню */
-             }
-             
-             /* Показываем текст из title атрибута для кнопок-иконок в мобильном меню */
-             .control-panel.mobile-menu-open .btn.btn-icon-only {
-                 justify-content: flex-start;
-                 padding: 10px 18px;
-                 position: relative;
-             }
-             
-             .control-panel.mobile-menu-open .btn.btn-icon-only .icon {
-                 margin-right: 8px;
-             }
-             
-             .control-panel.mobile-menu-open .btn.btn-icon-only::after {
-                 content: attr(title);
-                 margin-left: 8px;
-                 white-space: nowrap;
-             }
-             
-             .mobile-menu-toggle {
+
+            .control-panel.mobile-menu-open .btn span {
+                display: inline;
+            }
+
+            .control-panel.mobile-menu-open .btn.btn-icon-only {
+                justify-content: flex-start;
+                padding: 10px 18px;
+                position: relative;
+            }
+
+            .control-panel.mobile-menu-open .btn.btn-icon-only .icon {
+                margin-right: 8px;
+            }
+
+            .control-panel.mobile-menu-open .btn.btn-icon-only::after {
+                content: attr(title);
+                margin-left: 8px;
+                white-space: nowrap;
+            }
+
+            .mobile-menu-toggle {
                 display: block;
                 position: absolute;
                 right: 24px;
                 top: 50%;
                 transform: translateY(-50%);
             }
+
             .form-container {
                 max-width: 100%;
                 padding: 20px;
             }
         }
-        
+
+        /* Адаптивность для мобильных */
         @media (max-width: 768px) {
+            .content-wrapper, .form-container {
+                padding: 0;
+            }
+
             .form-container {
                 max-width: 100%;
                 margin: 0;
                 border-radius: 0;
+                min-height: calc(100vh - var(--panel-height) - 32px);
             }
         }
 
-        /* ----- Цвета для иконок ----- */
-        .fa-file-alt, .fa-list { color: #5DADE2; } /* Голубой - для файла и списка */
-        .fa-language { color: #58D68D; } /* Зеленый - для перевода */
-        .fa-eye { color: #F5B041; }      /* Оранжевый - для видимости */
-        .fa-eraser { color: #EC7063; }   /* Красный - для очистки */
-        .fa-undo { color: #A569BD; }     /* Фиолетовый - для отмены */
-        .fa-redo { color: #A569BD; }     /* Фиолетовый - для повтора */
-        .fa-copy { color: #48C9B0; }     /* Бирюзовый - для копирования */
-        .fa-save { color: #FFFFFF; }     /* Белый - для сохранения (на синем фоне) */
-        .fa-bars { color: #E0E0E0; }     /* Стандартный цвет текста для меню */
+        /* Цвета для иконок Font Awesome */
+        .fa-file-alt, .fa-list { color: #5DADE2; } /* Голубой для файла и списка */
+        .fa-language { color: #58D68D; } /* Зеленый для языка */
+        .fa-eye { color: #F5B041; } /* Оранжевый для глаза */
+        .fa-eraser { color: #EC7063; } /* Красный для ластика */
+        .fa-undo, .fa-redo { color: #A569BD; } /* Фиолетовый для отмены и повтора */
+        .fa-copy { color: #48C9B0; } /* Бирюзовый для копирования */
+        .fa-save { color: #FFFFFF; } /* Белый для сохранения */
+        .fa-bars { color: #E0E0E0; } /* Серый для меню */
 
-        /* Стили для уведомления */
+        /* Стили для уведомлений */
         .notification {
             position: fixed;
             top: 80px;
@@ -442,13 +506,13 @@
             z-index: 101;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            pointer-events: none; /* Чтобы не мешал кликам */
+            pointer-events: none;
         }
 
+        /* Показ уведомления */
         .notification.show {
             opacity: 1;
         }
-
     </style>
     
     <!-- Элемент для уведомления -->
@@ -524,9 +588,10 @@
             <div id="form-view-format" class="form-view active">
                 <h2>Форма редактирования промпта</h2>
                 
-                <details open data-section="main">
-                    <summary>Общие параметры ролика</summary>
-                    <div class="content">
+                <div class="header-row">
+                <h3>Общие параметры ролика</h3>
+                </div>
+                <div class="content">
                         <div class="form-field"><label for="title">Название и/или короткое описание ролика</label><input type="text" id="title" name="title" class="form-control"></div>
                         <div class="form-field"><label for="duration">Общая длительность в секундах</label><input type="number" id="duration" name="duration" class="form-control"></div>
                         <div class="form-field"><label for="style">Визуальный стиль</label><select id="style" name="style" class="form-control">
@@ -548,40 +613,52 @@
                         <div class="form-field"><label for="prompt">Глобальное краткое описание ролика</label><textarea id="prompt" name="prompt" class="form-control"></textarea></div>
                         <div class="form-field">
                             <label>Целевая аудитория</label>
-                            <div class="form-control" style="display: flex; flex-wrap: wrap; gap: 10px; background: none; border: none; padding: 0;">
-                                <label style="display: flex; align-items: center; margin-right: 15px; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="all" checked style="margin-right: 5px;"> Все
+                            <div class="form-control checkbox-group">
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="all" checked class="checkbox-input"> Все
                                 </label>
-                                <label style="display: flex; align-items: center; margin-right: 15px; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="adults" style="margin-right: 5px;"> Взрослые
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="adults" class="checkbox-input"> Взрослые
                                 </label>
-                                <label style="display: flex; align-items: center; margin-right: 15px; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="elderly" style="margin-right: 5px;"> Пожилые
-                                </label>content
-                                <label style="display: flex; align-items: center; margin-right: 15px; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="children" style="margin-right: 5px;"> Дети
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="elderly" class="checkbox-input"> Пожилые
                                 </label>
-                                <label style="display: flex; align-items: center; margin-right: 15px; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="teenagers" style="margin-right: 5px;"> Подростки
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="children" class="checkbox-input"> Дети
                                 </label>
-                                <label style="display: flex; align-items: center; margin-right: 15px; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="women" style="margin-right: 5px;"> Женщины
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="teenagers" class="checkbox-input"> Подростки
                                 </label>
-                                <label style="display: flex; align-items: center; font-weight: normal;">
-                                    <input type="checkbox" name="target_audience" value="men" style="margin-right: 5px;"> Мужчины
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="women" class="checkbox-input"> Женщины
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="target_audience" value="men" class="checkbox-input"> Мужчины
                                 </label>
                             </div>
                         </div>
                     </div>
-                </details>
+                </div>
 
-                <details open data-section-type="scenes-container">
-                    <summary>Сцены <button class="btn btn-icon-only add-item-btn" data-target="scenes"><i class="fa-solid fa-plus" style="color: #FFD700;"></i></button></summary>
-                    <div class="content">
-                        <details open data-section-type="scene" data-id="1">
-                            <summary>Сцена 1</summary>
-                            <div class="content">
-                                <details open data-section="main"><summary>Основное</summary><div class="content">
+                <div class="header-row">
+                    <h3>Сцены</h3>
+                    <div class="header-buttons">
+                        <button class="btn btn-warning btn-icon-only" title="Очистить"><i class="fa-solid fa-broom icon"></i></button>
+                        <button class="btn btn-danger btn-icon-only" title="Удалить"><i class="fa-solid fa-trash icon"></i></button>
+                        <button class="btn btn-icon-only add-item-btn" data-target="scenes"><i class="fa-solid fa-plus add-icon"></i></button>
+                    </div>
+                </div>
+                <div class="content">
+                        <div class="header-row">
+                            <h3>Сцена 1</h3>
+                            <div class="header-buttons">
+                                <button class="btn btn-warning btn-icon-only" title="Очистить"><i class="fa-solid fa-broom icon"></i></button>
+                                <button class="btn btn-danger btn-icon-only" title="Удалить"><i class="fa-solid fa-trash icon"></i></button>
+                            </div>
+                        </div>
+                        <div class="content">
+                                <h3>Основное</h3>
+                                <div class="content">
                                     <div class="form-field"><label for="s1_duration">Длительность сцены (в секундах)</label><input type="number" id="s1_duration" name="duration" class="form-control"></div>
                                     <div class="form-field"><label for="s1_transition">Тип перехода</label><select id="s1_transition" name="transition_from_previous" class="form-control">
                                         <option value="none">отсутствие перехода, сцены сменяются напрямую</option>
@@ -597,7 +674,8 @@
                                     <div class="form-field"><label for="s1_custom_transition">Описание кастомного перехода</label><input type="text" id="s1_custom_transition" name="custom_transition" class="form-control"></div>
                                     <div class="form-field"><label for="s1_description">Текстовое описание сцены</label><textarea id="s1_description" name="description" class="form-control"></textarea></div>
                                 </div></details>
-                                <details data-section="camera"><summary>Камера</summary><div class="content">
+                                <h3>Камера</h3>
+                                <div class="content">
                                     <div class="form-field"><label for="s1_cam_pos">Позиция камеры</label><input type="text" id="s1_cam_pos" name="position" class="form-control"></div>
                                     <div class="form-field"><label for="s1_cam_shot">Размер кадра</label><select id="s1_cam_shot" name="shot" class="form-control">
                                         <option value="extreme-wide">вид «ант-земля», большая сцена, мелкие детали</option>
@@ -634,8 +712,9 @@
                                         <option value="Dutch-angle">наклонённая камера</option>
                                     </select></div>
                                     <div class="form-field"><label for="s1_cam_custom_angle">Кастомный вид</label><input type="text" id="s1_cam_custom_angle" name="custom_angle" class="form-control"></div>
-                                </div></details>
-                                <details data-section="lighting"><summary>Освещение</summary><div class="content">
+                                </div></div>
+                                <h3>Освещение</h3>
+                                <div class="content">
                                     <div class="form-field"><label for="s1_light_type">Тип освещения</label><select id="s1_light_type" name="lighting_type" class="form-control">
                                         <option value="natural">естественное освещение: солнце, небо</option>
                                         <option value="ambient">общее фоновое освещение без явного источника</option>
@@ -649,11 +728,28 @@
                                         <option value="moonlight">холодное, мягкое освещение луны</option>
                                     </select></div>
                                     <div class="form-field"><label for="s1_light_custom">Кастомное освещение</label><input type="text" id="s1_light_custom" name="custom_light" class="form-control"></div>
-                                </div></details>
-                                <details data-section="objects"><summary>Объекты <button class="btn btn-icon-only add-item-btn" data-target="objects"><i class="fa-solid fa-plus" style="color: #FFD700;"></i></button></summary><div class="content">
-                                    <details open data-section-type="object-item" data-id="1">
-                                        <summary>Объект 1</summary>
-                                        <div class="content">
+                                </div>
+                                <details data-section="objects">
+                                    <summary>
+                                        Объекты 
+                                        <div class="header-buttons">
+                                            <button class="btn btn-warning btn-icon-only" title="Очистить" data-parent="scenes">
+                                                <i class="fa-solid fa-broom icon"></i>
+                                            </button>
+                                            <button class="btn btn-icon-only add-item-btn" data-target="objects" title="Добавить" data-parent="scenes">
+                                                <i class="fa-solid fa-plus add-icon"></i>
+                                            </button>
+                                        </div>
+                                    </summary>
+                                    <div class="content">
+                                    <div class="header-row">
+                                        <h3>Объект 1</h3>
+                                        <div class="header-buttons">
+                                            <button class="btn btn-warning btn-icon-only" title="Очистить"><i class="fa-solid fa-broom icon"></i></button>
+                                            <button class="btn btn-danger btn-icon-only" title="Удалить"><i class="fa-solid fa-trash icon"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="content">
                                             <div class="form-field"><label for="s1_o1_type">Тип объекта</label><select id="s1_o1_type" name="object_type" class="form-control">
                                                 <option value="person">человек или персонаж</option>
                                                 <option value="animal">любое животное</option>
@@ -714,9 +810,10 @@
                                             <option value="mixed">смешанный стиль, комбинирующий несколько подходов</option>
                                         </select></div>
                                         <div class="form-field"><label for="s1_o1_custom_style">Кастомный стиль</label><input type="text" id="s1_o1_custom_style" name="custom_style" class="form-control"></div>
-                                    </div></details>
-                                </div></details>
-                                <details data-section="audio"><summary>Аудио</summary><div class="content">
+                                    </div></div>
+                                </div></div>
+                                <h3>Аудио</h3>
+                                <div class="content">
                                     <div class="form-field"><label for="s1_audio_ambient">Фоновый звук</label><select id="s1_audio_ambient" name="ambient" class="form-control">
                                         <option value="footsteps">звук шагов</option>
                                         <option value="door">скрип, удар, открытие/закрытие двери</option>
@@ -764,24 +861,40 @@
                                     <div class="form-field"><label for="s1_audio_custom_effects">Описание эффектов</label><input type="text" id="s1_audio_custom_effects" name="custom_effects" class="form-control"></div>
                                     <div class="form-field"><label for="s1_audio_talk">Речь</label><textarea id="s1_audio_talk" name="talk" class="form-control"></textarea></div>
                                     <div class="form-field"><label for="s1_audio_lang">Язык</label><input type="text" id="s1_audio_lang" name="language" value="Русский, язык не менять" class="form-control"></div>
-                                </div></details>
-                                <details data-section="text_overlay"><summary>Надписи <button class="btn btn-icon-only add-item-btn" data-target="text_overlay"><i class="fa-solid fa-plus" style="color: #FFD700;"></i></button></summary><div class="content">
-                                    <details open data-section-type="text-overlay-item" data-id="1"><summary>Надпись 1</summary><div class="content">
+                                </div></div>
+                                <div class="header-row">
+                                    <h3>Надписи</h3>
+                                    <div class="header-buttons">
+                                        <button class="btn btn-warning btn-icon-only" title="Очистить"><i class="fa-solid fa-broom icon"></i></button>
+                                        <button class="btn btn-danger btn-icon-only" title="Удалить"><i class="fa-solid fa-trash icon"></i></button>
+                                        <button class="btn btn-icon-only add-item-btn" data-target="text_overlay"><i class="fa-solid fa-plus add-icon"></i></button>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="header-row">
+                                        <h3>Надпись 1</h3>
+                                        <div class="header-buttons">
+                                            <button class="btn btn-warning btn-icon-only" title="Очистить"><i class="fa-solid fa-broom icon"></i></button>
+                                            <button class="btn btn-danger btn-icon-only" title="Удалить"><i class="fa-solid fa-trash icon"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="content">
                                         <div class="form-field"><label for="s1_txt1_content">Текст</label><input type="text" id="s1_txt1_content" name="content" class="form-control"></div>
                                         <div class="form-field"><label for="s1_txt1_lang">Язык</label><input type="text" id="s1_txt1_lang" name="language" value="Русский, язык не менять" class="form-control"></div>
                                         <div class="form-field"><label for="s1_txt1_pos">Расположение</label><input type="text" id="s1_txt1_pos" name="position" class="form-control"></div>
-                                        <details data-section="style"><summary>Стиль текста</summary><div class="content">
+                                        <h3>Стиль текста</h3>
+                                        <div class="content">
                                             <div class="form-field"><label for="s1_txt1_font">Шрифт</label><input type="text" id="s1_txt1_font" name="font" class="form-control"></div>
                                             <div class="form-field"><label for="s1_txt1_size">Размер</label><input type="number" id="s1_txt1_size" name="size" class="form-control"></div>
-                                            <div class="form-field"><label for="s1_txt1_color">Цвет</label><input type="color" id="s1_txt1_color" name="color" value="#000000" class="form-control"></div>
+                                            <div class="form-field"><label for="s1_txt1_color">Цвет</label><input type="color" id="s1_txt1_color" name="color" value="#000000" class="..."></div>
                                             <div class="form-field"><label for="s1_txt1_custom_style">Кастомный стиль</label><input type="text" id="s1_txt1_custom_style" name="custom_style" class="form-control"></div>
-                                        </div></details>
-                                    </div></details>
-                                </div></details>
+                                        </div></div>
+                                    </div></div>
+                                </div></div>
                             </div>
-                        </details>
+                        </div>
                     </div>
-                </details>
+                </div>
             </div>
 
             <!-- Форма "Текст" -->

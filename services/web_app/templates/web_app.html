@@ -30,9 +30,6 @@
         <button id="transform-btn" class="btn btn-icon-only" title="Форматировать">
             <i class="fa-solid fa-list icon"></i>
         </button>
-        <button class="btn btn-icon-only" title="Перевести (RU/EN)">
-            <i class="fa-solid fa-language icon"></i>
-        </button>
         <div class="control-group-separator"></div>
 
         <!-- Группа 3: Управление формой -->
@@ -40,26 +37,24 @@
              <i class="fa-solid fa-compress icon"></i>
         </button>
         <button class="btn btn-icon-only" title="Очистить форму">
-            <i class="fa-solid fa-eraser icon"></i>
+            <i class="fa-solid fa-broom icon add-icon"></i>
         </button>
         <div class="control-group-separator"></div>
 
         <!-- Группа 4: История -->
-        <button class="btn btn-icon-only" title="Откат">
-            <i class="fa-solid fa-undo icon"></i>
+        <button class="btn btn-icon-only" title="Запомнить">
+            <i class="fa-solid fa-right-to-bracket icon"></i>
         </button>
-        <button class="btn btn-icon-only" title="Повтор">
-            <i class="fa-solid fa-redo icon"></i>
+        <button class="btn btn-icon-only" title="Перевести (RU/EN)">
+            <i class="fa-solid fa-language icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Восстановить">
+            <i class="fa-solid fa-right-from-bracket icon"></i>
         </button>
     </div>
 
     <!-- Группа 5: Действия с файлом -->
     <div class="control-group right">
-        <div id="format-selector" class="segmented-control" data-segmented-control>
-            <button class="segmented-control-btn active">JSON</button>
-            <button class="segmented-control-btn">XML</button>
-            <button class="segmented-control-btn">MD</button>
-        </div>
         <button id="copy-btn" class="btn btn-icon-only" title="Копировать">
             <i class="fa-solid fa-copy icon"></i>
         </button>
@@ -80,6 +75,7 @@
             <h2>Форма редактирования промпта</h2>
 
             <!-- Здесь будет генерироваться новая форма -->
+             
         </div>
 
         <!-- Форма "Текст" -->
@@ -87,7 +83,7 @@
              <h2>Текстовое представление</h2>
              <div class="form-group">
                 <label for="prompt-full-text">Полный текст промпта</label>
-                <textarea id="prompt-full-text" class="form-control" placeholder="Сюда можно вставить промпт в любом формате. И сохранить как есть или нажать кнопку "Форматировать", чтобы перенести его в поля режима "Формат"."></textarea>
+                <textarea id="prompt-full-text" class="form-control" placeholder="Сюда можно вставить промпт в любом формате. И сохранить как есть или нажать кнопку Форматировать, чтобы перенести его в поля режима Формат."></textarea>
             </div>
         </div>
 

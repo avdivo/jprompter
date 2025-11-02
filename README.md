@@ -93,3 +93,4 @@ uvicorn main:app --reload
 ---
 *Старая команда для туннелирования (может быть полезна):*
 `lt --port 8000 --subdomain jprompttr`
+Если при открытии приложения требует пароль - это IP, его можно узнать так: https://loca.lt/mytunnelpassword

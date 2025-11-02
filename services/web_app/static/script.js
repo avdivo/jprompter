@@ -45,20 +45,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isFormatView) {
             // Режим "Формат"
-            transformBtn.title = 'Переделать в текст';
-            transformBtn.querySelector('i').className = 'fa-solid fa-file-alt icon'; // Иконка файла
-            spoilerBtn.disabled = false; // Активируем кнопку спойлеров
-            formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
-                btn.disabled = false; // Активируем кнопки форматов
-            });
+            if (transformBtn) {
+                transformBtn.title = 'Переделать в текст';
+                const icon = transformBtn.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-file-alt icon'; // Иконка файла
+            }
+            if (spoilerBtn) spoilerBtn.disabled = false; // Активируем кнопку спойлеров
+            if (formatSelector) {
+                formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
+                    btn.disabled = false; // Активируем кнопки форматов
+                });
+            }
         } else {
             // Режим "Текст"
-            transformBtn.title = 'Форматировать';
-            transformBtn.querySelector('i').className = 'fa-solid fa-list icon'; // Иконка списка
-            spoilerBtn.disabled = true; // Деактивируем кнопку спойлеров
-            formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
-                btn.disabled = true; // Деактивируем кнопки форматов
-            });
+            if (transformBtn) {
+                transformBtn.title = 'Форматировать';
+                const icon = transformBtn.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-list icon'; // Иконка списка
+            }
+            if (spoilerBtn) spoilerBtn.disabled = true; // Деактивируем кнопку спойлеров
+            if (formatSelector) {
+                formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
+                    btn.disabled = true; // Деактивируем кнопки форматов
+                });
+            }
         }
     }
 
@@ -149,6 +159,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Небольшая задержка, чтобы дать время для переключения классов
             setTimeout(setTextareaHeight, 10);
         });
+    }
+});
+
+// --- Глобальный обработчик для закрытия модального окна по клавише Escape ---
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('media-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
+            const modalContent = modal.querySelector('#modal-content');
+            modalContent.innerHTML = '';
+        }
     }
 });
 

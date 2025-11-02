@@ -1,0 +1,445 @@
+# Спецификация на JSON шаблон, HTML форму и выходной JSON объект
+
+Пример JSON шаблона
+```json
+{
+  "version": {
+    "_type": "readonly",
+    "_label": "Версия шаблона",
+    "_default": "1.0.0"
+  },
+  "main": {
+    "_type": "box",
+    "_title": "Главное",
+    "title": {
+      "_type": "text",
+      "_label": "Название ролика",
+      "_default": ""
+    },
+    "transition": {
+      "_type": "select",
+      "_label": "Тип перехода",
+      "_options": [
+        { "_value": "none", "_label": "Нет" },
+        { "_value": "fade", "_label": "Плавный" }
+      ],
+      "_default": "none"
+    }
+  },
+  "features": {
+    "_type": "checkbox",
+    "_label": "Дополнительные эффекты",
+    "_options": [
+      { "_value": "sound", "_label": "Звук" },
+      { "_value": "subtitles", "_label": "Субтитры" }
+    ],
+    "_default": []
+  },
+  "scenes": {
+    "_type": "array",
+    "_spoiler": "Сцены",
+    "scene": {
+      "_type": "object",
+      "_title": "Сцена",
+      "name": {
+        "_type": "text",
+        "_label": "Название сцены",
+        "_default": ""
+      }, 
+      "duration": {
+        "_type": "number",
+        "_label": "Длительность (секунд)",
+      }, 
+    }
+  }
+}
+```
+
+## Описание полей
+Пояснение к примерам шаблонов элементов:
+- data-path - полный путь в json шаблоне или в json объекте ответа до нужного элемента
+- name - название поля из шаблона
+- _label - метка для поля из шаблона
+- _default - значение по умолчанию из шаблона, если не указано - опустить это свойство
+- _value - значение выбора
+- value - значение поля
+
+### Поле только для чтения (readonly)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "readonly",
+    "_label": "Версия шаблона",
+    "_default": "1.0.0"
+  }
+```
+
+#### В форме (html)
+```html
+<div class="form-field">
+  <label for=data-path>_label</label>
+  <input type="text" id=data-path class="form-control" data-path=data-path value=_default readonly>
+</div>
+```
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+---
+
+### Текстовое поле (text)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "text",
+    "_label": "Название ролика",
+    "_default": ""
+  }
+```
+
+#### В форме (html)
+```html
+<div class="form-field">
+  <label for=data-path>_label</label>
+  <input type="text" id=data-path class="form-control" data-path=data-path value=_default placeholder=_label>
+</div>
+```
+Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+---
+
+### Цифровое поле (number)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "number",
+    "_label": "Длительность (секунд)",
+    "_default": 5
+  }
+```
+
+#### В форме (html)
+```html
+<div class="form-field">
+  <label for=data-path>_label</label>
+  <input type="number" id=data-path class="form-control" data-path=data-path value=_default placeholder=_label>
+</div>
+```
+Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+---
+
+### Многострочное текстовое поле (textarea)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "textarea",
+    "_label": "Описание ролика",
+    "_default": ""
+  }
+```
+
+#### В форме (html)
+```html
+<div class="form-field">
+  <label for=data-path>_label</label>
+  <textarea id=data-path class="form-control" data-path=data-path value=_default placeholder=_label></textarea>
+</div>
+```
+Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+---
+
+### Поле для выбора цвета (color)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "color",
+    "_label": "Цвет",
+    "_default": ""
+  }
+```
+
+#### В форме (html)
+```html
+<div class="form-field">
+  <label for=data-path>_label</label>
+  <input type="color" id=data-path class="..." data-path=data-path value=_default placeholder=_label>
+</div>
+```
+
+Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+---
+
+### Выпадающий список (select)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "select",
+    "_label": "Тип перехода",
+    "_options": [
+      { "value": "none", "_label": "Нет" },
+      { "value": "fade", "_label": "Плавный" }
+    ],
+    "_default": "none"
+  }
+```
+
+#### В форме (html)
+```html
+<div class="form-field">
+  <label for=data-path>_label</label>
+  <select id=data-path class="form-control" data-path=data-path>
+    {{content}}
+  </select>
+</div>
+```
+
+##### Опции для выбора (content)
+```html
+  <option value=value [selected]>_options[]._label</option>
+```
+Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем подпись из формы, выбор по умолчанию установится сам на первый элемент
+
+#### В ответе (json)
+```json
+  name: _value
+```
+
+---
+
+### Множественный выбор (checkbox)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "checkbox",
+    "_label": "Дополнительные эффекты",
+    "_options": [
+      { "_value": "none", "_label": "Нет" },
+      { "_value": "subtitles", "_label": "Субтитры" }
+    ],
+    "_default": ["none"]
+  }
+```
+
+#### В форме (html)
+```html
+  <div class="form-field">
+    <label>_label</label>
+    <div class="form-control checkbox-group">
+      {{content}}
+    </div>
+  </div>
+```
+##### Опции для выбора (content)
+```html
+  <label>
+    <input type="checkbox" value="none" data-path=data-path class="checkbox-input" [checked]>
+    Нет
+  </label > 
+```
+Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем подпись из формы, выбор по умолчанию установится сам на первый элемент
+
+#### В ответе (json)
+```json
+  name: [_value]
+```
+
+---
+
+### Блок (box + _spoiler/_title)
+Блоки  могут иметь 2 вида отображения:
+- Блок со спойлером (_spoiler)
+- Блок с заголовком (_title)
+
+#### В шаблоне (json)
+```json
+  name: {
+    "_type": "box"
+    <"_spoiler": _label> или <"_title": _label>
+    {{content}}
+  }
+```
+Отсутствие _spoiler и _title расценивать как _title с пустым именем "_title": "". 
+
+#### Блок со спойлером в форме (html)
+```html
+  <details class="form-field" data-path=data-path>
+    <summary>
+      _label 
+    </summary>
+    <div class="content">
+      {{content}}
+    </div>
+  </details>
+```
+
+#### Блок с заголовком в форме html
+```html
+  <div class="scene-block form-field" data-path=data-path>
+    <div class="header-row">
+      <h3>_label</h3>
+    </div>
+    <div class="content">
+      {{content}}
+    </div>
+  </div>
+```
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+---
+
+### Массив (array + _spoiler/_title)
+Массивы могут иметь 2 вида отображения:
+- Массив со спойлером (_spoiler)
+- Массив с заголовком (_title)
+
+#### Шаблон массива (json)
+```json
+  name: {
+    "_type": "array",
+    <"_spoiler": _label> или <"_title": _label>
+    "scene": {
+      {{content}}
+    }
+  }
+```
+Отсутствие _spoiler и _title расценивать как _title с пустым именем "_title": "".  
+Массив в шаблоне может иметь только один шаблон объекта, лишние игнорируются.
+
+#### Массив со спойлером в форме html (array + _spoiler)
+```html
+  <details class="form-field" data-path=data-path>
+    <summary>
+      _label
+      <div class="header-buttons">
+        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes">
+            <i class="fa-solid fa-broom add-icon"></i>
+        </button>
+        <button class="btn btn-icon-only add-item-btn" data-target="objects" title="Добавить" data-parent="scenes">
+            <i class="fa-solid fa-plus add-btn-icon"></i>
+        </button>
+      </div>  
+    </summary>
+    <div class="content">
+      {{content (objects)}}
+    </div>
+  </details>
+```
+
+#### Массив с заголовком в форме (html)
+```html
+  <div class="scene-block form-field" data-path=data-path>
+    <div class="header-row">
+      <h3>_label</h3>
+      <div class="header-buttons">
+        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes">
+            <i class="fa-solid fa-broom add-icon"></i>
+        </button>
+        <button class="btn btn-icon-only add-item-btn" data-target="objects" title="Добавить" data-parent="scenes">
+            <i class="fa-solid fa-plus add-btn-icon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="content">
+      {{content (objects)}}
+    </div>
+  </div>
+```
+
+##### Объект массива (object + _spoiler/_title)
+Объект, как и массивы могут иметь 2 вида отображения:
+- объект со спойлером (_spoiler)
+- объект с заголовком (_title)
+data-path - в объекте массива получается из пути к шаблону объекта в шаблоне и порядкового номера объекта в dom дереве: data-path + "_" + N
+То же и с _label. _label + " " + N
+
+```json
+  name: {
+    "_type": "object"
+    <"_spoiler": _label> или <"_title": _label>
+    {{content}}
+  }
+```
+Отсутствие _spoiler и _title расценивать как _title с пустым именем "_title": "". 
+
+###### Объект массива со спойлером (html)
+```html
+  <details class="form-field" data-path=data-path>
+    <summary>
+      _label
+      <div class="header-buttons">
+        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes.scene_1">
+        <i class="fa-solid fa-broom add-icon"></i>
+        </button>
+        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent="scenes.scene_1">
+            <i class="fa-solid fa-trash del-icon"></i>
+        </button>
+      </div>
+    </summary>
+    <div class="content">
+      {{content}}
+    </div>
+  </details>
+```
+
+###### Объект массива с заголовком (html)
+```html
+  <div class="scene-block form-field" data-path=data-path>
+    <div class="header-row">
+      <h3>_label</h3>
+      <div class="header-buttons">
+        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes.scene_1">
+        <i class="fa-solid fa-broom add-icon"></i>
+        </button>
+        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent="scenes.scene_1">
+            <i class="fa-solid fa-trash del-icon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="content">
+      {{content}}
+    </div>
+  </div>
+```
+
+#### В ответе (json)
+```json
+  name: value
+```
+
+

@@ -1,4 +1,3 @@
-/* CSS-переменные для цветов и размеров */
 :root {
     --panel-height: 64px;
     --border-color: #444;
@@ -13,7 +12,6 @@
     --button-active-bg: #5a5a5a;
 }
 
-/* Стили для тела страницы */
 body {
     margin: 0;
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
@@ -21,7 +19,6 @@ body {
     color: var(--text-color);
 }
 
-/* Панель управления в верхней части */
 .control-panel {
     position: sticky;
     top: 0;
@@ -38,14 +35,12 @@ body {
     z-index: 100;
 }
 
-/* Группы элементов управления */
 .control-group {
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-/* Разделитель между группами */
 .control-group-separator {
     width: 1px;
     height: 24px;
@@ -53,7 +48,6 @@ body {
     margin: 0 8px;
 }
 
-/* Общие стили для кнопок и сегментированных элементов */
 .btn, .segmented-control-btn {
     display: inline-flex;
     align-items: center;
@@ -72,36 +66,26 @@ body {
     transition: all 0.2s ease-out;
 }
 
-/* Эффект при наведении на кнопки */
-.btn:hover, .segmented-control-btn:hover {
-    color: #fff;
-}
-
-/* Эффект при наведении на обычные кнопки */
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
     border-color: #777;
 }
 
-/* Эффект при нажатии на кнопку */
 .btn:active {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Стили для кнопок только с иконками */
 .btn-icon-only {
     padding: 10px;
 }
 
-/* Стили для иконок внутри кнопок */
 .btn .icon {
     width: 16px;
     text-align: center;
 }
 
-/* Стили для сегментированного переключателя */
 .segmented-control {
     display: flex;
     background: #2a2a2a;
@@ -110,7 +94,6 @@ body {
     border: 1px solid #444;
 }
 
-/* Стили для кнопок сегментированного переключателя */
 .segmented-control-btn {
     background: transparent;
     border: none;
@@ -119,7 +102,12 @@ body {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Активное состояние сегментированной кнопки */
+.segmented-control-btn:hover {
+     transform: none;
+     box-shadow: none;
+     color: #fff;
+}
+
 .segmented-control-btn.active {
     background-color: #555;
     color: #fff;
@@ -127,53 +115,14 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
-/* Стили для первичных кнопок */
 .btn-primary {
     background: linear-gradient(145deg, #007bff, #0056b3);
     border-color: #0056b3;
 }
-
-/* Эффект при наведении на первичные кнопки */
 .btn-primary:hover {
     background: linear-gradient(145deg, #0088ff, #0060c5);
 }
 
-/* Стили для кнопок опасности */
-.btn-danger {
-    background: linear-gradient(145deg, #dc3545, #c82333);
-    border-color: #c82333;
-}
-
-/* Эффект при наведении на кнопки опасности */
-.btn-danger:hover {
-    background: linear-gradient(145deg, #e74c3c, #c0392b);
-}
-
-/* Стили для кнопок предупреждения */
-.btn-warning {
-    background: linear-gradient(145deg, #ffc107, #e0a800);
-    border-color: #e0a800;
-}
-
-/* Эффект при наведении на кнопки предупреждения */
-.btn-warning:hover {
-    background: linear-gradient(145deg, #ffb300, #cc9900);
-}
-
-/* Стили для заголовочных строк */
-.header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Стили для кнопок в заголовках */
-.header-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-/* Стили для отключенных кнопок */
 .btn:disabled, .segmented-control-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -181,19 +130,22 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Эффект при наведении на отключенные кнопки */
 .btn:disabled:hover, .segmented-control-btn:disabled:hover {
     transform: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
     border-color: #555;
 }
 
-/* Обертка для содержимого */
 .content-wrapper {
     padding: 24px;
 }
 
-/* Контейнер формы */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 0;
+    }
+}
+
 .form-container {
     max-width: 80%;
     margin: 0 auto;
@@ -204,7 +156,20 @@ body {
     min-height: calc(100vh - var(--panel-height) - 48px);
 }
 
-/* Стили для заголовков в контейнере формы */
+@media (max-width: 768px) {
+    .form-container {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 16px;
+        min-height: calc(100vh - var(--panel-height) - 32px);
+    }
+
+    .content-wrapper {
+        padding: 0;
+    }
+}
+
 .form-container h2 {
     margin-top: 0;
     color: var(--text-color);
@@ -212,22 +177,18 @@ body {
     padding-bottom: 10px;
 }
 
-/* Стили для параграфов в контейнере формы */
 .form-container p {
     color: var(--text-muted-color);
 }
 
-/* Скрытые виды форм по умолчанию */
 .form-view {
     display: none;
 }
 
-/* Активный вид формы */
 .form-view.active {
     display: block;
 }
 
-/* Стили для спойлеров (details) */
 details {
     border: none;
     border-radius: 6px;
@@ -236,7 +197,6 @@ details {
     overflow: hidden;
 }
 
-/* Стили для заголовков спойлеров (summary) */
 summary {
     cursor: pointer;
     font-weight: 600;
@@ -252,52 +212,46 @@ summary {
     align-items: center;
 }
 
-/* Эффект при наведении на заголовок спойлера */
 summary:hover {
     background-color: var(--button-hover-bg);
 }
 
-/* Стили для содержимого спойлеров */
 .content {
     padding: 16px;
     background-color: var(--background-color);
 }
 
-/* Стили для полей формы */
 .form-field {
     margin-bottom: 16px;
 }
 
-/* Убираем отступ у последнего поля */
 .form-field:last-child {
     margin-bottom: 0;
 }
 
-/* Стили для открытых спойлеров */
 details[open] > summary {
     border-bottom: 1px solid var(--border-color);
     border-radius: 6px 6px 0 0;
 }
 
-/* Стили для групп форм */
 .form-group {
     margin-bottom: 20px;
 }
 
-/* Стили для меток в группах форм и полях */
-.form-group label, .form-field label {
+.form-group label {
     display: block;
     margin-bottom: 8px;
     color: #777;
     font-size: 14px;
 }
 
-/* Меньший отступ для меток полей */
 .form-field label {
+    color: #777;
+    font-size: 14px;
     margin-bottom: 6px;
+    display: block;
 }
 
-/* Стили для элементов управления формой */
 .form-control {
     width: 100%;
     padding: 12px;
@@ -310,67 +264,31 @@ details[open] > summary {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Стили для группы чекбоксов */
-.checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    background: none;
-    border: none;
-    padding: 0;
-}
-
-/* Стили для чекбоксов */
-.checkbox-input {
-    margin-right: 5px;
-}
-
-/* Стили для иконки добавления */
-.add-icon {
-    color: #FFD700;
-}
-
-/* Стили для иконки добавления кнопки */
-.add-btn-icon {
-    color: #58D68D;
-}
-
-/* Стили для иконки удаления */
-.del-icon {
-    color: hsl(0, 100%, 50%);
-}
-
-
-/* Специальный стиль для поля выбора цвета */
-input[type="color"] {
-    border: 1px solid var(--border-color);
-}
-
-/* Эффект при фокусе и наведении на элементы управления */
-.form-control:focus, .form-control:hover {
+.form-control:focus {
     outline: none;
     border-color: var(--primary-glow);
     box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
 }
 
-/* Стили для textarea */
+.form-control:hover {
+    border-color: var(--primary-glow);
+    box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.2);
+}
+
 textarea.form-control {
     min-height: 150px;
     resize: vertical;
 }
 
-/* Стили для основного textarea */
 textarea#prompt-full-text {
     height: calc(100vh - 200px);
     min-height: auto;
 }
 
-/* Высота textarea в режиме текста */
 #form-view-text.active textarea#prompt-full-text {
     height: calc(100vh - 100px);
 }
 
-/* Переключатель мобильного меню */
 .mobile-menu-toggle {
     display: none;
     background: none;
@@ -378,16 +296,122 @@ textarea#prompt-full-text {
     padding: 0;
     cursor: pointer;
 }
-
-/* Иконка переключателя мобильного меню */
 .mobile-menu-toggle i {
     font-size: 24px;
     color: var(--text-color);
 }
 
-/* Быстрый доступ на мобильных */
 .mobile-quick-access {
     display: none;
+}
+
+@media (max-width: 1024px) {
+    .control-panel {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .control-group .btn span, .control-group.center, .control-group.right {
+        display: none;
+    }
+    .mobile-quick-access {
+        display: flex;
+        gap: 10px;
+        margin-left: 10px;
+    }
+    .mobile-quick-access .btn {
+        padding: 10px;
+    }
+
+    .control-panel.mobile-menu-open {
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+        padding-bottom: 16px;
+        background-color: #1a1a1a;
+    }
+
+    .control-panel.mobile-menu-open .control-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 10px;
+    }
+    .control-panel.mobile-menu-open .control-group:not(:first-child) {
+         padding-top: 16px;
+    }
+     .control-panel.mobile-menu-open .control-group.center,
+     .control-panel.mobile-menu-open .control-group.right {
+        display: flex;
+    }
+     .control-panel.mobile-menu-open .btn span {
+         display: inline;
+    }
+
+     .control-panel.mobile-menu-open .btn.btn-icon-only {
+         justify-content: flex-start;
+         padding: 10px 18px;
+         position: relative;
+    }
+
+     .control-panel.mobile-menu-open .btn.btn-icon-only .icon {
+         margin-right: 8px;
+    }
+
+     .control-panel.mobile-menu-open .btn.btn-icon-only::after {
+         content: attr(title);
+         margin-left: 8px;
+         white-space: nowrap;
+    }
+
+     .mobile-menu-toggle {
+        display: block;
+        position: absolute;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .form-container {
+        max-width: 100%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+}
+
+.fa-file-alt, .fa-list { color: #5DADE2; }
+.fa-language { color: #58D68D; }
+.fa-eye { color: #F5B041; }
+.fa-eraser { color: #EC7063; }
+.fa-undo { color: #A569BD; }
+.fa-redo { color: #A569BD; }
+.fa-copy { color: #48C9B0; }
+.fa-save { color: #FFFFFF; }
+.fa-bars { color: #E0E0E0; }
+
+.notification {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 101;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+}
+
+.notification.show {
+    opacity: 1;
 }
 
 /* Стили для медиа-галереи */
@@ -533,127 +557,29 @@ textarea#prompt-full-text {
     height: 450px;
 }
 
-/* Адаптивность для планшетов */
-@media (max-width: 1024px) {
-    .control-panel {
-        padding: 0 16px;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-    }
-
-    .control-group .btn span, .control-group.center, .control-group.right {
-        display: none;
-    }
-
-    .mobile-quick-access {
-        display: flex;
-        gap: 10px;
-        margin-left: 10px;
-    }
-
-    .mobile-quick-access .btn {
-        padding: 10px;
-    }
-
-    .control-panel.mobile-menu-open {
-        height: auto;
-        flex-direction: column;
-        align-items: stretch;
-        padding-bottom: 16px;
-        background-color: #1a1a1a;
-    }
-
-    .control-panel.mobile-menu-open .control-group {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-        gap: 10px;
-    }
-
-    .control-panel.mobile-menu-open .control-group:not(:first-child) {
-        padding-top: 16px;
-    }
-
-    .control-panel.mobile-menu-open .control-group.center,
-    .control-panel.mobile-menu-open .control-group.right {
-        display: flex;
-    }
-
-    .control-panel.mobile-menu-open .btn span {
-        display: inline;
-    }
-
-    .control-panel.mobile-menu-open .btn.btn-icon-only {
-        justify-content: flex-start;
-        padding: 10px 18px;
-        position: relative;
-    }
-
-    .control-panel.mobile-menu-open .btn.btn-icon-only .icon {
-        margin-right: 8px;
-    }
-
-    .control-panel.mobile-menu-open .btn.btn-icon-only::after {
-        content: attr(title);
-        margin-left: 8px;
-        white-space: nowrap;
-    }
-
-    .mobile-menu-toggle {
-        display: block;
-        position: absolute;
-        right: 24px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .form-container {
-        max-width: 100%;
-        padding: 20px;
-    }
-}
-
-/* Адаптивность для мобильных */
+/* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
-    .content-wrapper, .form-container {
-        padding: 0;
+    .media-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
     }
 
-    .form-container {
-        max-width: 100%;
-        margin: 0;
-        border-radius: 0;
-        min-height: calc(100vh - var(--panel-height) - 32px);
+    .media-thumb {
+        height: 120px;
     }
-}
 
-/* Цвета для иконок Font Awesome */
-.fa-file-alt, .fa-list { color: #5DADE2; } /* Голубой для файла и списка */
-.fa-language { color: #58D68D; } /* Зеленый для языка */
-.fa-eye { color: #F5B041; } /* Оранжевый для глаза */
-.fa-eraser { color: #EC7063; } /* Красный для ластика */
-.fa-undo, .fa-redo { color: #A569BD; } /* Фиолетовый для отмены и повтора */
-.fa-copy { color: #48C9B0; } /* Бирюзовый для копирования */
-.fa-save { color: #FFFFFF; } /* Белый для сохранения */
-.fa-bars { color: #E0E0E0; } /* Серый для меню */
+    .modal-video {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/9;
+    }
 
-/* Стили для уведомлений */
-.notification {
-    position: fixed;
-    top: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    z-index: 101;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-    pointer-events: none;
-}
+    .gallery-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-/* Показ уведомления */
-.notification.show {
-    opacity: 1;
+    .gallery-controls .btn {
+        text-align: center;
+    }
 }
