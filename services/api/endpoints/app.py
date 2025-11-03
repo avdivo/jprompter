@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel
 
@@ -12,7 +14,8 @@ class ButtonClickMessage(BaseModel):
 
 class InitData(BaseModel):
     initData: str
-    message_id: str
+    message_id: Optional[str] = None
+    chat: Optional[str] = None
 
 
 @router.post("/init")
@@ -25,7 +28,12 @@ async def init(data: InitData, response: Response):
         dict: Вывод сообщения вместо данных.
     """
     try:
-        user_data = validate_telegram_data(data.initData)
+        print(data)
+        all_data = validate_telegram_data(data.initData)
+        # print(f"Все полученные данные: {all_data}")
+        # print(f"message_id: {data.message_id}")
+        # print(f"chat: {data}")
+        user_data = all_data.get("user", {})
         jwt_token = create_jwt_token(user_data["id"])
         response.set_cookie(key="jwt", value=jwt_token, httponly=True)
         return {"message": user_data}

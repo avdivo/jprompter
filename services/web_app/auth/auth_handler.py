@@ -18,7 +18,7 @@ def validate_telegram_data(init_data: str) -> dict:
     Args:
         init_data (str): Строка initData из Telegram Mini App.
     Returns:
-        dict: Декодированные и валидированные данные пользователя.
+        dict: Декодированные и валидированные данные, включая пользователя и другие параметры.
     Raises:
         ValueError: Если данные невалидны или срок действия истек.
     """
@@ -41,7 +41,7 @@ def validate_telegram_data(init_data: str) -> dict:
     calculated_hash = hmac.new(
         bot_config.secret_key, data_check_string.encode(), hashlib.sha256
     ).hexdigest()
- 
+
     # Сравнение хешей
     if calculated_hash != data["hash"]:
         raise ValueError("Invalid hash")
@@ -51,7 +51,11 @@ def validate_telegram_data(init_data: str) -> dict:
     if time.time() - auth_date > 900:  # 15 минут
         raise ValueError("Auth date expired")
 
-    return json.loads(data["user"])
+    # Возвращаем все данные, декодируя user
+    result = data.copy()
+    if "user" in result:
+        result["user"] = json.loads(result["user"])
+    return result
 
 
 def create_jwt_token(user_id: int) -> str:

@@ -5,11 +5,13 @@ from config.config import AppConfig
 app_config = AppConfig()
 
 
-def web_app_keyboard(base_url: str, chat_id: int) -> InlineKeyboardMarkup:
+def web_app_keyboard(base_url: str, message_id: str, chat: str) -> InlineKeyboardMarkup:
     """
     Создает инлайн-клавиатуру с кнопкой для запуска веб-приложения.
     Args:
-        None
+        base_url - url приложения
+        message_id - id сообщения-промпта
+        from - где находится сообщение "chat" или "group"
     Returns:
         InlineKeyboardMarkup: Инлайн-клавиатура с кнопкой веб-приложения.
     """
@@ -21,7 +23,7 @@ def web_app_keyboard(base_url: str, chat_id: int) -> InlineKeyboardMarkup:
                     web_app=WebAppInfo(
                         url=(
                             f"{base_url}{app_config.app_path}"
-                            f"?message_id=123&chat_id={chat_id}"
+                            f"?message_id={message_id}&chat={chat}"
                         )
                     ),
                 )

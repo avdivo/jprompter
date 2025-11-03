@@ -14,11 +14,11 @@ async def command_start_handler(message: types.Message) -> None:
     Этот хендлер обрабатывает команду /start.
     """
     user_name = message.from_user.full_name if message.from_user else "Guest"
-    chat_id = message.chat.id
+    # chat_id = message.chat.id
     await message.answer(
         f"Привет, {user_name}! {bot_config.webhook_base_url}",
         reply_markup=web_app_keyboard(
-            base_url=bot_config.webhook_base_url, chat_id=chat_id
+            base_url=bot_config.webhook_base_url, message_id="123", chat="chat"
         ),
     )
     await message.answer(
