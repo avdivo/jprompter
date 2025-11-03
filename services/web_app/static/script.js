@@ -162,6 +162,47 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// --- Обработчик для кнопки "Копировать" ---
+document.addEventListener('DOMContentLoaded', function() {
+    const copyBtn = document.getElementById('copy-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+            console.log('Кнопка копировать нажата');
+            console.log('window.appData:', window.appData);
+            // Проверяем, есть ли данные в глобальном хранилище
+            if (window.appData && window.appData.template && window.appData.prompt) {
+                console.log('Данные найдены, переключаемся на режим Text');
+                // Переключаемся на режим "Текст"
+                const textViewBtn = document.querySelector('#view-switcher .segmented-control-btn[data-view="text"]');
+                if (textViewBtn && !textViewBtn.classList.contains('active')) {
+                    textViewBtn.click();
+                }
+
+                // Показываем данные в текстовом поле
+                const textarea = document.getElementById('prompt-full-text');
+                if (textarea) {
+                    const dataString = JSON.stringify({
+                        template: window.appData.template,
+                        prompt: window.appData.prompt
+                    }, null, 2);
+                    textarea.value = dataString;
+                    console.log('Данные установлены в textarea');
+                } else {
+                    console.log('Textarea не найден');
+                }
+
+                // Показываем уведомление
+                showNotification('Данные загружены в текстовое поле');
+            } else {
+                console.log('Данные не найдены в window.appData');
+                showNotification('Данные не найдены');
+            }
+        });
+    } else {
+        console.log('Кнопка copy-btn не найдена');
+    }
+});
+
 // --- Глобальный обработчик для закрытия модального окна по клавише Escape ---
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {

@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Инициализация Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand(); // Развернуть на весь экран
+        Telegram.WebApp.ready();       // Инициализация
+        Telegram.WebApp.expand();      // Растягиваем на весь экран
     }
 
     // --- Отправка initData на сервер при загрузке страницы ---
@@ -26,6 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             console.log('Ответ от сервера:', data);
+            // Сохраняем данные в глобальное хранилище
+            window.appData = {
+                template: data.template,
+                prompt: data.prompt,
+                user: data.message
+            };
         })
         .catch(error => {
             console.error('Ошибка при отправке initData:', error);

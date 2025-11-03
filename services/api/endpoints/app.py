@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Response
@@ -22,10 +24,11 @@ class InitData(BaseModel):
 async def init(data: InitData, response: Response):
     """
     Эндпоинт для получения авторизации (записи JWT токена с cookies).
+    Читает шаблон из docs/templates/template-video-1.0.json и возвращает его с пустым промптом.
     Args:
         None
     Returns:
-        dict: Вывод сообщения вместо данных.
+        dict: Шаблон и пользовательские данные.
     """
     try:
         print(data)
@@ -36,7 +39,21 @@ async def init(data: InitData, response: Response):
         user_data = all_data.get("user", {})
         jwt_token = create_jwt_token(user_data["id"])
         response.set_cookie(key="jwt", value=jwt_token, httponly=True)
-        return {"message": user_data}
+
+        # Читаем шаблон из файла
+        template_path = (
+            Path(__file__).parent.parent.parent.parent
+            / "docs"
+            / "templates"
+            / "template-video-1.0.json"
+        )
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = json.load(f)
+
+        # Создаем пустой промпт (пока заглушка)
+        prompt = {}
+
+        return {"message": user_data, "template": template, "prompt": prompt}
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
