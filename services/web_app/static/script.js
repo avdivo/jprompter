@@ -183,7 +183,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (textarea) {
                     const dataString = JSON.stringify({
                         template: window.appData.template,
-                        prompt: window.appData.prompt
+                        prompt: window.appData.prompt,
+                        chat: window.appData.chat,
+                        user: window.appData.user,
+                        message_id: window.appData.message_id
                     }, null, 2);
                     textarea.value = dataString;
                     console.log('Данные установлены в textarea');

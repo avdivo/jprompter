@@ -53,7 +53,7 @@ async def init(data: InitData, response: Response):
         # Создаем пустой промпт (пока заглушка)
         prompt = {}
 
-        return {"message": user_data, "template": template, "prompt": prompt}
+        return {"template": template, "prompt": prompt}
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
