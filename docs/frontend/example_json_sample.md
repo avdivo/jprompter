@@ -63,6 +63,7 @@
 - _default - значение по умолчанию из шаблона, если не указано - опустить это свойство
 - _value - значение выбора
 - value - значение поля
+- свойство data-type определяет тип элемента, туда записывается _type
 
 ### Поле только для чтения (readonly)
 
@@ -79,7 +80,7 @@
 ```html
 <div class="form-field">
   <label for=data-path>_label</label>
-  <input type="text" id=data-path class="form-control" data-path=data-path value=_default readonly>
+  <input type="text" class="form-control" data-path=data-path id=data-path data-type=_type value=_default readonly>
 </div>
 ```
 
@@ -105,7 +106,7 @@
 ```html
 <div class="form-field">
   <label for=data-path>_label</label>
-  <input type="text" id=data-path class="form-control" data-path=data-path value=_default placeholder=_label>
+  <input type="text" class="form-control" data-path=data-path id=data-path data-type=_type value=_default placeholder=_label>
 </div>
 ```
 Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
@@ -132,7 +133,7 @@
 ```html
 <div class="form-field">
   <label for=data-path>_label</label>
-  <input type="number" id=data-path class="form-control" data-path=data-path value=_default placeholder=_label>
+  <input type="number" class="form-control" data-path=data-path id=data-path data-type=_type value=_default placeholder=_label>
 </div>
 ```
 Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
@@ -159,7 +160,7 @@
 ```html
 <div class="form-field">
   <label for=data-path>_label</label>
-  <textarea id=data-path class="form-control" data-path=data-path value=_default placeholder=_label></textarea>
+  <textarea class="form-control" data-path=data-path id=data-path data-type=_type value=_default placeholder=_label></textarea>
 </div>
 ```
 Если поля "_label" и/или "_default" отсутствуют в шаблоне - исключаем их из формы
@@ -186,7 +187,7 @@
 ```html
 <div class="form-field">
   <label for=data-path>_label</label>
-  <input type="color" id=data-path class="..." data-path=data-path value=_default placeholder=_label>
+  <input type="color" class="..." data-path=data-path id=data-path data-type=_type value=_default placeholder=_label>
 </div>
 ```
 
@@ -218,7 +219,7 @@
 ```html
 <div class="form-field">
   <label for=data-path>_label</label>
-  <select id=data-path class="form-control" data-path=data-path>
+  <select class="form-control" data-path=data-path id=data-path data-type=_type>
     {{content}}
   </select>
 </div>
@@ -264,7 +265,7 @@
 ##### Опции для выбора (content)
 ```html
   <label>
-    <input type="checkbox" value="none" data-path=data-path class="checkbox-input" [checked]>
+    <input type="checkbox" value="none" data-path=data-path id=data-path data-type=_type class="checkbox-input">
     Нет
   </label > 
 ```
@@ -294,7 +295,7 @@
 
 #### Блок со спойлером в форме (html)
 ```html
-  <details class="form-field" data-path=data-path>
+  <details class="form-field" data-path=data-path id=data-path data-type=_type>
     <summary>
       _label 
     </summary>
@@ -306,7 +307,7 @@
 
 #### Блок с заголовком в форме html
 ```html
-  <div class="scene-block form-field" data-path=data-path>
+  <div class="scene-block form-field" data-path=data-path id=data-path data-type=_type>
     <div class="header-row">
       <h3>_label</h3>
     </div>
@@ -343,7 +344,7 @@
 
 #### Массив со спойлером в форме html (array + _spoiler)
 ```html
-  <details class="form-field" data-path=data-path>
+  <details class="form-field" data-path=data-path id=data-path data-type=_type>
     <summary>
       _label
       <div class="header-buttons">
@@ -363,7 +364,7 @@
 
 #### Массив с заголовком в форме (html)
 ```html
-  <div class="scene-block form-field" data-path=data-path>
+  <div class="scene-block form-field" data-path=data-path id=data-path data-type=_type>
     <div class="header-row">
       <h3>_label</h3>
       <div class="header-buttons">
@@ -385,8 +386,11 @@
 Объект, как и массивы могут иметь 2 вида отображения:
 - объект со спойлером (_spoiler)
 - объект с заголовком (_title)
-data-path - в объекте массива получается из пути к шаблону объекта в шаблоне и порядкового номера объекта в dom дереве: data-path + "_" + N
-То же и с _label. _label + " " + N
+data-id - свойство в первом теге объекта (оберточном) указывает номер объекта массива, от 1.
+data-path - в объекте массива получается из пути к шаблону объекта в шаблоне и порядкового номера объекта в dom дереве: data-path + "_" + data-id
+То же и с _label. _label + " " + data-id
+data-parent в первом теге объекта (оберточном) указывает путь к массиву-родителю, в кнопках - путь к первому тэгу.
+data-role - по наличию этого свойства находим тэг значение которого нужно изменить. Он указывает что должно быть в тэте. Например "_label".
 
 ```json
   name: {
@@ -399,15 +403,15 @@ data-path - в объекте массива получается из пути 
 
 ###### Объект массива со спойлером (html)
 ```html
-  <details class="form-field" data-path=data-path>
+  <details class="form-field" data-path=data-path data-type=_type data-parent="scenes" data-id=data-id>
     <summary>
-      _label
+      <span data-role="_label">_label</span>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes.scene_1">
-        <i class="fa-solid fa-broom add-icon"></i>
+        <button class="btn btn-icon-only" title="Очистить" data-parent=data-path data-role="button">
+          <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent="scenes.scene_1">
-            <i class="fa-solid fa-trash del-icon"></i>
+        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent=data-path data-role="button">
+          <i class="fa-solid fa-trash del-icon"></i>
         </button>
       </div>
     </summary>
@@ -419,15 +423,15 @@ data-path - в объекте массива получается из пути 
 
 ###### Объект массива с заголовком (html)
 ```html
-  <div class="scene-block form-field" data-path=data-path>
+  <div class="scene-block form-field" data-path=data-path data-type=_type data-parent="scenes" data-id=data-id>
     <div class="header-row">
-      <h3>_label</h3>
+      <h3 data-role="_label">_label</h3>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes.scene_1">
-        <i class="fa-solid fa-broom add-icon"></i>
+        <button class="btn btn-icon-only" title="Очистить" data-parent=data-path>
+          <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent="scenes.scene_1">
-            <i class="fa-solid fa-trash del-icon"></i>
+        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent=data-path>
+          <i class="fa-solid fa-trash del-icon"></i>
         </button>
       </div>
     </div>
