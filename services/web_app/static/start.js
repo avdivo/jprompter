@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Добавляем шаблон и промпт в глобальное хранилище
             window.appData.template = data.template;
             window.appData.prompt = data.prompt;
+            window.appData.prompt_type = data.prompt_type;
         })
         .catch(error => {
             console.error('Ошибка при отправке initData:', error);

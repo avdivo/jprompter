@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Кнопка копировать нажата');
             console.log('window.appData:', window.appData);
             // Проверяем, есть ли данные в глобальном хранилище
-            if (window.appData && window.appData.template && window.appData.prompt) {
+            if (window.appData && window.appData.template && window.appData.prompt && window.appData.prompt_type) {
                 console.log('Данные найдены, переключаемся на режим Text');
                 // Переключаемся на режим "Текст"
                 const textViewBtn = document.querySelector('#view-switcher .segmented-control-btn[data-view="text"]');
@@ -182,11 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textarea = document.getElementById('prompt-full-text');
                 if (textarea) {
                     const dataString = JSON.stringify({
-                        template: window.appData.template,
-                        prompt: window.appData.prompt,
-                        chat: window.appData.chat,
-                        user: window.appData.user,
-                        message_id: window.appData.message_id
+                        Данные: window.appData
                     }, null, 2);
                     textarea.value = dataString;
                     console.log('Данные установлены в textarea');

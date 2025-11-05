@@ -24,7 +24,8 @@ class InitData(BaseModel):
 async def init(data: InitData, response: Response):
     """
     Эндпоинт для получения авторизации (записи JWT токена с cookies).
-    Читает шаблон из docs/templates/template-video-1.0.json и возвращает его с пустым промптом.
+    Читает шаблон из docs/templates/template-video-1.0.json
+    и возвращает его с пустым промптом.
     Args:
         None
     Returns:
@@ -53,7 +54,7 @@ async def init(data: InitData, response: Response):
         # Создаем пустой промпт (пока заглушка)
         prompt = {}
 
-        return {"template": template, "prompt": prompt}
+        return {"template": template, "prompt": prompt, "prompt_type": "json"}
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
