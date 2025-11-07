@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование шаблонов форм</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .template-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .template-section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .copy-btn {
+            background-color: #28a745;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+
+
+        .param-group {
+            background-color: #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .param-group h4 {
+            margin: 0 0 8px 0;
+            color: #495057;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .param-label {
+            font-weight: bold;
+            color: #007bff;
+            margin-right: 8px;
+        }
+
+        .placeholder-hint {
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тестирование шаблонов форм</h1>
+
+    <!-- Поле только для чтения -->
+    <div class="template-section">
+        <h2>Поле только для чтения (readonly)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="readonly_data-path" value="version">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="readonly__label" value="Версия шаблона">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(заменяет {{_default}})</span><br>
+                <input type="text" id="readonly__default" value="1.0.0">
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "readonly" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="readonly__type" value="readonly" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('readonly')">Сгенерировать</button>
+        <div class="result" id="readonly-result"></div>
+    </div>
+
+    <!-- Текстовое поле -->
+    <div class="template-section">
+        <h2>Текстовое поле (text)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="text_data-path" value="main.title">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="text__label" value="Название ролика">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(заменяет {{_default}})</span><br>
+                <input type="text" id="text__default" value="">
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "text" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="text__type" value="text" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('text')">Сгенерировать</button>
+        <div class="result" id="text-result"></div>
+    </div>
+
+    <!-- Цифровое поле -->
+    <div class="template-section">
+        <h2>Цифровое поле (number)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="number_data-path" value="scenes.scene.duration">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="number__label" value="Длительность (секунд)">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(заменяет {{_default}})</span><br>
+                <input type="number" id="number__default" value="">
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "number" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="number__type" value="number" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('number')">Сгенерировать</button>
+        <div class="result" id="number-result"></div>
+    </div>
+
+    <!-- Многострочное текстовое поле -->
+    <div class="template-section">
+        <h2>Многострочное текстовое поле (textarea)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="textarea_data-path" value="main.description">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="textarea__label" value="Описание ролика">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(заменяет {{_default}})</span><br>
+                <textarea id="textarea__default"></textarea>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "textarea" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="textarea__type" value="textarea" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('textarea')">Сгенерировать</button>
+        <div class="result" id="textarea-result"></div>
+    </div>
+
+    <!-- Поле для выбора цвета -->
+    <div class="template-section">
+        <h2>Поле для выбора цвета (color)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="color_data-path" value="main.color">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="color__label" value="Цвет">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(заменяет {{_default}})</span><br>
+                <input type="color" id="color__default" value="#000000">
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "color" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="color__type" value="color" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('color')">Сгенерировать</button>
+        <div class="result" id="color-result"></div>
+    </div>
+
+    <!-- Выпадающий список -->
+    <div class="template-section">
+        <h2>Выпадающий список (select)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default, _options }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="select_data-path" value="main.transition">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="select__label" value="Тип перехода">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(влияет на selected в {{options}})</span><br>
+                <input type="text" id="select__default" value="none">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_options</span>
+                <span class="placeholder-hint">(заменяет {{options}} - генерируется из JSON)</span><br>
+                <textarea id="select__options" placeholder="Массив опций в JSON формате">[{"_value": "none", "_label": "Нет"}, {"_value": "fade", "_label": "Плавный"}]</textarea>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "select" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="select__type" value="select" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('select')">Сгенерировать</button>
+        <div class="result" id="select-result"></div>
+    </div>
+
+    <!-- Множественный выбор -->
+    <div class="template-section">
+        <h2>Множественный выбор (checkbox)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, _default, _options }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="checkbox_data-path" value="features">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_label</span>
+                <span class="placeholder-hint">(заменяет {{_label}})</span><br>
+                <input type="text" id="checkbox__label" value="Дополнительные эффекты">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_default</span>
+                <span class="placeholder-hint">(влияет на checked в {{options}})</span><br>
+                <input type="text" id="checkbox__default" value="[]">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_options</span>
+                <span class="placeholder-hint">(заменяет {{options}} - генерируется из JSON)</span><br>
+                <textarea id="checkbox__options" placeholder="Массив опций в JSON формате">[{"_value": "sound", "_label": "Звук"}, {"_value": "subtitles", "_label": "Субтитры"}]</textarea>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "checkbox" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="checkbox__type" value="checkbox" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('checkbox')">Сгенерировать</button>
+        <div class="result" id="checkbox-result"></div>
+    </div>
+
+    <!-- Блок -->
+    <div class="template-section">
+        <h2>Блок (box)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _label, content }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="box_data-path" value="main">
+            </div>
+            <div class="form-group" id="box_title_group">
+                <span class="param-label">_title</span>
+                <span class="placeholder-hint">(для boxTitle - заменяет {{_label}})</span><br>
+                <input type="text" id="box__title" value="Главное">
+            </div>
+            <div class="form-group" id="box_spoiler_group" style="display: none;">
+                <span class="param-label">_spoiler</span>
+                <span class="placeholder-hint">(для boxSpoiler - заменяет {{_label}})</span><br>
+                <input type="text" id="box__spoiler" value="Главное">
+            </div>
+            <div class="form-group">
+                <span class="param-label">content</span>
+                <span class="placeholder-hint">(заменяет {{content}})</span><br>
+                <textarea id="box_content" placeholder="Вставьте HTML содержимое блока"></textarea>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Параметры отображения:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>Тип блока:</strong> выбирает шаблон boxTitle/boxSpoiler
+            </div>
+            <div class="form-group">
+                <span class="param-label">box_type</span>
+                <span class="placeholder-hint">(выбирает шаблон: boxTitle или boxSpoiler)</span><br>
+                <select id="box_type">
+                    <option value="boxTitle">boxTitle (использует _title)</option>
+                    <option value="boxSpoiler">boxSpoiler (использует _spoiler)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "box" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="box__type" value="box" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('box')">Сгенерировать</button>
+        <div class="result" id="box-result"></div>
+    </div>
+
+    <!-- Массив -->
+    <div class="template-section">
+        <h2>Массив (array)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _obj, _label, content }
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(заменяет {{data-path}})</span><br>
+                <input type="text" id="array_data-path" value="scenes">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_obj</span>
+                <span class="placeholder-hint">(заменяет {{_obj}} - имя контейнера объектов)</span><br>
+                <input type="text" id="array__obj" value="scene">
+            </div>
+            <div class="form-group" id="array_title_group">
+                <span class="param-label">_title</span>
+                <span class="placeholder-hint">(для arrayTitle - заменяет {{_label}})</span><br>
+                <input type="text" id="array__title" value="Сцены">
+            </div>
+            <div class="form-group" id="array_spoiler_group" style="display: none;">
+                <span class="param-label">_spoiler</span>
+                <span class="placeholder-hint">(для arraySpoiler - заменяет {{_label}})</span><br>
+                <input type="text" id="array__spoiler" value="Сцены">
+            </div>
+            <div class="form-group">
+                <span class="param-label">content</span>
+                <span class="placeholder-hint">(заменяет {{content}} - объекты массива)</span><br>
+                <textarea id="array_content" placeholder="Вставьте HTML содержимое массива"></textarea>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Параметры отображения:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>Тип массива:</strong> выбирает шаблон arrayTitle/arraySpoiler
+            </div>
+            <div class="form-group">
+                <span class="param-label">array_type</span>
+                <span class="placeholder-hint">(выбирает шаблон: arrayTitle или arraySpoiler)</span><br>
+                <select id="array_type">
+                    <option value="arrayTitle">arrayTitle (использует _title)</option>
+                    <option value="arraySpoiler">arraySpoiler (использует _spoiler)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "array" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="array__type" value="array" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('array')">Сгенерировать</button>
+        <div class="result" id="array-result"></div>
+    </div>
+
+    <!-- Объект массива -->
+    <div class="template-section">
+        <h2>Объект массива (object)</h2>
+
+        <div class="param-group">
+            <h4>Переменные для замены плейсхолдеров:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>data:</strong> { data-path, _obj, data-id, _label, content }<br>
+                <em>data-path и _label рассчитываются автоматически: data-path = {{data-path}}_{{data-id}}, _label = {{_label}} {{data-id}}</em>
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">data-path</span>
+                <span class="placeholder-hint">(базовое значение, используется как {{data-path}} в расчетах)</span><br>
+                <input type="text" id="object_data-path" value="scenes">
+            </div>
+            <div class="form-group">
+                <span class="param-label">_obj</span>
+                <span class="placeholder-hint">(заменяет {{_obj}} - ссылка на родительский массив)</span><br>
+                <input type="text" id="object__obj" value="scene">
+            </div>
+            <div class="form-group">
+                <span class="param-label">data-id</span>
+                <span class="placeholder-hint">(заменяет {{data-id}}, используется в расчетах data-path и _label)</span><br>
+                <input type="text" id="object_data-id" value="1">
+            </div>
+            <div class="form-group" id="object_title_group">
+                <span class="param-label">_title</span>
+                <span class="placeholder-hint">(базовое значение _label для objectTitle)</span><br>
+                <input type="text" id="object__title" value="Сцена">
+            </div>
+            <div class="form-group" id="object_spoiler_group" style="display: none;">
+                <span class="param-label">_spoiler</span>
+                <span class="placeholder-hint">(базовое значение _label для objectSpoiler)</span><br>
+                <input type="text" id="object__spoiler" value="Сцена">
+            </div>
+            <div class="form-group">
+                <span class="param-label">content</span>
+                <span class="placeholder-hint">(заменяет {{content}} - поля объекта)</span><br>
+                <textarea id="object_content" placeholder="Вставьте HTML содержимое объекта"></textarea>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Параметры отображения:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>Тип объекта:</strong> выбирает шаблон objectTitle/objectSpoiler
+            </div>
+            <div class="form-group">
+                <span class="param-label">object_type</span>
+                <span class="placeholder-hint">(выбирает шаблон: objectTitle или objectSpoiler)</span><br>
+                <select id="object_type">
+                    <option value="objectTitle">objectTitle (использует _title)</option>
+                    <option value="objectSpoiler">objectSpoiler (использует _spoiler)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Жестко заданные параметры:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>_type:</strong> "object" (data-type атрибут)
+            </div>
+            <div class="form-group">
+                <span class="param-label">_type</span>
+                <span class="placeholder-hint">(информационно, не изменяется)</span><br>
+                <input type="text" id="object__type" value="object" readonly style="background-color: #f8f9fa;">
+            </div>
+        </div>
+
+        <button onclick="generateTemplate('object')">Сгенерировать</button>
+        <div class="result" id="object-result"></div>
+    </div>
+
+    <!-- Модальное окно для результатов -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Результат</h2>
+            <pre id="modalResult"></pre>
+            <button class="copy-btn" onclick="copyToClipboard()">Копировать</button>
+        </div>
+    </div>
+
+    <script src="../templates.js"></script>
+    <script>
+        function generateTemplate(type) {
+            let data = {};
+            let template = '';
+
+            switch(type) {
+                case 'readonly':
+                    data = {
+                        'data-path': document.getElementById('readonly_data-path').value,
+                        '_label': document.getElementById('readonly__label').value,
+                        '_default': document.getElementById('readonly__default').value
+                    };
+                    template = 'readonly';
+                    break;
+
+                case 'text':
+                    data = {
+                        'data-path': document.getElementById('text_data-path').value,
+                        '_label': document.getElementById('text__label').value,
+                        '_default': document.getElementById('text__default').value
+                    };
+                    template = 'text';
+                    break;
+
+                case 'number':
+                    data = {
+                        'data-path': document.getElementById('number_data-path').value,
+                        '_label': document.getElementById('number__label').value,
+                        '_default': document.getElementById('number__default').value
+                    };
+                    template = 'number';
+                    break;
+
+                case 'textarea':
+                    data = {
+                        'data-path': document.getElementById('textarea_data-path').value,
+                        '_label': document.getElementById('textarea__label').value,
+                        '_default': document.getElementById('textarea__default').value
+                    };
+                    template = 'textarea';
+                    break;
+
+                case 'color':
+                    data = {
+                        'data-path': document.getElementById('color_data-path').value,
+                        '_label': document.getElementById('color__label').value,
+                        '_default': document.getElementById('color__default').value
+                    };
+                    template = 'color';
+                    break;
+
+                case 'select':
+                    data = {
+                        'data-path': document.getElementById('select_data-path').value,
+                        '_label': document.getElementById('select__label').value,
+                        '_default': document.getElementById('select__default').value,
+                        '_options': JSON.parse(document.getElementById('select__options').value || '[]')
+                    };
+                    template = 'select';
+                    break;
+
+                case 'checkbox':
+                    data = {
+                        'data-path': document.getElementById('checkbox_data-path').value,
+                        '_label': document.getElementById('checkbox__label').value,
+                        '_default': JSON.parse(document.getElementById('checkbox__default').value || '[]'),
+                        '_options': JSON.parse(document.getElementById('checkbox__options').value || '[]')
+                    };
+                    template = 'checkbox';
+                    break;
+
+                case 'box':
+                    const boxType = document.getElementById('box_type').value;
+                    const boxLabelField = boxType === 'boxTitle' ? 'box__title' : 'box__spoiler';
+                    data = {
+                        'data-path': document.getElementById('box_data-path').value,
+                        '_label': document.getElementById(boxLabelField).value,
+                        'content': document.getElementById('box_content').value
+                    };
+                    template = boxType;
+                    break;
+
+                case 'array':
+                    const arrayType = document.getElementById('array_type').value;
+                    const arrayLabelField = arrayType === 'arrayTitle' ? 'array__title' : 'array__spoiler';
+                    data = {
+                        'data-path': document.getElementById('array_data-path').value,
+                        '_obj': document.getElementById('array__obj').value,
+                        '_label': document.getElementById(arrayLabelField).value,
+                        'content': document.getElementById('array_content').value
+                    };
+                    template = arrayType;
+                    break;
+
+                case 'object':
+                    const objectType = document.getElementById('object_type').value;
+                    const objectLabelField = objectType === 'objectTitle' ? 'object__title' : 'object__spoiler';
+                    data = {
+                        'data-path': document.getElementById('object_data-path').value,
+                        '_obj': document.getElementById('object__obj').value,
+                        'data-id': document.getElementById('object_data-id').value,
+                        '_label': document.getElementById(objectLabelField).value,
+                        'content': document.getElementById('object_content').value
+                    };
+                    template = objectType;
+                    break;
+            }
+
+            const result = renderTemplate(template, data);
+            document.getElementById(type + '-result').innerHTML = result;
+
+            // Показать модальное окно
+            document.getElementById('modalResult').textContent = result;
+            document.getElementById('resultModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('modalResult').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Скопировано в буфер обмена!');
+            });
+        }
+
+
+
+        // Переключение полей _title/_spoiler для блоков
+        document.getElementById('box_type').addEventListener('change', function() {
+            const isTitle = this.value === 'boxTitle';
+            document.getElementById('box_title_group').style.display = isTitle ? 'block' : 'none';
+            document.getElementById('box_spoiler_group').style.display = isTitle ? 'none' : 'block';
+        });
+
+        // Переключение полей _title/_spoiler для массивов
+        document.getElementById('array_type').addEventListener('change', function() {
+            const isTitle = this.value === 'arrayTitle';
+            document.getElementById('array_title_group').style.display = isTitle ? 'block' : 'none';
+            document.getElementById('array_spoiler_group').style.display = isTitle ? 'none' : 'block';
+        });
+
+        // Переключение полей _title/_spoiler для объектов
+        document.getElementById('object_type').addEventListener('change', function() {
+            const isTitle = this.value === 'objectTitle';
+            document.getElementById('object_title_group').style.display = isTitle ? 'block' : 'none';
+            document.getElementById('object_spoiler_group').style.display = isTitle ? 'none' : 'block';
+        });
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('resultModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

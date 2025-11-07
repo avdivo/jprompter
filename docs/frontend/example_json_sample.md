@@ -63,7 +63,7 @@
 - _default - значение по умолчанию из шаблона, если не указано - опустить это свойство
 - _value - значение выбора
 - value - значение поля
-- свойство data-type определяет тип элемента, туда записывается _type
+- свойство data-type определяет тип элемента, туда записывается _type (их перечень ограничен существующими)
 
 ### Поле только для чтения (readonly)
 
@@ -328,6 +328,7 @@
 Массивы могут иметь 2 вида отображения:
 - Массив со спойлером (_spoiler)
 - Массив с заголовком (_title)
+- _obj - указывает на первый объект в шаблоне, и на контейнер объектов в форме (в примере "scene"). В выходном объекте отсутствует
 
 #### Шаблон массива (json)
 ```json
@@ -348,15 +349,15 @@
     <summary>
       _label
       <div class="header-buttons">
-        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes">
+        <button class="btn btn-icon-only" data-parent=data-path data-target=_obj title="Очистить">
             <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only add-item-btn" data-target="objects" title="Добавить" data-parent="scenes">
+        <button class="btn btn-icon-only add-item-btn" data-parent=data-path data-target=_obj title="Добавить">
             <i class="fa-solid fa-plus add-btn-icon"></i>
         </button>
       </div>  
     </summary>
-    <div class="content">
+    <div id=_obj class="content">
       {{content (objects)}}
     </div>
   </details>
@@ -368,15 +369,15 @@
     <div class="header-row">
       <h3>_label</h3>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" title="Очистить" data-parent="scenes">
+        <button class="btn btn-icon-only" data-parent=data-path data-target=_obj title="Очистить">
             <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only add-item-btn" data-target="objects" title="Добавить" data-parent="scenes">
+        <button class="btn btn-icon-only add-item-btn" data-parent=data-path data-target=_obj title="Добавить">
             <i class="fa-solid fa-plus add-btn-icon"></i>
         </button>
       </div>
     </div>
-    <div class="content">
+    <div id=_obj class="content">
       {{content (objects)}}
     </div>
   </div>
@@ -390,7 +391,7 @@ data-id - свойство в первом теге объекта (оберто
 data-path - в объекте массива получается из пути к шаблону объекта в шаблоне и порядкового номера объекта в dom дереве: data-path + "_" + data-id
 То же и с _label. _label + " " + data-id
 data-parent в первом теге объекта (оберточном) указывает путь к массиву-родителю, в кнопках - путь к первому тэгу.
-data-role - по наличию этого свойства находим тэг значение которого нужно изменить. Он указывает что должно быть в тэте. Например "_label".
+
 
 ```json
   name: {
@@ -403,14 +404,14 @@ data-role - по наличию этого свойства находим тэ�
 
 ###### Объект массива со спойлером (html)
 ```html
-  <details class="form-field" data-path=data-path data-type=_type data-parent="scenes" data-id=data-id>
+  <details class="form-field" data-path=data-path data-type=_type data-parent=_obj data-id=data-id>
     <summary>
-      <span data-role="_label">_label</span>
+      <span>_label</span>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" title="Очистить" data-parent=data-path data-role="button">
+        <button class="btn btn-icon-only" data-parent=data-path title="Очистить">
           <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent=data-path data-role="button">
+        <button class="btn btn-icon-only" data-parent=data-path title="Удалить">
           <i class="fa-solid fa-trash del-icon"></i>
         </button>
       </div>
@@ -423,14 +424,14 @@ data-role - по наличию этого свойства находим тэ�
 
 ###### Объект массива с заголовком (html)
 ```html
-  <div class="scene-block form-field" data-path=data-path data-type=_type data-parent="scenes" data-id=data-id>
+  <div class="scene-block form-field" data-path=data-path data-type=_type data-parent=_obj data-id=data-id>
     <div class="header-row">
-      <h3 data-role="_label">_label</h3>
+      <h3>_label</h3>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" title="Очистить" data-parent=data-path>
+        <button class="btn btn-icon-only" data-parent=data-path title="Очистить">
           <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent=data-path>
+        <button class="btn btn-icon-only" data-parent=data-path title="Удалить">
           <i class="fa-solid fa-trash del-icon"></i>
         </button>
       </div>
