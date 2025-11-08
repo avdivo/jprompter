@@ -218,20 +218,9 @@
                 <span class="param-label">path</span>
                 <span class="placeholder-hint">(путь к элементу в шаблоне)</span><br>
                 <select id="createElement_path_preset" onchange="updatePathInput()">
-                    <option value="">Выберите предустановленный путь...</option>
-                    <option value="version">version - поле только для чтения</option>
-                    <option value="title">title - текстовое поле</option>
-                    <option value="main.visual_style">main.visual_style - выпадающий список стилей</option>
-                    <option value="main.target_audience">main.target_audience - множественный выбор</option>
-                    <option value="main">main - блок с описанием</option>
-                    <option value="scenes">scenes - массив сцен</option>
-                    <option value="scenes.scene">scenes.scene - объект сцены</option>
-                    <option value="scenes.scene.main">scenes.scene.main - блок параметров сцены</option>
-                    <option value="scenes.scene.camera.shot">scenes.scene.camera.shot - размер кадра</option>
-                    <option value="scenes.scene.objects">scenes.scene.objects - массив объектов</option>
-                    <option value="scenes.scene.objects.object">scenes.scene.objects.object - объект сцены</option>
+                    <option value="">Выберите путь из шаблона...</option>
                 </select>
-                <input type="text" id="createElement_path" value="version" placeholder="Или введите путь вручную" style="margin-top: 5px;">
+                <input type="text" id="createElement_path" value="" placeholder="Или введите путь вручную" style="margin-top: 5px;">
             </div>
             <div class="form-group">
                 <span class="param-label">content</span>
@@ -242,19 +231,6 @@
                 <span class="param-label">dataId</span>
                 <span class="placeholder-hint">(идентификатор элемента, по умолчанию 1)</span><br>
                 <input type="text" id="createElement_dataId" value="1" placeholder="Идентификатор элемента">
-            </div>
-        </div>
-
-        <div class="param-group">
-            <h4>Примеры путей из шаблона:</h4>
-            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
-                <strong>version</strong> - поле только для чтения<br>
-                <strong>main.title</strong> - текстовое поле<br>
-                <strong>main.transition</strong> - выпадающий список<br>
-                <strong>features</strong> - множественный выбор<br>
-                <strong>main</strong> - блок<br>
-                <strong>scenes</strong> - массив<br>
-                <strong>scenes.scene</strong> - объект массива (для dataId=1)
             </div>
         </div>
 
@@ -338,6 +314,49 @@
             }
         }
 
+        function populatePathPresets(template) {
+            const select = document.getElementById('createElement_path_preset');
+            select.innerHTML = '<option value="">Выберите путь из шаблона...</option>'; // Очистка и добавление заголовка
+
+            const paths = new Set();
+
+            function traverse(obj, prefix) {
+                for (const key in obj) {
+                    if (key.startsWith('_')) continue;
+
+                    const newPath = prefix ? `${prefix}.${key}` : key;
+                    const value = obj[key];
+                    
+                    paths.add(newPath);
+
+                    if (value && typeof value === 'object') {
+                        if (value._type === 'array') {
+                            // Для массивов добавляем путь к самому массиву и к его элементу
+                            const singularKey = Object.keys(value).find(k => !k.startsWith('_'));
+                            if (singularKey) {
+                                const itemPath = `${newPath}.${singularKey}`;
+                                paths.add(itemPath);
+                                traverse(value[singularKey], itemPath);
+                            }
+                        } else {
+                            traverse(value, newPath);
+                        }
+                    }
+                }
+            }
+
+            traverse(template, '');
+
+            const sortedPaths = Array.from(paths).sort();
+            sortedPaths.forEach(path => {
+                const option = document.createElement('option');
+                option.value = path;
+                option.textContent = path;
+                select.appendChild(option);
+            });
+        }
+
+
         function testCreateElement() {
             const errorDiv = document.getElementById('createElement-error');
             const resultDiv = document.getElementById('createElement-result');
@@ -385,10 +404,12 @@
                         const content = e.target.result;
                         window.appData.template = JSON.parse(content);
                         displayTemplate();
+                        populatePathPresets(window.appData.template); // <--- ВЫЗОВ НОВОЙ ФУНКЦИИ
                         errorDiv.style.display = 'none';
                     } catch (error) {
                         window.appData.template = null;
                         displayTemplate();
+                        populatePathPresets({}); // Очистка списка
                         errorDiv.textContent = `Ошибка чтения или парсинга JSON файла: ${error.message}`;
                         errorDiv.style.display = 'block';
                     }
@@ -396,6 +417,7 @@
                 reader.onerror = () => {
                     window.appData.template = null;
                     displayTemplate();
+                    populatePathPresets({}); // Очистка списка
                     errorDiv.textContent = 'Не удалось прочитать файл.';
                     errorDiv.style.display = 'block';
                 };
