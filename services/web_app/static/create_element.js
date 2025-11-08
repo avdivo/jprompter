@@ -94,6 +94,18 @@ function prepareElementData(element, path, content, dataId) {
         }
     }
 
+    // Для объектов, если они являются частью массива, находим путь к родительскому массиву
+    if (element._type === 'object') {
+        const pathParts = path.split('.');
+        if (pathParts.length > 1) {
+            const parentPath = pathParts.slice(0, -1).join('.');
+            const parentElement = getElementByPath(window.appData.template, parentPath);
+            if (parentElement && parentElement._type === 'array') {
+                data._obj = parentPath;
+            }
+        }
+    }
+
     return data;
 }
 
