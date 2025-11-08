@@ -74,7 +74,6 @@ function prepareElementData(element, path, content, dataId) {
     if (element._label) data._label = element._label;
     if (element._default !== undefined) data._default = element._default;
     if (element._options) data._options = element._options;
-    if (element._obj) data._obj = element._obj;
 
     // Для блоков, массивов и объектов устанавливаем _label из _spoiler или _title
     if (element._type === 'box' || element._type === 'array' || element._type === 'object') {
@@ -84,6 +83,14 @@ function prepareElementData(element, path, content, dataId) {
             data._label = element._title;
         } else {
             data._label = '';
+        }
+    }
+
+    // Для массивов, находим имя шаблона объекта
+    if (element._type === 'array') {
+        const objectTemplateKey = Object.keys(element).find(key => !key.startsWith('_'));
+        if (objectTemplateKey) {
+            data._obj = objectTemplateKey;
         }
     }
 
