@@ -203,20 +203,19 @@
 
     <!-- Тестирование функции createElement -->
     <div class="template-section">
-        <h2>Функция createElement(path, content, dataId)</h2>
+        <h2>Функция createElement(path, content)</h2>
 
         <div class="param-group">
             <h4>Параметры функции:</h4>
             <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
-                <strong>createElement(path, content, dataId)</strong><br>
-                - <strong>path</strong> (string): Путь к элементу в шаблоне (например, 'main.title')<br>
-                - <strong>content</strong> (string): Контент для вставки в элемент (если требуется)<br>
-                - <strong>dataId</strong> (string|number): Идентификатор элемента (по умолчанию 1)
+                <strong>createElement(path, content)</strong><br>
+                - <strong>path</strong> (string): Путь к элементу в форме (например, 'scenes.scene_1')<br>
+                - <strong>content</strong> (string): Контент для вставки в элемент (если требуется)
             </div>
 
             <div class="form-group">
                 <span class="param-label">path</span>
-                <span class="placeholder-hint">(путь к элементу в шаблоне)</span><br>
+                <span class="placeholder-hint">(путь к элементу в форме)</span><br>
                 <select id="createElement_path_preset" onchange="updatePathInput()">
                     <option value="">Выберите путь из шаблона...</option>
                 </select>
@@ -226,11 +225,6 @@
                 <span class="param-label">content</span>
                 <span class="placeholder-hint">(HTML контент для вставки в элемент)</span><br>
                 <textarea id="createElement_content" placeholder="HTML контент..."></textarea>
-            </div>
-            <div class="form-group">
-                <span class="param-label">dataId</span>
-                <span class="placeholder-hint">(идентификатор элемента, по умолчанию 1)</span><br>
-                <input type="text" id="createElement_dataId" value="1" placeholder="Идентификатор элемента">
             </div>
         </div>
 
@@ -336,6 +330,8 @@
                             if (singularKey) {
                                 const itemPath = `${newPath}.${singularKey}`;
                                 paths.add(itemPath);
+                                // Добавляем пример пути с индексом
+                                paths.add(`${itemPath}_1`);
                                 traverse(value[singularKey], itemPath);
                             }
                         } else {
@@ -370,10 +366,9 @@
 
             const path = document.getElementById('createElement_path').value.trim();
             const content = document.getElementById('createElement_content').value;
-            const dataId = document.getElementById('createElement_dataId').value;
 
             try {
-                const result = createElement(path, content, dataId);
+                const result = createElement(path, content);
                 resultDiv.innerHTML = result;
                 errorDiv.style.display = 'none';
 

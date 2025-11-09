@@ -1,8 +1,8 @@
 /**
  * Функция для создания HTML-элемента на основе пути в шаблоне
- * @param {string} path - Путь к элементу в шаблоне (например, 'main.title')
+ * @param {string} path - Путь к элементу в форме (например, 'scenes_1.title')
  * @param {string} content - Контент для вставки в элемент (если требуется)
- * @param {string|number} dataId - Идентификатор элемента (по умолчанию 1)
+ * @param {string|number} dataId - Идентификатор элемента по умолчанию (если не найден в пути)
  * @returns {string} Отформатированный HTML код элемента
  */
 function createElement(path, content = '', dataId = 1) {
@@ -12,7 +12,7 @@ function createElement(path, content = '', dataId = 1) {
         throw new Error('Шаблон не найден в appData');
     }
 
-    // Получаем элемент по пути
+    // Получаем элемент по пути, очищенному от индексов
     const element = getElementByPath(template, path);
     if (!element) {
         throw new Error(`Элемент по пути '${path}' не найден в шаблоне`);
@@ -24,7 +24,7 @@ function createElement(path, content = '', dataId = 1) {
         throw new Error(`Тип элемента не определен для пути '${path}'`);
     }
 
-    // Подготавливаем данные для рендеринга
+    // Подготавливаем данные для рендеринга, используя полный путь из формы
     const data = prepareElementData(element, path, content, dataId);
 
     // Определяем имя шаблона на основе типа
@@ -35,16 +35,16 @@ function createElement(path, content = '', dataId = 1) {
 }
 
 /**
- * Получает элемент из шаблона по пути
+ * Получает элемент из шаблона по пути из формы (очищая индексы _N)
  * @param {object} template - Шаблон
- * @param {string} path - Путь (например, 'main.title')
+ * @param {string} formPath - Путь из формы (например, 'scenes_1.title')
  * @returns {object|null} Найденный элемент или null
  */
-function getElementByPath(template, path) {
-    const keys = path.split('.');
+function getElementByPath(template, formPath) {
+    const templateKeys = formPath.split('.').map(key => key.replace(/_\d+$/, ''));
     let current = template;
 
-    for (const key of keys) {
+    for (const key of templateKeys) {
         if (current && typeof current === 'object' && key in current) {
             current = current[key];
         } else {
@@ -58,16 +58,31 @@ function getElementByPath(template, path) {
 /**
  * Подготавливает данные для рендеринга элемента
  * @param {object} element - Элемент из шаблона
- * @param {string} path - Путь к элементу
+ * @param {string} formPath - Полный путь к элементу в форме
  * @param {string} content - Контент
- * @param {string|number} dataId - Идентификатор
+ * @param {string|number} defaultDataId - Идентификатор по умолчанию
  * @returns {object} Данные для renderTemplate
  */
-function prepareElementData(element, path, content, dataId) {
+function prepareElementData(element, formPath, content, defaultDataId) {
+    let finalDataId = defaultDataId;
+    let basePath = formPath; // По умолчанию используем полный путь
+    const match = formPath.match(/_(\d+)$/);
+
+    if (match) {
+        finalDataId = parseInt(match[1], 10);
+        // Если создается сам объект массива, его data-path должен быть базовым,
+        // так как renderTemplate добавит к нему индекс.
+        if (element._type === 'object') {
+            basePath = formPath.substring(0, match.index);
+        }
+    } else {
+        finalDataId = 1; // Если суффикс _N отсутствует, ID равен 1
+    }
+
     const data = {
-        'data-path': path,
+        'data-path': basePath, // Используем basePath, который был условно изменен
         content: content,
-        'data-id': dataId
+        'data-id': finalDataId
     };
 
     // Копируем свойства из элемента
@@ -96,12 +111,12 @@ function prepareElementData(element, path, content, dataId) {
 
     // Для объектов, если они являются частью массива, находим путь к родительскому массиву
     if (element._type === 'object') {
-        const pathParts = path.split('.');
+        const pathParts = formPath.split('.');
         if (pathParts.length > 1) {
             const parentPath = pathParts.slice(0, -1).join('.');
             const parentElement = getElementByPath(window.appData.template, parentPath);
             if (parentElement && parentElement._type === 'array') {
-                data._obj = parentPath;
+                data._obj = parentPath; // `_obj` здесь используется для `data-parent`
             }
         }
     }
