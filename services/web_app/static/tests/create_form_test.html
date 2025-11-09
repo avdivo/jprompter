@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование функции createForm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .template-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .template-section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-content pre {
+            flex-grow: 1;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 0;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            align-self: flex-end;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .copy-btn {
+            background-color: #28a745;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+
+        .param-group {
+            background-color: #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .param-group h4 {
+            margin: 0 0 8px 0;
+            color: #495057;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .param-label {
+            font-weight: bold;
+            color: #007bff;
+            margin-right: 8px;
+        }
+
+        .placeholder-hint {
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .template-display {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .template-display h3 {
+            margin-top: 0;
+            color: #495057;
+            font-size: 16px;
+        }
+
+        .template-json {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            max-height: 600px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .json-key {
+            color: #007bff;
+        }
+
+        .json-string {
+            color: #28a745;
+        }
+
+        .json-number {
+            color: #fd7e14;
+        }
+
+        .json-boolean {
+            color: #6f42c1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тестирование функции createForm</h1>
+
+    <!-- Тестирование функции createForm -->
+    <div class="template-section">
+        <h2>Функция createForm(path)</h2>
+
+        <div class="param-group">
+            <h4>Параметры функции:</h4>
+            <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                <strong>createForm(path)</strong><br>
+                - <strong>path</strong> (string): Путь к элементу для построения. Если оставить пустым, будет построена вся форма.
+            </div>
+
+            <div class="form-group">
+                <span class="param-label">path</span>
+                <span class="placeholder-hint">(путь к элементу в шаблоне)</span><br>
+                <select id="createForm_path_preset" onchange="updateFormPathInput()">
+                    <option value="">-- Полная форма (пустой путь) --</option>
+                </select>
+                <input type="text" id="createForm_path" value="" placeholder="Оставьте пустым для полной формы или введите путь" style="margin-top: 5px;">
+            </div>
+        </div>
+
+        <button onclick="testCreateForm()">Вызвать createForm</button>
+        <div class="result" id="createForm-result"></div>
+        <div class="error" id="createForm-error" style="display: none;"></div>
+    </div>
+
+    <!-- Отображение шаблона -->
+    <div class="template-section">
+        <h2>Текущий шаблон (appData.template)</h2>
+        <div class="form-group">
+            <label for="template-loader">Загрузить шаблон из файла:</label>
+            <input type="file" id="template-loader" accept=".json">
+            <p style="font-size: 12px; color: #666;">Выберите файл <code>template-video-1.0.json</code> для начала работы.</p>
+        </div>
+        <div class="template-display">
+            <h3>JSON шаблон для тестирования:</h3>
+            <div class="template-json" id="template-display" style="max-height: 800px; overflow-y: auto;">
+                <p>Шаблон не загружен. Выберите файл выше.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для результатов -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Результат</h2>
+            <pre id="modalResult"></pre>
+            <div style="margin-top: 15px; text-align: right;">
+                <button class="copy-btn" onclick="copyToClipboard()">Копировать</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../templates.js"></script>
+    <script src="../create_element.js"></script>
+    <script src="../create_form.js"></script>
+    <script>
+        // Глобальное состояние
+        window.appData = {
+            template: null
+        };
+
+        function updateFormPathInput() {
+            const presetSelect = document.getElementById('createForm_path_preset');
+            const pathInput = document.getElementById('createForm_path');
+            pathInput.value = presetSelect.value;
+        }
+
+        function syntaxHighlight(json) {
+            if (typeof json !== 'string') {
+                json = JSON.stringify(json, null, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-boolean';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        function displayTemplate() {
+            const templateDisplay = document.getElementById('template-display');
+            if (window.appData.template) {
+                templateDisplay.innerHTML = syntaxHighlight(window.appData.template);
+            } else {
+                templateDisplay.innerHTML = '<p>Шаблон не загружен. Выберите файл выше.</p>';
+            }
+        }
+
+        function populatePathPresets(template) {
+            const select = document.getElementById('createForm_path_preset');
+            select.innerHTML = '<option value="">-- Полная форма (пустой путь) --</option>'; // Очистка и добавление заголовка
+
+            const paths = new Set();
+
+            function traverse(obj, prefix) {
+                for (const key in obj) {
+                    if (key.startsWith('_')) continue;
+
+                    const newPath = prefix ? `${prefix}.${key}` : key;
+                    const value = obj[key];
+                    
+                    paths.add(newPath);
+
+                    if (value && typeof value === 'object' && !Array.isArray(value)) {
+                         if (value._type === 'array') {
+                            const singularKey = Object.keys(value).find(k => !k.startsWith('_'));
+                            if (singularKey) {
+                                const itemPath = `${newPath}.${singularKey}`;
+                                // Добавляем путь к объекту-шаблону внутри массива
+                                paths.add(itemPath);
+                                // Добавляем пример пути с индексом
+                                paths.add(`${itemPath}_1`);
+                                // Рекурсивно обходим сам объект
+                                traverse(value[singularKey], `${itemPath}_1`);
+                            }
+                        } else {
+                            traverse(value, newPath);
+                        }
+                    }
+                }
+            }
+
+            traverse(template, '');
+
+            const sortedPaths = Array.from(paths).sort();
+            sortedPaths.forEach(path => {
+                const option = document.createElement('option');
+                option.value = path;
+                option.textContent = path;
+                select.appendChild(option);
+            });
+        }
+
+
+        function testCreateForm() {
+            const errorDiv = document.getElementById('createForm-error');
+            const resultDiv = document.getElementById('createForm-result');
+            
+            if (!window.appData.template) {
+                errorDiv.textContent = 'Ошибка: Шаблон не загружен. Пожалуйста, выберите файл шаблона.';
+                errorDiv.style.display = 'block';
+                resultDiv.innerHTML = '';
+                return;
+            }
+
+            const path = document.getElementById('createForm_path').value.trim();
+
+            try {
+                // Очищаем предыдущие результаты
+                resultDiv.innerHTML = '';
+                errorDiv.style.display = 'none';
+
+                console.log(`Вызов createForm с путем: "${path}"`);
+                const result = createForm(path); // Предполагается, что createForm определена в create_form.js
+                
+                // Для отладки выводим результат в консоль
+                console.log("Результат получен, отображаем в модальном окне.");
+
+                document.getElementById('modalResult').textContent = result;
+                document.getElementById('resultModal').style.display = 'block';
+
+            } catch (error) {
+                console.error("Ошибка при вызове createForm:", error);
+                errorDiv.textContent = `Ошибка: ${error.message}\n${error.stack}`;
+                errorDiv.style.display = 'block';
+                resultDiv.innerHTML = '';
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const templateLoader = document.getElementById('template-loader');
+            const errorDiv = document.getElementById('createForm-error');
+
+            templateLoader.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const content = e.target.result;
+                        window.appData.template = JSON.parse(content);
+                        displayTemplate();
+                        populatePathPresets(window.appData.template);
+                        errorDiv.style.display = 'none';
+                    } catch (error) {
+                        window.appData.template = null;
+                        displayTemplate();
+                        populatePathPresets({}); // Очистка списка
+                        errorDiv.textContent = `Ошибка чтения или парсинга JSON файла: ${error.message}`;
+                        errorDiv.style.display = 'block';
+                    }
+                };
+                reader.onerror = () => {
+                    window.appData.template = null;
+                    displayTemplate();
+                    populatePathPresets({}); // Очистка списка
+                    errorDiv.textContent = 'Не удалось прочитать файл.';
+                    errorDiv.style.display = 'block';
+                };
+                reader.readAsText(file);
+            });
+
+            // Начальное отображение
+            displayTemplate();
+            updateFormPathInput();
+        });
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('modalResult').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Скопировано в буфер обмена!');
+            }, (err) => {
+                alert('Не удалось скопировать текст.');
+                console.error('Ошибка копирования: ', err);
+            });
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('resultModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
