@@ -423,7 +423,7 @@
         },
         "text_style": {
           "_type": "box",
-          "_title": "Стиль текста",
+          "_spoiler": "Стиль текста",
           "font": {
             "_type": "text",
             "_label": "Название шрифта",
