@@ -989,7 +989,7 @@
                         // Функция для обновления ID в строке
                         function updateIdInString(str, oldId, newId) {
                             // Заменяем _старыйID на _новыйID в конце строки
-                            return str.replace(new RegExp('_' + oldId + '), '_' + newId);
+                            return str.replace(new RegExp('_' + oldId + '$'), '_' + newId);
                         }
         
                         // Обновляем id и name для всех полей внутри нового элемента
