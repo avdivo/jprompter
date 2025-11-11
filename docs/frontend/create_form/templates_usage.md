@@ -173,14 +173,14 @@ const html = renderTemplate('arrayTitle', data);
 
 **Результат:**
 ```html
-<div class="scene-block form-field" data-path="scenes" id="scenes" data-type="array">
+<div class="scene-block form-field" data-path="scenes" id=1 data-type="array">
     <div class="header-row">
         <h3>Сцены</h3>
         <div class="header-buttons">
-            <button class="btn btn-icon-only" data-parent="scenes" data-target="scene" title="Очистить">
+            <button class="btn btn-icon-only" data-action="clear-items" data-target="scene" title="Очистить">
                 <i class="fa-solid fa-broom add-icon"></i>
             </button>
-            <button class="btn btn-icon-only add-item-btn" data-parent="scenes" data-target="scene" title="Добавить">
+            <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="scene" title="Добавить">
                 <i class="fa-solid fa-plus add-btn-icon"></i>
             </button>
         </div>
@@ -222,11 +222,8 @@ const html = renderTemplate('objectTitle', data);
     <div class="header-row">
         <h3>Сцена 1</h3>
         <div class="header-buttons">
-            <button class="btn btn-icon-only" data-parent="scenes_1" title="Очистить">
-                <i class="fa-solid fa-broom add-icon"></i>
-            </button>
-            <button class="btn btn-icon-only" data-parent="scenes_1" title="Удалить">
-                <i class="fa-solid fa-trash del-icon"></i>
+            <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
             </button>
         </div>
     </div>

@@ -8,6 +8,7 @@
     <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/menu.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="../static/start.js"></script>
     <script src="../static/templates.js"></script>
@@ -101,6 +102,17 @@
             <input type="file" id="media-upload" accept="image/*,video/*" multiple style="display: none;">
             <div id="media-container" class="media-container"></div>
         </div>
+
+        <div id="context-menu" class="context-menu" style="display: none;">
+            <ul>
+                <li><button data-action="add" class="color-green"><i class="fa-solid fa-plus"></i> Добавить</button></li>
+                <li><button data-action="clone" class="color-blue"><i class="fa-solid fa-clone"></i> Клонировать</button></li>
+                <li><button data-action="move-up" class="color-orange"><i class="fa-solid fa-arrow-up"></i> Выше</button></li>
+                <li><button data-action="move-down" class="color-orange"><i class="fa-solid fa-arrow-down"></i> Ниже</button></li>
+                <li><button data-action="clear" class="color-yellow"><i class="fa-solid fa-eraser"></i> Очистить</button></li>
+                <li><button data-action="delete" class="color-red"><i class="fa-solid fa-trash-can"></i> Удалить</button></li>
+            </ul>
+        </div>
     </div>
 </main>
 
@@ -160,6 +172,7 @@
         });
     });
 </script>
+<script src="../static/form.js"></script>
 
 </body>
 </html>

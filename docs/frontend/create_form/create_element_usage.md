@@ -102,14 +102,16 @@ const html = createElement('scenes', objectContent);
 ```
 
 **Результат:**
-Будет вызван `renderTemplate('arraySpoiler', ...)` и сгенерирован HTML-спойлер "Сцены" с кнопками "Добавить" и "Очистить". В `data-target` у кнопок будет `scene` (имя ключа объекта из шаблона).
+Будет вызван `renderTemplate('arraySpoiler', ...)` и сгенерирован HTML-спойлер "Сцены" с кнопками "Добавить" и "Очистить". В `data-target` у кнопок будет `scene` (имя ключа объекта из шаблона). В `data-action` метка действия.
 ```html
 <details class="form-field" data-path="scenes" id="scenes" data-type="array">
     <summary>
       Сцены
       <div class="header-buttons">
-        <button ... data-target="scene" title="Добавить">...</button>
-      </div>  
+        <button ... data-action="clear-items" data-target="scene" title="Очистить">...</button>
+        </div>        
+        <button ... data-action="add-item" data-target="scene" title="Добавить">...</button>
+        </div>
     </summary>
     <div id="scene" class="content">
         <!-- Содержимое переменной objectContent -->

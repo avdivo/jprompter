@@ -328,7 +328,9 @@
 Массивы могут иметь 2 вида отображения:
 - Массив со спойлером (_spoiler)
 - Массив с заголовком (_title)
-- _obj - указывает на первый объект в шаблоне, и на контейнер объектов в форме (в примере "scene"). В выходном объекте отсутствует
+- _obj - указывает на первый объект в шаблоне, и на контейнер объектов в форме (в примере "scene"). В выходном объекте отсутствует.
+- кнопки массивов и их объектов сами определяют родителя по первому (вверх по иерархии) элементу со свойством data-path.
+- свойство data-action в кнопках содержит метку действия кнопки, чтобы скрипт, событие которого привязано к контейнеру формы мог распознать нажатую кнопку.
 
 #### Шаблон массива (json)
 ```json
@@ -349,10 +351,10 @@
     <summary>
       _label
       <div class="header-buttons">
-        <button class="btn btn-icon-only" data-parent=data-path data-target=_obj title="Очистить">
+        <button class="btn btn-icon-only" data-action="clear-items" data-target="{{_obj}}" title="Очистить">
             <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only add-item-btn" data-parent=data-path data-target=_obj title="Добавить">
+        <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="{{_obj}}" title="Добавить">
             <i class="fa-solid fa-plus add-btn-icon"></i>
         </button>
       </div>  
@@ -369,10 +371,10 @@
     <div class="header-row">
       <h3>_label</h3>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" data-parent=data-path data-target=_obj title="Очистить">
+        <button class="btn btn-icon-only" data-action="clear-items" data-target="{{_obj}}" title="Очистить">
             <i class="fa-solid fa-broom add-icon"></i>
         </button>
-        <button class="btn btn-icon-only add-item-btn" data-parent=data-path data-target=_obj title="Добавить">
+        <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="{{_obj}}" title="Добавить">
             <i class="fa-solid fa-plus add-btn-icon"></i>
         </button>
       </div>
@@ -390,7 +392,7 @@
 data-id - свойство в первом теге объекта (оберточном) указывает номер объекта массива, от 1.
 data-path - в объекте массива получается из пути к шаблону объекта в шаблоне и порядкового номера объекта в dom дереве: data-path + "_" + data-id
 То же и с _label. _label + " " + data-id
-data-parent в первом теге объекта (оберточном) указывает путь к массиву-родителю, в кнопках - путь к первому тэгу.
+data-parent в первом теге объекта (оберточном) указывает путь к контейнеру-родителю, в шаблоне указывает на объект.
 
 
 ```json
@@ -408,11 +410,8 @@ data-parent в первом теге объекта (оберточном) ук�
     <summary>
       <span>_label</span>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" data-parent=data-path title="Очистить">
-          <i class="fa-solid fa-broom add-icon"></i>
-        </button>
-        <button class="btn btn-icon-only" data-parent=data-path title="Удалить">
-          <i class="fa-solid fa-trash del-icon"></i>
+        <button class="btn btn-icon-only context-menu-btn" title="Действия">
+            <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
         </button>
       </div>
     </summary>
@@ -428,11 +427,8 @@ data-parent в первом теге объекта (оберточном) ук�
     <div class="header-row">
       <h3>_label</h3>
       <div class="header-buttons">
-        <button class="btn btn-icon-only" data-parent=data-path title="Очистить">
-          <i class="fa-solid fa-broom add-icon"></i>
-        </button>
-        <button class="btn btn-icon-only" data-parent=data-path title="Удалить">
-          <i class="fa-solid fa-trash del-icon"></i>
+        <button class="btn btn-icon-only context-menu-btn" title="Действия">
+            <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
         </button>
       </div>
     </div>

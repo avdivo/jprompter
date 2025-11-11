@@ -150,10 +150,10 @@ const formTemplates = {
             <summary>
                 {{_label}}
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="{{data-path}}" data-target="{{_obj}}" title="Очистить">
+                    <button class="btn btn-icon-only" data-action="clear-items" data-target="{{_obj}}" title="Очистить">
                         <i class="fa-solid fa-broom add-icon"></i>
                     </button>
-                    <button class="btn btn-icon-only add-item-btn" data-parent="{{data-path}}" data-target="{{_obj}}" title="Добавить">
+                    <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="{{_obj}}" title="Добавить">
                         <i class="fa-solid fa-plus add-btn-icon"></i>
                     </button>
                 </div>
@@ -170,10 +170,10 @@ const formTemplates = {
             <div class="header-row">
                 <h3>{{_label}}</h3>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="{{data-path}}" data-target="{{_obj}}" title="Очистить">
+                    <button class="btn btn-icon-only" data-action="clear-items" data-target="{{_obj}}" title="Очистить">
                         <i class="fa-solid fa-broom add-icon"></i>
                     </button>
-                    <button class="btn btn-icon-only add-item-btn" data-parent="{{data-path}}" data-target="{{_obj}}" title="Добавить">
+                    <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="{{_obj}}" title="Добавить">
                         <i class="fa-solid fa-plus add-btn-icon"></i>
                     </button>
                 </div>
@@ -190,11 +190,8 @@ const formTemplates = {
             <summary>
                 <span>{{_label}} {{data-id}}</span>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="{{data-path}}_{{data-id}}" title="Очистить">
-                        <i class="fa-solid fa-broom add-icon"></i>
-                    </button>
-                    <button class="btn btn-icon-only" data-parent="{{data-path}}_{{data-id}}" title="Удалить">
-                        <i class="fa-solid fa-trash del-icon"></i>
+                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                     </button>
                 </div>
             </summary>
@@ -210,11 +207,8 @@ const formTemplates = {
             <div class="header-row">
                 <h3>{{_label}} {{data-id}}</h3>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="{{data-path}}_{{data-id}}" title="Очистить">
-                        <i class="fa-solid fa-broom add-icon"></i>
-                    </button>
-                    <button class="btn btn-icon-only" data-parent="{{data-path}}_{{data-id}}" title="Удалить">
-                        <i class="fa-solid fa-trash del-icon"></i>
+                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                     </button>
                 </div>
             </div>
