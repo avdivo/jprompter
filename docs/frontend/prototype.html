@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Прототип редактора промптов</title>
     <!-- Подключаем иконки Font Awesome -->
-    <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         /* CSS-переменные для цветов и размеров */
@@ -526,6 +525,66 @@
         }
     </style>
     
+    <!-- 
+    ============================================================
+    СТИЛИ ДЛЯ КОНТЕКСТНОГО МЕНЮ
+    ============================================================
+    -->
+    <style>
+        /* Контейнер контекстного меню */
+        .context-menu {
+            position: absolute; /* Позиционируется относительно ближайшего родителя с position: relative/absolute/fixed */
+            z-index: 1000;
+            width: 200px;
+            background-color: #3e3e3e;
+            border: 1px solid #555;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        /* Убираем стандартные стили списка */
+        .context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Стили для кнопок внутри меню */
+        .context-menu button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            text-align: left;
+            cursor: pointer;
+            font-size: inherit;
+        }
+
+        /* Эффект при наведении на кнопку в меню */
+        .context-menu button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Стили для иконок в меню */
+        .context-menu button i {
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Цветовые классы для ИКОНОК внутри кнопок меню */
+        .color-green i { color: #2ecc71; }
+        .color-blue i { color: #3498db; }
+        .color-orange i { color: #f39c12; }
+        .color-yellow i { color: #f1c40f; }
+        .color-red i { color: #e74c3c; }
+    </style>
+
     <!-- Элемент для уведомления -->
     <div id="notification" class="notification">Скопировано</div>
 
@@ -594,7 +653,12 @@
     </header>
 
     <main class="content-wrapper">
-        <div class="form-container">
+        <!-- 
+        ============================================================
+        КОНТЕЙНЕР ФОРМЫ С ID ДЛЯ ПЕРЕХВАТА СОБЫТИЙ
+        ============================================================
+        -->
+        <div class="form-container" id="form-event-container">
             <!-- Форма "Формат" -->
             <div id="form-view-format" class="form-view active">
                 <h2>Форма редактирования промпта</h2>
@@ -651,10 +715,10 @@
                         <span class="summary-label">Сцены</span>
                         <div class="header-buttons">
                             <button class="btn btn-icon-only" title="Очистить" data-parent="scenes">
-                                <i class="fa-solid fa-broom add-icon"></i>
+                                <i class="fa-solid fa-broom add-icon fa-fw"></i>
                             </button>
                             <button class="btn btn-icon-only add-item-btn" data-target="objects" title="Добавить" data-parent="scenes">
-                                <i class="fa-solid fa-plus add-btn-icon"></i>
+                                <i class="fa-solid fa-plus add-btn-icon fa-fw"></i>
                             </button>
                         </div>
                     </summary>
@@ -663,11 +727,13 @@
                         <div class="header-row">
                         <h3>Сцена 1</h3>
                         <div class="header-buttons">
-                            <button class="btn btn-icon-only" title="Очистить" data-parent="scenes.scene_1">
-                            <i class="fa-solid fa-broom add-icon"></i>
-                            </button>
-                            <button class="btn btn-icon-only" data-target="objects" title="Удалить" data-parent="scenes.scene_1">
-                                <i class="fa-solid fa-trash del-icon"></i>
+                            <!-- 
+                            ============================================================
+                            КНОПКА ВЫЗОВА КОНТЕКСТНОГО МЕНЮ
+                            ============================================================
+                            -->
+                            <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                                <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                             </button>
                         </div>
                         </div>
@@ -702,254 +768,368 @@
                     <textarea id="prompt-full-text" class="form-control" placeholder="Сюда можно вставить промпт в любом формате. И сохранить как есть или нажать кнопку &quot;Форматировать&quot;, чтобы перенести его в поля режима &quot;Формат&quot;."></textarea>
                 </div>
             </div>
-        </div>
-    </main>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- Логика для переключателей ---
-            const segmentedControls = document.querySelectorAll('[data-segmented-control]');
+                    <!-- 
+                    ============================================================
+                    HTML-СТРУКТУРА КОНТЕКСТНОГО МЕНЮ
+                    Изначально скрыта с помощью style="display: none;"
+                    ============================================================
+                    -->
+                    <div id="context-menu" class="context-menu" style="display: none;">
+                        <ul>
+                            <li><button data-action="add" class="color-green"><i class="fa-solid fa-plus"></i> Добавить</button></li>
+                            <li><button data-action="clone" class="color-blue"><i class="fa-solid fa-clone"></i> Клонировать</button></li>
+                            <li><button data-action="move-up" class="color-orange"><i class="fa-solid fa-arrow-up"></i> Выше</button></li>
+                            <li><button data-action="move-down" class="color-orange"><i class="fa-solid fa-arrow-down"></i> Ниже</button></li>
+                            <li><button data-action="clear" class="color-yellow"><i class="fa-solid fa-eraser"></i> Очистить</button></li>
+                            <li><button data-action="delete" class="color-red"><i class="fa-solid fa-trash-can"></i> Удалить</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </main>
             
-            // --- Функции для управления спойлерами ---
-            function collapseAllSpoilers() {
-                const allDetails = document.querySelectorAll('details');
-                allDetails.forEach(detail => {
-                    detail.removeAttribute('open');
-                });
-            }
-            
-            function expandAllSpoilers() {
-                const allDetails = document.querySelectorAll('details');
-                allDetails.forEach(detail => {
-                    detail.setAttribute('open', '');
-                });
-            }
-            
-            // --- Переменная для отслеживания состояния спойлеров ---
-            let spoilersExpanded = true;
-            
-            // --- Обработчик для кнопки "Показать/скрыть спойлеры" ---
-            const spoilerToggleBtn = document.getElementById('spoiler-toggle-btn');
-            if (spoilerToggleBtn) {
-                spoilerToggleBtn.addEventListener('click', function() {
-                    if (spoilersExpanded) {
-                        collapseAllSpoilers();
-                        this.title = 'Развернуть все спойлеры';
-                        this.querySelector('i').className = 'fa-solid fa-expand icon'; // Иконка развертывания
-                    } else {
-                        expandAllSpoilers();
-                        this.title = 'Свернуть все спойлеры';
-                        this.querySelector('i').className = 'fa-solid fa-compress icon'; // Иконка свертывания
-                    }
-                    spoilersExpanded = !spoilersExpanded;
-                });
-            }
-            
-            // --- Вспомогательная функция для обновления UI при переключении вида ---
-            function updateUIForView(isFormatView) {
-                const transformBtn = document.getElementById('transform-btn');
-                const spoilerBtn = document.getElementById('spoiler-toggle-btn');
-                const formatSelector = document.getElementById('format-selector');
-
-                if (isFormatView) {
-                    // Режим "Формат"
-                    transformBtn.title = 'Переделать в текст';
-                    transformBtn.querySelector('i').className = 'fa-solid fa-file-alt icon'; // Иконка файла
-                    spoilerBtn.disabled = false; // Активируем кнопку спойлеров
-                    formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
-                        btn.disabled = false; // Активируем кнопки форматов
-                    });
-                } else {
-                    // Режим "Текст"
-                    transformBtn.title = 'Форматировать';
-                    transformBtn.querySelector('i').className = 'fa-solid fa-list icon'; // Иконка списка
-                    spoilerBtn.disabled = true; // Деактивируем кнопку спойлеров
-                    formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
-                        btn.disabled = true; // Деактивируем кнопки форматов
-                    });
-                }
-            }
-
-            segmentedControls.forEach(control => {
-                // Специальная логика для переключателя вида "Формат/Текст"
-                if (control.id === 'view-switcher') {
-                    control.addEventListener('click', function(event) {
-                        const targetButton = event.target.closest('.segmented-control-btn');
-                        if (!targetButton || targetButton.classList.contains('active')) return;
-
-                        // Управление активным состоянием кнопки
-                        control.querySelectorAll('.segmented-control-btn').forEach(btn => btn.classList.remove('active'));
-                        targetButton.classList.add('active');
-
-                        // Переключение видимости форм
-                        const viewToShow = targetButton.dataset.view;
-                        document.querySelectorAll('.form-view').forEach(view => {
-                            view.classList.remove('active');
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // --- Логика для переключателей ---
+                    const segmentedControls = document.querySelectorAll('[data-segmented-control]');
+                    
+                    // --- Функции для управления спойлерами ---
+                    function collapseAllSpoilers() {
+                        const allDetails = document.querySelectorAll('details');
+                        allDetails.forEach(detail => {
+                            detail.removeAttribute('open');
                         });
-                        document.getElementById(`form-view-${viewToShow}`).classList.add('active');
-
-                        // Обновляем UI в зависимости от выбранного вида
-                        updateUIForView(viewToShow === 'format');
+                    }
+                    
+                    function expandAllSpoilers() {
+                        const allDetails = document.querySelectorAll('details');
+                        allDetails.forEach(detail => {
+                            detail.setAttribute('open', '');
+                        });
+                    }
+                    
+                    // --- Переменная для отслеживания состояния спойлеров ---
+                    let spoilersExpanded = true;
+                    
+                    // --- Обработчик для кнопки "Показать/скрыть спойлеры" ---
+                    const spoilerToggleBtn = document.getElementById('spoiler-toggle-btn');
+                    if (spoilerToggleBtn) {
+                        spoilerToggleBtn.addEventListener('click', function() {
+                            if (spoilersExpanded) {
+                                collapseAllSpoilers();
+                                this.title = 'Развернуть все спойлеры';
+                                this.querySelector('i').className = 'fa-solid fa-expand icon'; // Иконка развертывания
+                            } else {
+                                expandAllSpoilers();
+                                this.title = 'Свернуть все спойлеры';
+                                this.querySelector('i').className = 'fa-solid fa-compress icon'; // Иконка свертывания
+                            }
+                            spoilersExpanded = !spoilersExpanded;
+                        });
+                    }
+                    
+                    // --- Вспомогательная функция для обновления UI при переключении вида ---
+                    function updateUIForView(isFormatView) {
+                        const transformBtn = document.getElementById('transform-btn');
+                        const spoilerBtn = document.getElementById('spoiler-toggle-btn');
+                        const formatSelector = document.getElementById('format-selector');
+        
+                        if (isFormatView) {
+                            // Режим "Формат"
+                            transformBtn.title = 'Переделать в текст';
+                            transformBtn.querySelector('i').className = 'fa-solid fa-file-alt icon'; // Иконка файла
+                            spoilerBtn.disabled = false; // Активируем кнопку спойлеров
+                            formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
+                                btn.disabled = false; // Активируем кнопки форматов
+                            });
+                        } else {
+                            // Режим "Текст"
+                            transformBtn.title = 'Форматировать';
+                            transformBtn.querySelector('i').className = 'fa-solid fa-list icon'; // Иконка списка
+                            spoilerBtn.disabled = true; // Деактивируем кнопку спойлеров
+                            formatSelector.querySelectorAll('.segmented-control-btn').forEach(btn => {
+                                btn.disabled = true; // Деактивируем кнопки форматов
+                            });
+                        }
+                    }
+        
+                    segmentedControls.forEach(control => {
+                        // Специальная логика для переключателя вида "Формат/Текст"
+                        if (control.id === 'view-switcher') {
+                            control.addEventListener('click', function(event) {
+                                const targetButton = event.target.closest('.segmented-control-btn');
+                                if (!targetButton || targetButton.classList.contains('active')) return;
+        
+                                // Управление активным состоянием кнопки
+                                control.querySelectorAll('.segmented-control-btn').forEach(btn => btn.classList.remove('active'));
+                                targetButton.classList.add('active');
+        
+                                // Переключение видимости форм
+                                const viewToShow = targetButton.dataset.view;
+                                document.querySelectorAll('.form-view').forEach(view => {
+                                    view.classList.remove('active');
+                                });
+                                document.getElementById(`form-view-${viewToShow}`).classList.add('active');
+        
+                                // Обновляем UI в зависимости от выбранного вида
+                                updateUIForView(viewToShow === 'format');
+                            });
+                        } else {
+                            // Общая логика для всех остальных переключателей
+                            control.addEventListener('click', function(event) {
+                                const targetButton = event.target.closest('.segmented-control-btn');
+                                if (!targetButton || targetButton.classList.contains('active')) return;
+        
+                                control.querySelectorAll('.segmented-control-btn').forEach(btn => btn.classList.remove('active'));
+                                targetButton.classList.add('active');
+                            });
+                        }
                     });
-                } else {
-                    // Общая логика для всех остальных переключателей
-                    control.addEventListener('click', function(event) {
-                        const targetButton = event.target.closest('.segmented-control-btn');
-                        if (!targetButton || targetButton.classList.contains('active')) return;
-
-                        control.querySelectorAll('.segmented-control-btn').forEach(btn => btn.classList.remove('active'));
-                        targetButton.classList.add('active');
+        
+                    // Инициализируем состояние UI при загрузке страницы (предполагаем, что активен "Формат")
+                    document.addEventListener('DOMContentLoaded', function() {
+                        updateUIForView(true);
+                    });
+        
+                    // --- Логика для мобильного меню ---
+                    const menuToggle = document.getElementById('mobile-menu-toggle');
+                    const controlPanel = document.getElementById('control-panel');
+        
+                    menuToggle.addEventListener('click', function() {
+                        controlPanel.classList.toggle('mobile-menu-open');
+                        
+                        // Обновляем иконку в зависимости от состояния меню
+                        const icon = menuToggle.querySelector('i');
+                        if (controlPanel.classList.contains('mobile-menu-open')) {
+                            icon.className = 'fa-solid fa-xmark'; // Закрытие меню
+                        } else {
+                            icon.className = 'fa-solid fa-bars'; // Открытие меню
+                        }
+                    });
+                    
+                    // Возвращаем иконку в исходное состояние при загрузке страницы
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const icon = menuToggle.querySelector('i');
+                        icon.className = 'fa-solid fa-bars';
+                    });
+                    
+                    // Функция для установки высоты textarea в режиме "Текст"
+                    function setTextareaHeight() {
+                        const textView = document.getElementById('form-view-text');
+                        const textarea = document.getElementById('prompt-full-text');
+                        
+                        if (textView && textView.classList.contains('active') && textarea) {
+                            // В режиме "Текст" textarea занимает всю высоту экрана
+                            textarea.style.height = 'calc(100vh - 100px)';
+                        } else if (textarea) {
+                            // В других режимах возвращаем обычную высоту
+                            textarea.style.height = 'calc(100vh - 200px)';
+                        }
+                    }
+                    
+                    // Вызываем функцию при загрузке страницы
+                    document.addEventListener('DOMContentLoaded', setTextareaHeight);
+                    
+                    // Вызываем функцию при изменении размера окна
+                    window.addEventListener('resize', setTextareaHeight);
+                    
+                    // Вызываем функцию при переключении режимов
+                    const viewSwitcher = document.getElementById('view-switcher');
+                    if (viewSwitcher) {
+                        viewSwitcher.addEventListener('click', function() {
+                            // Небольшая задержка, чтобы дать время для переключения классов
+                            setTimeout(setTextareaHeight, 10);
+                        });
+                    }
+                });
+        
+                // --- Функция для показа уведомления ---
+                function showNotification(message, duration = 1500) {
+                    const notification = document.getElementById('notification');
+                    if (notification) {
+                        notification.textContent = message;
+                        notification.classList.add('show');
+                        setTimeout(() => {
+                            notification.classList.remove('show');
+                        }, duration);
+                    }
+                }
+        
+                // --- Логика для добавления элементов ---
+                document.addEventListener('click', function(event) {
+                    if (event.target.closest('.add-item-btn')) {
+                        event.preventDefault();
+                        event.stopPropagation();
+        
+                        const button = event.target.closest('.add-item-btn');
+        
+                        // Находим контейнер (ближайший details с data-section или data-section-type)
+                        const containerDetails = button.closest('details[data-section], details[data-section-type]');
+                        if (!containerDetails) return;
+        
+                        const container = containerDetails.querySelector('.content');
+                        if (!container) return;
+        
+                        // Определяем тип элементов в этом контейнере
+                        const existingItems = container.querySelectorAll('details[data-section-type][data-id]');
+                        if (existingItems.length === 0) return;
+        
+                        // Находим максимальный ID среди существующих элементов
+                        let maxId = 0;
+                        existingItems.forEach(item => {
+                            const id = parseInt(item.dataset.id, 10);
+                            if (id > maxId) maxId = id;
+                        });
+        
+                        // Используем первый элемент как шаблон для клонирования
+                        const templateItem = existingItems[0];
+                        const newItem = templateItem.cloneNode(true);
+                        const newId = maxId + 1;
+                        newItem.dataset.id = newId;
+        
+                        // Функция для обновления ID в строке
+                        function updateIdInString(str, oldId, newId) {
+                            // Заменяем _старыйID на _новыйID в конце строки
+                            return str.replace(new RegExp('_' + oldId + '), '_' + newId);
+                        }
+        
+                        // Обновляем id и name для всех полей внутри нового элемента
+                        newItem.querySelectorAll('[id]').forEach(el => {
+                            el.id = updateIdInString(el.id, templateItem.dataset.id, newId);
+                        });
+                        newItem.querySelectorAll('[name]').forEach(el => {
+                            el.name = updateIdInString(el.name, templateItem.dataset.id, newId);
+                        });
+        
+                        // Обновляем заголовок спойлера (заменяем число в конце на новый id)
+                        const summary = newItem.querySelector('summary');
+                        if (summary) {
+                            summary.textContent = summary.textContent.replace(/[0-9]+$/, newId);
+                        }
+        
+                        // Добавляем новый элемент в контейнер
+                        container.appendChild(newItem);
+        
+                        // Показываем уведомление
+                        showNotification('Добавлено');
+                    }
+                });
+        
+                // --- Логика для кнопки "Копировать" ---
+                const copyBtn = document.getElementById('copy-btn');
+        
+                if (copyBtn) {
+                    copyBtn.addEventListener('click', function() {
+                        // Вызываем функцию из make_answer.js для генерации JSON
+                        const jsonString = generateAnswerJSON();
+        
+                        // Копирование в буфер обмена
+                        navigator.clipboard.writeText(jsonString).then(() => {
+                            // Показываем уведомление
+                            showNotification('Скопировано');
+                        }).catch(err => {
+                            console.error('Не удалось скопировать текст: ', err);
+                        });
                     });
                 }
-            });
-
-            // Инициализируем состояние UI при загрузке страницы (предполагаем, что активен "Формат")
-            document.addEventListener('DOMContentLoaded', function() {
-                updateUIForView(true);
-            });
-
-            // --- Логика для мобильного меню ---
-            const menuToggle = document.getElementById('mobile-menu-toggle');
-            const controlPanel = document.getElementById('control-panel');
-
-            menuToggle.addEventListener('click', function() {
-                controlPanel.classList.toggle('mobile-menu-open');
-                
-                // Обновляем иконку в зависимости от состояния меню
-                const icon = menuToggle.querySelector('i');
-                if (controlPanel.classList.contains('mobile-menu-open')) {
-                    icon.className = 'fa-solid fa-xmark'; // Закрытие меню
-                } else {
-                    icon.className = 'fa-solid fa-bars'; // Открытие меню
-                }
-            });
-            
-            // Возвращаем иконку в исходное состояние при загрузке страницы
-            document.addEventListener('DOMContentLoaded', function() {
-                const icon = menuToggle.querySelector('i');
-                icon.className = 'fa-solid fa-bars';
-            });
-            
-            // Функция для установки высоты textarea в режиме "Текст"
-            function setTextareaHeight() {
-                const textView = document.getElementById('form-view-text');
-                const textarea = document.getElementById('prompt-full-text');
-                
-                if (textView && textView.classList.contains('active') && textarea) {
-                    // В режиме "Текст" textarea занимает всю высоту экрана
-                    textarea.style.height = 'calc(100vh - 100px)';
-                } else if (textarea) {
-                    // В других режимах возвращаем обычную высоту
-                    textarea.style.height = 'calc(100vh - 200px)';
-                }
-            }
-            
-            // Вызываем функцию при загрузке страницы
-            document.addEventListener('DOMContentLoaded', setTextareaHeight);
-            
-            // Вызываем функцию при изменении размера окна
-            window.addEventListener('resize', setTextareaHeight);
-            
-            // Вызываем функцию при переключении режимов
-            const viewSwitcher = document.getElementById('view-switcher');
-            if (viewSwitcher) {
-                viewSwitcher.addEventListener('click', function() {
-                    // Небольшая задержка, чтобы дать время для переключения классов
-                    setTimeout(setTextareaHeight, 10);
+            </script>
+        
+            <!-- 
+            ============================================================
+            СКРИПТ ДЛЯ УПРАВЛЕНИЯ КОНТЕКСТНЫМ МЕНЮ
+            ============================================================
+            -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const menu = document.getElementById('context-menu');
+                    const formContainer = document.getElementById('form-event-container');
+        
+                    // --- Функция для закрытия меню ---
+                    function closeMenu() {
+                        if (menu) {
+                            menu.style.display = 'none';
+                        }
+                    }
+        
+                    // --- Обработчик кликов по всему контейнеру формы ---
+                    if (formContainer) {
+                        formContainer.addEventListener('click', function (event) {
+                            const triggerBtn = event.target.closest('.context-menu-btn');
+                            
+                            // --- Логика открытия меню ---
+                            if (triggerBtn) {
+                                event.preventDefault(); // Предотвращаем стандартное поведение кнопки
+                                event.stopPropagation(); // Останавливаем всплытие, чтобы не сработал обработчик закрытия на document
+        
+                                const rect = triggerBtn.getBoundingClientRect();
+                                
+                                // Показываем меню, чтобы получить его реальные размеры
+                                menu.style.display = 'block';
+                                const menuWidth = menu.offsetWidth;
+                                const menuHeight = menu.offsetHeight;
+                                
+                                // --- Новая логика позиционирования ---
+        
+                                // 1. Изначально выравниваем правый край меню по правому краю кнопки
+                                let left = rect.right - menuWidth;
+                                // Верх меню начинаем от низа кнопки
+                                let top = rect.bottom;
+        
+                                // 2. Проверяем, не выходит ли меню за нижнюю границу окна
+                                if (top + menuHeight > window.innerHeight) {
+                                    // Если да, пытаемся разместить его НАД кнопкой
+                                    top = rect.top - menuHeight;
+                                }
+        
+                                // 3. Проверяем, не выходит ли меню за верхнюю границу окна (после возможного перемещения вверх)
+                                if (top < 0) {
+                                    // Если все равно выходит, прижимаем к верху окна с небольшим отступом
+                                    top = 5;
+                                }
+                                
+                                // 4. Проверяем, не выходит ли меню за левую границу
+                                if (left < 0) {
+                                    left = 5;
+                                }
+        
+                                // Применяем рассчитанные координаты с учетом прокрутки страницы
+                                menu.style.top = `${top + window.scrollY}px`;
+                                menu.style.left = `${left + window.scrollX}px`;
+                                
+                                return; // Выходим, чтобы не закрыть меню сразу
+                            }
+        
+                            // --- Логика обработки действий в меню ---
+                            const actionBtn = event.target.closest('button[data-action]');
+                            if (actionBtn && actionBtn.closest('#context-menu')) {
+                                const action = actionBtn.dataset.action;
+                                // Показываем всплывающее окно с меткой действия
+                                alert(`Выбрано действие: "${action}"`);
+                                closeMenu(); // Закрываем меню после выбора действия
+                            }
+                        });
+                    }
+        
+                    // --- Глобальные обработчики для закрытия меню ---
+        
+                    // Закрытие по клику вне меню
+                    document.addEventListener('click', function (event) {
+                        if (menu && menu.style.display === 'block') {
+                            // Закрываем, если клик был не по самому меню и не по кнопке вызова
+                            if (!menu.contains(event.target) && !event.target.closest('.context-menu-btn')) {
+                                closeMenu();
+                            }
+                        }
+                    });
+        
+                    // Закрытие по клавише Esc
+                    document.addEventListener('keydown', function (event) {
+                        if (event.key === 'Escape') {
+                            closeMenu();
+                        }
+                    });
                 });
-            }
-        });
-
-        // --- Функция для показа уведомления ---
-        function showNotification(message, duration = 1500) {
-            const notification = document.getElementById('notification');
-            if (notification) {
-                notification.textContent = message;
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, duration);
-            }
-        }
-
-        // --- Логика для добавления элементов ---
-        document.addEventListener('click', function(event) {
-            if (event.target.closest('.add-item-btn')) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const button = event.target.closest('.add-item-btn');
-
-                // Находим контейнер (ближайший details с data-section или data-section-type)
-                const containerDetails = button.closest('details[data-section], details[data-section-type]');
-                if (!containerDetails) return;
-
-                const container = containerDetails.querySelector('.content');
-                if (!container) return;
-
-                // Определяем тип элементов в этом контейнере
-                const existingItems = container.querySelectorAll('details[data-section-type][data-id]');
-                if (existingItems.length === 0) return;
-
-                // Находим максимальный ID среди существующих элементов
-                let maxId = 0;
-                existingItems.forEach(item => {
-                    const id = parseInt(item.dataset.id, 10);
-                    if (id > maxId) maxId = id;
-                });
-
-                // Используем первый элемент как шаблон для клонирования
-                const templateItem = existingItems[0];
-                const newItem = templateItem.cloneNode(true);
-                const newId = maxId + 1;
-                newItem.dataset.id = newId;
-
-                // Функция для обновления ID в строке
-                function updateIdInString(str, oldId, newId) {
-                    // Заменяем _старыйID на _новыйID в конце строки
-                    return str.replace(new RegExp('_' + oldId + '$'), '_' + newId);
-                }
-
-                // Обновляем id и name для всех полей внутри нового элемента
-                newItem.querySelectorAll('[id]').forEach(el => {
-                    el.id = updateIdInString(el.id, templateItem.dataset.id, newId);
-                });
-                newItem.querySelectorAll('[name]').forEach(el => {
-                    el.name = updateIdInString(el.name, templateItem.dataset.id, newId);
-                });
-
-                // Обновляем заголовок спойлера (заменяем число в конце на новый id)
-                const summary = newItem.querySelector('summary');
-                if (summary) {
-                    summary.textContent = summary.textContent.replace(/[0-9]+$/, newId);
-                }
-
-                // Добавляем новый элемент в контейнер
-                container.appendChild(newItem);
-
-                // Показываем уведомление
-                showNotification('Добавлено');
-            }
-        });
-
-        // --- Логика для кнопки "Копировать" ---
-        const copyBtn = document.getElementById('copy-btn');
-
-        if (copyBtn) {
-            copyBtn.addEventListener('click', function() {
-                // Вызываем функцию из make_answer.js для генерации JSON
-                const jsonString = generateAnswerJSON();
-
-                // Копирование в буфер обмена
-                navigator.clipboard.writeText(jsonString).then(() => {
-                    // Показываем уведомление
-                    showNotification('Скопировано');
-                }).catch(err => {
-                    console.error('Не удалось скопировать текст: ', err);
-                });
-            });
-        }
-    </script>
-
-</body>
-</html>
+            </script>
+        
+        </body>
+        </html>
+        
