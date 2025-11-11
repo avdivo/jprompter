@@ -31,12 +31,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 const menuWidth = menu.offsetWidth;
                 const menuHeight = menu.offsetHeight;
                 
-                let left = rect.right - menuWidth;
+                // --- Улучшенная логика позиционирования ---
                 let top = rect.bottom;
+                let left = rect.right - menuWidth;
+                const margin = 5; // Отступ от краев экрана
 
-                if (top + menuHeight > window.innerHeight) { top = rect.top - menuHeight; }
-                if (top < 0) { top = 5; }
-                if (left < 0) { left = 5; }
+                // Используем Visual Viewport API для точной высоты на мобильных
+                const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+                // Проверка по вертикали
+                const bottomEdge = viewportHeight - margin;
+                if (top + menuHeight > bottomEdge) {
+                    // Если не помещается снизу, пробуем разместить сверху
+                    if (rect.top - menuHeight > margin) {
+                        top = rect.top - menuHeight;
+                    } else {
+                        // Если и сверху не помещается, прижимаем к нижнему краю
+                        top = bottomEdge - menuHeight;
+                    }
+                }
+
+                // Проверка по горизонтали
+                if (left < margin) {
+                    left = margin;
+                }
 
                 menu.style.top = `${top + window.scrollY}px`;
                 menu.style.left = `${left + window.scrollX}px`;

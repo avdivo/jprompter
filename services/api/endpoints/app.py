@@ -44,7 +44,9 @@ async def init(data: InitData, response: Response):
         # Читаем шаблон из файла
         template_path = (
             Path(__file__).parent.parent.parent.parent
-            / "docs"
+            / "services"
+            / "web_app"
+            / "static"
             / "templates"
             / "template-video-1.0.json"
         )

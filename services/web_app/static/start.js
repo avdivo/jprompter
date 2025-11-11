@@ -37,6 +37,17 @@ document.addEventListener('DOMContentLoaded', function() {
             window.appData.template = data.template;
             window.appData.prompt = data.prompt;
             window.appData.prompt_type = data.prompt_type;
+
+            // После получения шаблона, строим форму
+            if (window.appData.template) {
+                const dynamicFormContainer = document.getElementById('dynamic-form-container');
+                if (dynamicFormContainer) {
+                    dynamicFormContainer.innerHTML = createForm();
+                    console.log('Форма успешно построена и отображена.');
+                } else {
+                    console.error('Элемент #dynamic-form-container не найден.');
+                }
+            }
         })
         .catch(error => {
             console.error('Ошибка при отправке initData:', error);

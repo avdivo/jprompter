@@ -19,6 +19,8 @@ body {
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
+    -webkit-text-size-adjust: 100%; /* Отключаем автоматическое изменение размера текста в Safari */
+    text-size-adjust: 100%; /* Стандартное свойство */
 }
 
 /* Панель управления в верхней части */
