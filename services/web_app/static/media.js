@@ -48,7 +48,8 @@ class MediaGallery {
         }
 
         if (addButton) {
-            addButton.addEventListener('click', () => {
+            addButton.addEventListener('click', (e) => {
+                e.preventDefault();
                 uploadInput.click();
             });
         }
@@ -210,18 +211,7 @@ class MediaGallery {
 
 // Инициализация галереи при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализируем галерею только когда активен режим "Медиа"
-    const viewSwitcher = document.getElementById('view-switcher');
-    if (viewSwitcher) {
-        viewSwitcher.addEventListener('click', function() {
-            setTimeout(() => {
-                const mediaView = document.getElementById('form-view-media');
-                if (mediaView && mediaView.classList.contains('active')) {
-                    if (!window.mediaGallery) {
-                        window.mediaGallery = new MediaGallery('form-view-media');
-                    }
-                }
-            }, 10);
-        });
+    if (document.getElementById('form-view-media')) {
+        window.mediaGallery = new MediaGallery('form-view-media');
     }
 });
