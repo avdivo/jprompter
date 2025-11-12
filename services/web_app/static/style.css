@@ -27,13 +27,13 @@ body {
 .control-panel {
     position: sticky;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: 0; /* Revert to left: 0 */
+    width: 100%; /* Make it full width again */
     height: var(--panel-height);
     background-color: var(--panel-bg);
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Distribute content across the full width */
     align-items: center;
     padding: 0 24px;
     box-sizing: border-box;
@@ -555,14 +555,13 @@ textarea#prompt-full-text {
     .mobile-menu-dropdown {
         position: absolute;
         top: 100%;
-        right: 24px;
+        right: 24px; /* Revert to original right alignment */
         background-color: var(--panel-bg);
         border: 1px solid var(--border-color);
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         z-index: 1000;
-        min-width: 200px;
-        width: auto;
+        width: 250px; /* Fixed width */
         padding: 8px 0;
     }
 
