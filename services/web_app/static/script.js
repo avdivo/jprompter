@@ -18,23 +18,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Переменная для отслеживания состояния спойлеров ---
-    let spoilersExpanded = true;
+    let spoilersExpanded = false;
 
     // --- Обработчик для кнопки "Показать/скрыть спойлеры" ---
     const spoilerToggleBtn = document.getElementById('spoiler-toggle-btn');
-    if (spoilerToggleBtn) {
-        spoilerToggleBtn.addEventListener('click', function() {
-            if (spoilersExpanded) {
-                collapseAllSpoilers();
-                this.title = 'Развернуть все спойлеры';
-                this.querySelector('i').className = 'fa-solid fa-expand icon'; // Иконка развертывания
-            } else {
-                expandAllSpoilers();
-                this.title = 'Свернуть все спойлеры';
-                this.querySelector('i').className = 'fa-solid fa-compress icon'; // Иконка свертывания
+    const spoilerToggleBtnMobile = document.getElementById('spoiler-toggle-btn-mobile');
+
+    function toggleSpoilers() {
+        if (spoilersExpanded) {
+            collapseAllSpoilers();
+            spoilerToggleBtn.title = 'Развернуть все спойлеры';
+            spoilerToggleBtn.querySelector('i').className = 'fa-solid fa-expand icon';
+            if (spoilerToggleBtnMobile) {
+                spoilerToggleBtnMobile.innerHTML = '<i class="fa-solid fa-expand icon"></i> Развернуть спойлеры';
             }
-            spoilersExpanded = !spoilersExpanded;
-        });
+        } else {
+            expandAllSpoilers();
+            spoilerToggleBtn.title = 'Свернуть все спойлеры';
+            spoilerToggleBtn.querySelector('i').className = 'fa-solid fa-compress icon';
+            if (spoilerToggleBtnMobile) {
+                spoilerToggleBtnMobile.innerHTML = '<i class="fa-solid fa-compress icon"></i> Свернуть спойлеры';
+            }
+        }
+        spoilersExpanded = !spoilersExpanded;
+    }
+
+    if (spoilerToggleBtn) {
+        spoilerToggleBtn.addEventListener('click', toggleSpoilers);
     }
 
     // --- Вспомогательная функция для обновления UI при переключении вида ---
@@ -108,23 +118,77 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализируем состояние UI при загрузке страницы (предполагаем, что активен "Формат")
     document.addEventListener('DOMContentLoaded', function() {
         updateUIForView(true);
+        // Set initial state for spoiler buttons on load
+        if (spoilerToggleBtn) {
+            spoilerToggleBtn.title = 'Развернуть все спойлеры';
+            spoilerToggleBtn.querySelector('i').className = 'fa-solid fa-expand icon';
+        }
+        if (spoilerToggleBtnMobile) {
+            spoilerToggleBtnMobile.innerHTML = '<i class="fa-solid fa-expand icon"></i> Развернуть спойлеры';
+        }
+        // Collapse all spoilers on load
+        collapseAllSpoilers();
+        spoilersExpanded = false;
     });
 
     // --- Логика для мобильного меню ---
     const menuToggle = document.getElementById('mobile-menu-toggle');
-    const controlPanel = document.getElementById('control-panel');
+    const mobileMenuDropdown = document.getElementById('mobile-menu-dropdown');
 
-    menuToggle.addEventListener('click', function() {
-        controlPanel.classList.toggle('mobile-menu-open');
+    menuToggle.addEventListener('click', function(event) {
+        event.stopPropagation();
+        mobileMenuDropdown.classList.toggle('show');
 
         // Обновляем иконку в зависимости от состояния меню
         const icon = menuToggle.querySelector('i');
-        if (controlPanel.classList.contains('mobile-menu-open')) {
+        if (mobileMenuDropdown.classList.contains('show')) {
             icon.className = 'fa-solid fa-xmark'; // Закрытие меню
         } else {
             icon.className = 'fa-solid fa-bars'; // Открытие меню
         }
     });
+
+    // Закрываем меню при клике вне его
+    document.addEventListener('click', function(event) {
+        if (!mobileMenuDropdown.contains(event.target) && !menuToggle.contains(event.target)) {
+            mobileMenuDropdown.classList.remove('show');
+            const icon = menuToggle.querySelector('i');
+            icon.className = 'fa-solid fa-bars';
+        }
+    });
+
+
+    // Синхронизация кнопок мобильного меню с основными
+    const transformBtnMobile = document.getElementById('transform-btn-mobile');
+    if (transformBtnMobile) {
+        transformBtnMobile.addEventListener('click', function() {
+            const mainTransformBtn = document.getElementById('transform-btn');
+            if (mainTransformBtn) mainTransformBtn.click();
+            mobileMenuDropdown.classList.remove('show');
+            const icon = menuToggle.querySelector('i');
+            icon.className = 'fa-solid fa-bars';
+        });
+    }
+
+    if (spoilerToggleBtnMobile) {
+        spoilerToggleBtnMobile.addEventListener('click', function() {
+            toggleSpoilers();
+            mobileMenuDropdown.classList.remove('show');
+            const icon = menuToggle.querySelector('i');
+            icon.className = 'fa-solid fa-bars';
+        });
+    }
+
+    const copyBtnMobile = document.getElementById('copy-btn-mobile');
+    if (copyBtnMobile) {
+        copyBtnMobile.addEventListener('click', function() {
+            const mainCopyBtn = document.getElementById('copy-btn');
+            if (mainCopyBtn) mainCopyBtn.click();
+            mobileMenuDropdown.classList.remove('show');
+            const icon = menuToggle.querySelector('i');
+            icon.className = 'fa-solid fa-bars';
+        });
+    }
 
     // Возвращаем иконку в исходное состояние при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
