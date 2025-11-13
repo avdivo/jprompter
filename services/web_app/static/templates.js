@@ -254,7 +254,17 @@ function renderTemplate(templateName, data) {
     });
 }
 
+function renderMediaTemplate(templateString, data) {
+    if (typeof templateString !== 'string') {
+        console.error('renderMediaTemplate: templateString must be a string.');
+        return '';
+    }
+    return templateString.replace(/\{\{([-\w]+)\}\}/g, (match, key) => {
+        return data.hasOwnProperty(key) ? data[key] : '';
+    });
+}
+
 // Экспорт шаблонов для использования в других файлах
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { mediaTemplates, renderTemplate };
+    module.exports = { mediaTemplates, renderTemplate, renderMediaTemplate };
 }

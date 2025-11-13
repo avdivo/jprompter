@@ -26,7 +26,7 @@ class MediaGallery {
 
     // Создание модального окна
     createModal() {
-        const modalHtml = renderTemplate(mediaTemplates.modal, {});
+        const modalHtml = renderMediaTemplate(mediaTemplates.modal, {});
         document.body.insertAdjacentHTML('beforeend', modalHtml);
         this.modal = document.getElementById('media-modal');
     }
@@ -41,17 +41,9 @@ class MediaGallery {
     setupEventListeners() {
         // Загрузка файлов
         const uploadInput = document.getElementById('media-upload');
-        const addButton = document.getElementById('add-media-btn');
 
         if (uploadInput) {
             uploadInput.addEventListener('change', (e) => this.handleFileUpload(e));
-        }
-
-        if (addButton) {
-            addButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                uploadInput.click();
-            });
         }
 
         // Модальное окно
@@ -136,7 +128,7 @@ class MediaGallery {
             playIcon: mediaData.type === 'video' ? mediaTemplates.playIcon : ''
         };
 
-        const itemHtml = renderTemplate(mediaTemplates.mediaItem, itemData);
+        const itemHtml = renderMediaTemplate(mediaTemplates.mediaItem, itemData);
         this.mediaContainer.insertAdjacentHTML('beforeend', itemHtml);
 
         // Сохраняем данные о файле
