@@ -124,7 +124,7 @@ const formTemplates = {
     boxSpoiler: `
         <details class="form-field" data-path="{{data-path}}" id="{{data-path}}" data-type="box">
             <summary>
-                {{_label}}
+                <span data-role="title">{{_label}}</span>
             </summary>
             <div class="content">
                 {{content}}
@@ -136,7 +136,7 @@ const formTemplates = {
     boxTitle: `
         <div class="scene-block form-field" data-path="{{data-path}}" id="{{data-path}}" data-type="box">
             <div class="header-row">
-                <h3>{{_label}}</h3>
+                <h3><span data-role="title">{{_label}}</span></h3>
             </div>
             <div class="content">
                 {{content}}
@@ -148,7 +148,7 @@ const formTemplates = {
     arraySpoiler: `
         <details class="form-field" data-path="{{data-path}}" id="{{data-path}}" data-type="array">
             <summary>
-                {{_label}}
+                <span data-role="title">{{_label}}</span>
                 <div class="header-buttons">
                     <button class="btn btn-icon-only" data-action="clear-items" data-target="{{_obj}}" title="Очистить">
                         <i class="fa-solid fa-broom add-icon"></i>
@@ -168,7 +168,7 @@ const formTemplates = {
     arrayTitle: `
         <div class="scene-block form-field" data-path="{{data-path}}" id="{{data-path}}" data-type="array">
             <div class="header-row">
-                <h3>{{_label}}</h3>
+                <h3><span data-role="title">{{_label}}</span></h3>
                 <div class="header-buttons">
                     <button class="btn btn-icon-only" data-action="clear-items" data-target="{{_obj}}" title="Очистить">
                         <i class="fa-solid fa-broom add-icon"></i>
@@ -188,7 +188,7 @@ const formTemplates = {
     objectSpoiler: `
         <details class="form-field" data-path="{{data-path}}_{{data-id}}" data-type="object" data-parent="{{_obj}}" data-id="{{data-id}}">
             <summary>
-                <span>{{_label}} {{data-id}}</span>
+                <span data-role="title">{{_label}} {{data-id}}</span>
                 <div class="header-buttons">
                     <button class="btn btn-icon-only context-menu-btn" title="Действия">
                         <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
@@ -205,7 +205,7 @@ const formTemplates = {
     objectTitle: `
         <div class="scene-block form-field" data-path="{{data-path}}_{{data-id}}" data-type="object" data-parent="{{_obj}}" data-id="{{data-id}}">
             <div class="header-row">
-                <h3>{{_label}} {{data-id}}</h3>
+                <h3><span data-role="title">{{_label}} {{data-id}}</span></h3>
                 <div class="header-buttons">
                     <button class="btn btn-icon-only context-menu-btn" title="Действия">
                         <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
