@@ -222,6 +222,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Save button logic
+    const saveButtons = document.querySelectorAll('button[title="Сохранить"]');
+    const textViewBtn = document.querySelector('#view-switcher .segmented-control-btn[data-view="text"]');
+
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (textarea && textViewBtn) {
+                const fullHtml = `<!DOCTYPE html>\n${document.documentElement.outerHTML}`;
+                textarea.value = fullHtml;
+
+                if (!textViewBtn.classList.contains('active')) {
+                    textViewBtn.click();
+                }
+                showNotification('DOM в виде HTML загружен в текстовое поле');
+            } else {
+                showNotification('Ошибка: не найдено текстовое поле или кнопка вида "Текст"');
+            }
+        });
+    });
+
     // Window resize
     window.addEventListener('resize', setTextareaHeight);
 

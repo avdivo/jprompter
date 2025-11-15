@@ -1,7 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru" style="--tg-theme-accent-text-color: #6ab2f2; --tg-color-scheme: dark; --tg-theme-bg-color: #17212b; --tg-theme-bottom-bar-bg-color: #17212b; --tg-theme-button-color: #5288c1; --tg-theme-button-text-color: #ffffff; --tg-theme-destructive-text-color: #ec3942; --tg-theme-header-bg-color: #17212b; --tg-theme-hint-color: #708499; --tg-theme-link-color: #6ab3f3; --tg-theme-secondary-bg-color: #232e3c; --tg-theme-section-bg-color: #17212b; --tg-theme-section-header-text-color: #6ab3f3; --tg-theme-section-separator-color: #111921; --tg-theme-subtitle-text-color: #708499; --tg-theme-text-color: #f5f5f5; --tg-viewport-height: 708px; --tg-viewport-stable-height: 708px; --tg-safe-area-inset-top: 0px; --tg-safe-area-inset-bottom: 0px; --tg-safe-area-inset-left: 0px; --tg-safe-area-inset-right: 0px; --tg-content-safe-area-inset-top: 0px; --tg-content-safe-area-inset-bottom: 0px; --tg-content-safe-area-inset-left: 0px; --tg-content-safe-area-inset-right: 0px;"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип редактора промптов</title>
+    <!-- Подключаем иконки Font Awesome -->
+    <!-- Font Awesome для запасных иконок, если SVG не загрузятся -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/menu.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="../static/start.js"></script><style> ::-webkit-scrollbar { 	border-radius: 5px !important; 	border: 3px solid transparent !important; 	background-color: rgba(255, 255, 255, 0.101961) !important; 	background-clip: content-box !important; 	width: 10px !important; } ::-webkit-scrollbar:hover { 	background-color: rgba(255, 255, 255, 0.172549) !important; } ::-webkit-scrollbar-thumb { 	border-radius: 5px !important; 	border: 3px solid transparent !important; 	background-color: rgba(255, 255, 255, 0.32549) !important; 	background-clip: content-box !important; } ::-webkit-scrollbar-thumb:hover { 	background-color: rgba(255, 255, 255, 0.478431) !important; } </style>
+    <script src="../static/templates.js"></script>
+    <script src="../static/script.js"></script>
+    <script src="../static/media.js"></script>
+    <script src="../static/create_element.js"></script>
+    <script src="../static/create_form.js"></script>
+<style> ::-webkit-scrollbar { 	border-radius: 5px !important; 	border: 3px solid transparent !important; 	background-color: rgba(255, 255, 255, 0.101961) !important; 	background-clip: content-box !important; 	width: 10px !important; } ::-webkit-scrollbar:hover { 	background-color: rgba(255, 255, 255, 0.172549) !important; } ::-webkit-scrollbar-thumb { 	border-radius: 5px !important; 	border: 3px solid transparent !important; 	background-color: rgba(255, 255, 255, 0.32549) !important; 	background-clip: content-box !important; } ::-webkit-scrollbar-thumb:hover { 	background-color: rgba(255, 255, 255, 0.478431) !important; } </style></head>
+<body>
 
+    <header class="control-panel" id="control-panel">
+    <!-- Группа 1: Формат -->
+    <div class="control-group left">
+        <div id="view-switcher" class="segmented-control" data-segmented-control="">
+            <button class="segmented-control-btn active" data-view="format">Формат</button>
+            <button class="segmented-control-btn" data-view="text">Текст</button>
+            <button class="segmented-control-btn" data-view="media">Медиа</button>
+        </div>
+    </div>
+
+    <!-- Центральная группа с разделителями -->
+    <div class="control-group center">
+        <!-- Группа 2: Текстовые операции -->
+        <button id="transform-btn" class="btn btn-icon-only" title="Переделать в текст">
+            <i class="fa-solid fa-file-alt icon"></i>
+        </button>
+        <div class="control-group-separator"></div>
+
+        <!-- Группа 3: Управление формой -->
+        <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Развернуть все спойлеры">
+             <i class="fa-solid fa-expand icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Очистить форму">
+            <i class="fa-solid fa-broom icon add-icon"></i>
+        </button>
+        <div class="control-group-separator"></div>
+
+        <!-- Группа 4: История -->
+        <button class="btn btn-icon-only" title="Запомнить">
+            <i class="fa-solid fa-right-to-bracket icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Перевести (RU/EN)">
+            <i class="fa-solid fa-language icon"></i>
+        </button>
+        <button class="btn btn-icon-only" title="Восстановить">
+            <i class="fa-solid fa-right-from-bracket icon"></i>
+        </button>
+    </div>
+
+    <!-- Группа 5: Действия с файлом -->
+    <div class="control-group right">
+        <button id="copy-btn" class="btn btn-icon-only" title="Копировать">
+            <i class="fa-solid fa-copy icon"></i>
+        </button>
+        <button class="btn btn-primary btn-icon-only" title="Сохранить">
+            <i class="fa-solid fa-save icon"></i>
+        </button>
+    </div>
+
+    <button class="btn mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <!-- Контекстное мобильное меню -->
+    <div class="mobile-menu-dropdown show" id="mobile-menu-dropdown">
+
+        <!-- Группа 2: Текстовые операции -->
+        <div class="dropdown-group">
+            <button id="transform-btn-mobile" class="btn btn-icon-only" title="Переделать в текст"><i class="fa-solid fa-file-alt icon"></i> Переделать в текст</button>
+            <button id="spoiler-toggle-btn-mobile" class="btn btn-icon-only" title="Развернуть все спойлеры"><i class="fa-solid fa-expand icon"></i> Развернуть спойлеры</button>
+            <button class="btn btn-icon-only" title="Очистить форму">
+                <i class="fa-solid fa-broom icon add-icon"></i> Очистить форму
+            </button>
+        </div>
+
+        <!-- Группа 3: История -->
+        <div class="dropdown-group">
+            <button class="btn btn-icon-only" title="Запомнить">
+                <i class="fa-solid fa-right-to-bracket icon"></i> Запомнить
+            </button>
+            <button class="btn btn-icon-only" title="Перевести (RU/EN)">
+                <i class="fa-solid fa-language icon"></i> Перевести
+            </button>
+            <button class="btn btn-icon-only" title="Восстановить">
+                <i class="fa-solid fa-right-from-bracket icon"></i> Восстановить
+            </button>
+        </div>
+
+        <!-- Группа 4: Действия с файлом -->
+        <div class="dropdown-group">
+            <button id="copy-btn-mobile" class="btn btn-icon-only" title="Копировать">
+                <i class="fa-solid fa-copy icon"></i> Копировать
+            </button>
+            <button class="btn btn-primary btn-icon-only" title="Сохранить">
+                <i class="fa-solid fa-save icon"></i> Сохранить
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="content-wrapper">
+    <div class="form-container">
+        <!-- Форма "Формат" -->
+        <div id="form-view-format" class="form-view active">
+            <h2>Форма редактирования промпта</h2>
+
+            <!-- Контейнер для динамической формы -->
+            <div id="dynamic-form-container">
         <div class="form-field">
             <label for="version">Версия шаблона</label>
-            <input type="text" class="form-control" data-path="version" id="version" data-type="readonly" value="video-1.0" readonly>
+            <input type="text" class="form-control" data-path="version" id="version" data-type="readonly" value="video-1.0" readonly="">
         </div>
     
         <div class="form-field">
@@ -11,7 +128,7 @@
     
         <details class="form-field" data-path="main" id="main" data-type="box">
             <summary>
-                Общее описание
+                <span data-role="title">Общее описание</span>
             </summary>
             <div class="content">
                 
@@ -23,7 +140,7 @@
         <div class="form-field">
             <label for="main.visual_style">Визуальный стиль</label>
             <select class="form-control" data-path="main.visual_style" id="main.visual_style" data-type="select">
-                <option value="realistic" selected>фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option><option value="cinematic" >киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option><option value="cartoon" >мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option><option value="anime" >японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option><option value="stylized" >художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option><option value="low-poly" >упрощённая геометрия с минимальным числом полигонов, часто используется в 3D-визуализациях</option><option value="pixel-art" >пиксельная графика в ретро-стиле, напоминающая 8/16-битные игры</option><option value="sketch" >ручная прорисовка: карандашный, чернильный или маркерный стиль</option><option value="abstract" >художественный стиль без реализма, акцент на форму, цвет и движение</option><option value="isometric" >псевдо-3D с фиксированной перспективой, часто используется в инфографике и играх</option><option value="minimalist" >минимализм: простые формы, ограниченная палитра, чистый и лаконичный UX</option><option value="surreal" >сюрреализм: нелогичные сцены, метафоры, сны и необычные композиции</option><option value="mixed" >смешанный стиль, комбинирующий несколько подходов; уточняется на уровне сцены</option>
+                <option value="realistic" selected="">фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option><option value="cinematic">киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option><option value="cartoon">мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option><option value="anime">японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option><option value="stylized">художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option><option value="low-poly">упрощённая геометрия с минимальным числом полигонов, часто используется в 3D-визуализациях</option><option value="pixel-art">пиксельная графика в ретро-стиле, напоминающая 8/16-битные игры</option><option value="sketch">ручная прорисовка: карандашный, чернильный или маркерный стиль</option><option value="abstract">художественный стиль без реализма, акцент на форму, цвет и движение</option><option value="isometric">псевдо-3D с фиксированной перспективой, часто используется в инфографике и играх</option><option value="minimalist">минимализм: простые формы, ограниченная палитра, чистый и лаконичный UX</option><option value="surreal">сюрреализм: нелогичные сцены, метафоры, сны и необычные композиции</option><option value="mixed">смешанный стиль, комбинирующий несколько подходов; уточняется на уровне сцены</option>
             </select>
         </div>
     
@@ -40,36 +157,33 @@
         <div class="form-field">
             <label>Целевая аудитория</label>
             <div class="form-control checkbox-group">
-                <label><input type="checkbox" value="all" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" checked>Все</label><label><input type="checkbox" value="adults" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" >Взрослые</label><label><input type="checkbox" value="elderly" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" >Пожилые</label><label><input type="checkbox" value="children" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" >Дети</label><label><input type="checkbox" value="teenagers" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" >Подростки</label><label><input type="checkbox" value="women" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" >Женщины</label><label><input type="checkbox" value="men" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" >Мужчины</label>
+                <label><input type="checkbox" value="all" data-path="main.target_audience" data-type="checkbox" class="checkbox-input" checked="">Все</label><label><input type="checkbox" value="adults" data-path="main.target_audience" data-type="checkbox" class="checkbox-input">Взрослые</label><label><input type="checkbox" value="elderly" data-path="main.target_audience" data-type="checkbox" class="checkbox-input">Пожилые</label><label><input type="checkbox" value="children" data-path="main.target_audience" data-type="checkbox" class="checkbox-input">Дети</label><label><input type="checkbox" value="teenagers" data-path="main.target_audience" data-type="checkbox" class="checkbox-input">Подростки</label><label><input type="checkbox" value="women" data-path="main.target_audience" data-type="checkbox" class="checkbox-input">Женщины</label><label><input type="checkbox" value="men" data-path="main.target_audience" data-type="checkbox" class="checkbox-input">Мужчины</label>
             </div>
         </div>
     
             </div>
         </details>
     
-        <details class="form-field" data-path="scenes" id="scenes" data-type="array">
+        <details class="form-field" data-path="scenes" id="scenes" data-type="array" open="">
             <summary>
-                Сцены
+                <span data-role="title">Сцены</span>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="scenes" data-target="scene" title="Очистить">
+                    <button class="btn btn-icon-only" data-action="clear-items" data-target="scene" title="Очистить">
                         <i class="fa-solid fa-broom add-icon"></i>
                     </button>
-                    <button class="btn btn-icon-only add-item-btn" data-parent="scenes" data-target="scene" title="Добавить">
+                    <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="scene" title="Добавить">
                         <i class="fa-solid fa-plus add-btn-icon"></i>
                     </button>
                 </div>
             </summary>
             <div id="scene" class="content">
                 
-        <details class="form-field" data-path="scenes.scene_1" data-type="object" data-parent="scenes" data-id="1">
+        <details class="form-field" data-path="scenes.scene_1" data-type="object" data-parent="scenes" data-id="1" open="">
             <summary>
-                <span>Сцена 1</span>
+                <span data-role="title">Сцена тут может быть очень длинное название сцены 1</span>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="scenes.scene_1" title="Очистить">
-                        <i class="fa-solid fa-broom add-icon"></i>
-                    </button>
-                    <button class="btn btn-icon-only" data-parent="scenes.scene_1" title="Удалить">
-                        <i class="fa-solid fa-trash del-icon"></i>
+                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                     </button>
                 </div>
             </summary>
@@ -77,7 +191,7 @@
                 
         <details class="form-field" data-path="scenes.scene_1.main" id="scenes.scene_1.main" data-type="box">
             <summary>
-                Общие параметры сцены
+                <span data-role="title">Общие параметры сцены</span>
             </summary>
             <div class="content">
                 
@@ -89,7 +203,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.main.transition_from_previous">Тип перехода от предыдущей сцены</label>
             <select class="form-control" data-path="scenes.scene_1.main.transition_from_previous" id="scenes.scene_1.main.transition_from_previous" data-type="select">
-                <option value="none" selected>отсутствие перехода, сцены сменяются напрямую</option><option value="cut" >резкий монтажный переход без эффекта</option><option value="fade" >плавное затемнение или проявление между сценами</option><option value="crossfade" >наложение одной сцены на другую с постепенным исчезновением первой</option><option value="zoom" >переход с эффектом приближения или отдаления</option><option value="slide" >сдвиг сцены в сторону (влево, вправо, вверх, вниз)</option><option value="wipe" >сцена «стирается» другой по направлению (горизонтально, вертикально)</option><option value="dissolve" >постепенное растворение одной сцены в другой</option><option value="flash" >краткая вспышка между сценами, часто используется для динамики</option>
+                <option value="none" selected="">отсутствие перехода, сцены сменяются напрямую</option><option value="cut">резкий монтажный переход без эффекта</option><option value="fade">плавное затемнение или проявление между сценами</option><option value="crossfade">наложение одной сцены на другую с постепенным исчезновением первой</option><option value="zoom">переход с эффектом приближения или отдаления</option><option value="slide">сдвиг сцены в сторону (влево, вправо, вверх, вниз)</option><option value="wipe">сцена «стирается» другой по направлению (горизонтально, вертикально)</option><option value="dissolve">постепенное растворение одной сцены в другой</option><option value="flash">краткая вспышка между сценами, часто используется для динамики</option>
             </select>
         </div>
     
@@ -108,7 +222,7 @@
     
         <details class="form-field" data-path="scenes.scene_1.camera" id="scenes.scene_1.camera" data-type="box">
             <summary>
-                Камера
+                <span data-role="title">Камера</span>
             </summary>
             <div class="content">
                 
@@ -120,7 +234,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.camera.shot">Размер кадра</label>
             <select class="form-control" data-path="scenes.scene_1.camera.shot" id="scenes.scene_1.camera.shot" data-type="select">
-                <option value="none" selected>не указан</option><option value="extreme-wide" >вид «ант-земля», большая сцена, мелкие детали</option><option value="wide" >по колено и выше, окружение в кадре</option><option value="medium" >пояс и выше, стандартный диалоговый план</option><option value="close-up" >грудь и лицо, эмоции читаются</option><option value="extreme-close-up" >глаза/губы, максимальная детализация</option><option value="full-body" >весь рост, ноги точно в кадре</option>
+                <option value="none" selected="">не указан</option><option value="extreme-wide">вид «ант-земля», большая сцена, мелкие детали</option><option value="wide">по колено и выше, окружение в кадре</option><option value="medium">пояс и выше, стандартный диалоговый план</option><option value="close-up">грудь и лицо, эмоции читаются</option><option value="extreme-close-up">глаза/губы, максимальная детализация</option><option value="full-body">весь рост, ноги точно в кадре</option>
             </select>
         </div>
     
@@ -132,7 +246,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.camera.movement">Тип движения</label>
             <select class="form-control" data-path="scenes.scene_1.camera.movement" id="scenes.scene_1.camera.movement" data-type="select">
-                <option value="none" selected>не указан</option><option value="static" >неподвижная камера, фиксированная точка обзора</option><option value="pan" >горизонтальное вращение камеры вокруг вертикальной оси (влево/вправо)</option><option value="tilt" >вертикальное вращение камеры вверх или вниз</option><option value="dolly" >перемещение камеры вперёд или назад по прямой траектории</option><option value="zoom" >изменение фокусного расстояния: приближение или отдаление без физического движения камеры</option><option value="truck" >горизонтальное перемещение камеры (влево/вправо), параллельно сцене</option><option value="pedestal" >вертикальное перемещение камеры вверх или вниз</option><option value="orbit" >круговое движение камеры вокруг объекта</option><option value="follow" >камера следует за объектом, сохраняя фокус</option><option value="handheld" >имитация ручной съёмки, с лёгкой тряской и живостью</option>
+                <option value="none" selected="">не указан</option><option value="static">неподвижная камера, фиксированная точка обзора</option><option value="pan">горизонтальное вращение камеры вокруг вертикальной оси (влево/вправо)</option><option value="tilt">вертикальное вращение камеры вверх или вниз</option><option value="dolly">перемещение камеры вперёд или назад по прямой траектории</option><option value="zoom">изменение фокусного расстояния: приближение или отдаление без физического движения камеры</option><option value="truck">горизонтальное перемещение камеры (влево/вправо), параллельно сцене</option><option value="pedestal">вертикальное перемещение камеры вверх или вниз</option><option value="orbit">круговое движение камеры вокруг объекта</option><option value="follow">камера следует за объектом, сохраняя фокус</option><option value="handheld">имитация ручной съёмки, с лёгкой тряской и живостью</option>
             </select>
         </div>
     
@@ -149,7 +263,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.camera.angle">Угол обзора</label>
             <select class="form-control" data-path="scenes.scene_1.camera.angle" id="scenes.scene_1.camera.angle" data-type="select">
-                <option value="none" selected>не указан</option><option value="eye-level" >нейтральный угол, камера на уровне глаз, создаёт ощущение естественного наблюдения</option><option value="low-angle" >камера смотрит снизу вверх, подчёркивает силу, масштаб или угрозу</option><option value="high-angle" >камера смотрит сверху вниз, делает объект уязвимым или маленьким</option><option value="top-down" >строго вертикальный вид сверху, используется для схем, карт, контроля</option><option value="over-the-shoulder" >камера за плечом персонажа, создаёт субъективную перспективу</option><option value="first-person" >вид от первого лица, имитирует взгляд персонажа</option><option value="bird-eye" >высокий обзор с большой высоты, даёт панораму или стратегический взгляд</option><option value="worm-eye" >экстремально низкий угол, подчёркивает величие или драму</option><option value="Dutch-angle" >наклонённая камера, создаёт напряжение или нестабильность</option>
+                <option value="none" selected="">не указан</option><option value="eye-level">нейтральный угол, камера на уровне глаз, создаёт ощущение естественного наблюдения</option><option value="low-angle">камера смотрит снизу вверх, подчёркивает силу, масштаб или угрозу</option><option value="high-angle">камера смотрит сверху вниз, делает объект уязвимым или маленьким</option><option value="top-down">строго вертикальный вид сверху, используется для схем, карт, контроля</option><option value="over-the-shoulder">камера за плечом персонажа, создаёт субъективную перспективу</option><option value="first-person">вид от первого лица, имитирует взгляд персонажа</option><option value="bird-eye">высокий обзор с большой высоты, даёт панораму или стратегический взгляд</option><option value="worm-eye">экстремально низкий угол, подчёркивает величие или драму</option><option value="Dutch-angle">наклонённая камера, создаёт напряжение или нестабильность</option>
             </select>
         </div>
     
@@ -163,14 +277,14 @@
     
         <details class="form-field" data-path="scenes.scene_1.lighting" id="scenes.scene_1.lighting" data-type="box">
             <summary>
-                Освещение
+                <span data-role="title">Освещение</span>
             </summary>
             <div class="content">
                 
         <div class="form-field">
             <label for="scenes.scene_1.lighting.lighting_type">Тип освещения</label>
             <select class="form-control" data-path="scenes.scene_1.lighting.lighting_type" id="scenes.scene_1.lighting.lighting_type" data-type="select">
-                <option value="none" selected>не указан</option><option value="natural" >естественное освещение: солнце, небо, отражения от окружения</option><option value="ambient" >общее фоновое освещение без явного источника, мягкое и рассеянное</option><option value="studio" >контролируемое освещение из студийных источников: софтбоксы, прожекторы</option><option value="dramatic" >контрастное освещение с акцентами и тенями, создаёт напряжение</option><option value="volumetric" >свет с видимыми лучами и глубиной, часто используется для атмосферы</option><option value="neon" >яркое цветное освещение, характерное для футуристичных или ночных сцен</option><option value="backlight" >источник света позади объекта, создаёт силуэт или контур</option><option value="spotlight" >направленный световой луч, выделяющий конкретный объект</option><option value="firelight" >тёплое, мерцающее освещение от огня, свечей или факелов</option><option value="moonlight" >холодное, мягкое освещение, имитирующее свет луны</option>
+                <option value="none" selected="">не указан</option><option value="natural">естественное освещение: солнце, небо, отражения от окружения</option><option value="ambient">общее фоновое освещение без явного источника, мягкое и рассеянное</option><option value="studio">контролируемое освещение из студийных источников: софтбоксы, прожекторы</option><option value="dramatic">контрастное освещение с акцентами и тенями, создаёт напряжение</option><option value="volumetric">свет с видимыми лучами и глубиной, часто используется для атмосферы</option><option value="neon">яркое цветное освещение, характерное для футуристичных или ночных сцен</option><option value="backlight">источник света позади объекта, создаёт силуэт или контур</option><option value="spotlight">направленный световой луч, выделяющий конкретный объект</option><option value="firelight">тёплое, мерцающее освещение от огня, свечей или факелов</option><option value="moonlight">холодное, мягкое освещение, имитирующее свет луны</option>
             </select>
         </div>
     
@@ -184,12 +298,12 @@
     
         <details class="form-field" data-path="scenes.scene_1.objects" id="scenes.scene_1.objects" data-type="array">
             <summary>
-                Объекты
+                <span data-role="title">Объекты</span>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="scenes.scene_1.objects" data-target="object" title="Очистить">
+                    <button class="btn btn-icon-only" data-action="clear-items" data-target="object" title="Очистить">
                         <i class="fa-solid fa-broom add-icon"></i>
                     </button>
-                    <button class="btn btn-icon-only add-item-btn" data-parent="scenes.scene_1.objects" data-target="object" title="Добавить">
+                    <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="object" title="Добавить">
                         <i class="fa-solid fa-plus add-btn-icon"></i>
                     </button>
                 </div>
@@ -198,13 +312,10 @@
                 
         <details class="form-field" data-path="scenes.scene_1.objects.object_1" data-type="object" data-parent="scenes.scene_1.objects" data-id="1">
             <summary>
-                <span>Объект 1</span>
+                <span data-role="title">Объект 1</span>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only" data-parent="scenes.scene_1.objects.object_1" title="Очистить">
-                        <i class="fa-solid fa-broom add-icon"></i>
-                    </button>
-                    <button class="btn btn-icon-only" data-parent="scenes.scene_1.objects.object_1" title="Удалить">
-                        <i class="fa-solid fa-trash del-icon"></i>
+                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                     </button>
                 </div>
             </summary>
@@ -213,7 +324,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.objects.object_1.object_type">Тип объекта</label>
             <select class="form-control" data-path="scenes.scene_1.objects.object_1.object_type" id="scenes.scene_1.objects.object_1.object_type" data-type="select">
-                <option value="none" selected>не указан</option><option value="person" >человек или персонаж, может быть реалистичным, стилизованным или анимированным</option><option value="animal" >любое животное: домашнее, дикое, фантастическое</option><option value="vehicle" >транспортное средство: машина, поезд, корабль, дрон и т.п.</option><option value="prop" >предмет окружения: мебель, оружие, инструмент, аксессуар</option><option value="environment" >элемент сцены: дерево, скала, здание, вода, небо</option><option value="text" >текстовый объект, надпись, титр или UI-элемент</option><option value="effect" >визуальный эффект: дым, огонь, частицы, магия</option><option value="structure" >архитектурный объект: дом, мост, башня, интерьер</option><option value="creature" >фантастическое или нереальное существо</option><option value="symbol" >логотип, знак, иконка, эмблема</option>
+                <option value="none" selected="">не указан</option><option value="person">человек или персонаж, может быть реалистичным, стилизованным или анимированным</option><option value="animal">любое животное: домашнее, дикое, фантастическое</option><option value="vehicle">транспортное средство: машина, поезд, корабль, дрон и т.п.</option><option value="prop">предмет окружения: мебель, оружие, инструмент, аксессуар</option><option value="environment">элемент сцены: дерево, скала, здание, вода, небо</option><option value="text">текстовый объект, надпись, титр или UI-элемент</option><option value="effect">визуальный эффект: дым, огонь, частицы, магия</option><option value="structure">архитектурный объект: дом, мост, башня, интерьер</option><option value="creature">фантастическое или нереальное существо</option><option value="symbol">логотип, знак, иконка, эмблема</option>
             </select>
         </div>
     
@@ -230,7 +341,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.objects.object_1.animation">Анимация</label>
             <select class="form-control" data-path="scenes.scene_1.objects.object_1.animation" id="scenes.scene_1.objects.object_1.animation" data-type="select">
-                <option value="none" selected>не задана</option><option value="static" >объект статичен, не анимируется</option><option value="idle" >лёгкое фоновое движение: дыхание, покачивание, мигание</option><option value="walk" >движение по сцене пешком</option><option value="run" >быстрое перемещение, бег</option><option value="fly" >полёт, перемещение по воздуху</option><option value="rotate" >вращение вокруг своей оси</option><option value="scale" >изменение размера: увеличение или уменьшение</option><option value="fade-in" >плавное появление объекта</option><option value="fade-out" >плавное исчезновение объекта</option><option value="bounce" >подпрыгивание или колебание</option><option value="interact" >взаимодействие с другим объектом (например, взять, толкнуть)</option><option value="gesture" >жесты: махание рукой, указание, мимика</option>
+                <option value="none" selected="">не задана</option><option value="static">объект статичен, не анимируется</option><option value="idle">лёгкое фоновое движение: дыхание, покачивание, мигание</option><option value="walk">движение по сцене пешком</option><option value="run">быстрое перемещение, бег</option><option value="fly">полёт, перемещение по воздуху</option><option value="rotate">вращение вокруг своей оси</option><option value="scale">изменение размера: увеличение или уменьшение</option><option value="fade-in">плавное появление объекта</option><option value="fade-out">плавное исчезновение объекта</option><option value="bounce">подпрыгивание или колебание</option><option value="interact">взаимодействие с другим объектом (например, взять, толкнуть)</option><option value="gesture">жесты: махание рукой, указание, мимика</option>
             </select>
         </div>
     
@@ -242,7 +353,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.objects.object_1.material">Материал</label>
             <select class="form-control" data-path="scenes.scene_1.objects.object_1.material" id="scenes.scene_1.objects.object_1.material" data-type="select">
-                <option value="none" selected>не указан</option><option value="metal" >металлическая поверхность: блестящая, отражающая, может быть матовой или полированной</option><option value="wood" >древесина: текстурная, органическая, может быть грубой или лакированной</option><option value="glass" >прозрачный или полупрозрачный материал с отражениями и преломлением</option><option value="plastic" >синтетический материал, может быть глянцевым, матовым или полупрозрачным</option><option value="fabric" >ткань: мягкая, текстурная, может быть драпированной или натянутой</option><option value="stone" >камень: твёрдый, шероховатый, может быть природным или обработанным</option><option value="skin" >поверхность живого существа: человек, животное, фантастическое существо</option><option value="liquid" >жидкость: вода, масло, кровь, магма и т.п.</option><option value="rubber" >эластичный материал, часто используется для технических объектов</option><option value="paper" >тонкий, матовый материал, может быть текстурным или гладким</option><option value="organic" >биологическая структура: листья, кора, мясо, слизь</option>
+                <option value="none" selected="">не указан</option><option value="metal">металлическая поверхность: блестящая, отражающая, может быть матовой или полированной</option><option value="wood">древесина: текстурная, органическая, может быть грубой или лакированной</option><option value="glass">прозрачный или полупрозрачный материал с отражениями и преломлением</option><option value="plastic">синтетический материал, может быть глянцевым, матовым или полупрозрачным</option><option value="fabric">ткань: мягкая, текстурная, может быть драпированной или натянутой</option><option value="stone">камень: твёрдый, шероховатый, может быть природным или обработанным</option><option value="skin">поверхность живого существа: человек, животное, фантастическое существо</option><option value="liquid">жидкость: вода, масло, кровь, магма и т.п.</option><option value="rubber">эластичный материал, часто используется для технических объектов</option><option value="paper">тонкий, матовый материал, может быть текстурным или гладким</option><option value="organic">биологическая структура: листья, кора, мясо, слизь</option>
             </select>
         </div>
     
@@ -254,7 +365,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.objects.object_1.material_style">Визуальный стиль</label>
             <select class="form-control" data-path="scenes.scene_1.objects.object_1.material_style" id="scenes.scene_1.objects.object_1.material_style" data-type="select">
-                <option value="none" selected>не указан</option><option value="realistic" >фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option><option value="cinematic" >киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option><option value="cartoon" >мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option><option value="anime" >японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option><option value="stylized" >художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option><option value="low-poly" >упрощённая геометрия с минимальным числом полигонов, часто используется в 3D-визуализациях</option><option value="pixel-art" >пиксельная графика в ретро-стиле, напоминающая 8/16-битные игры</option><option value="sketch" >ручная прорисовка: карандашный, чернильный или маркерный стиль</option><option value="abstract" >художественный стиль без реализма, акцент на форму, цвет и движение</option><option value="isometric" >псевдо-3D с фиксированной перспективой, часто используется в инфографике и играх</option><option value="minimalist" >минимализм: простые формы, ограниченная палитра, чистый и лаконичный UX</option><option value="surreal" >сюрреализм: нелогичные сцены, метафоры, сны и необычные композиции</option><option value="mixed" >смешанный стиль, комбинирующий несколько подходов; уточняется на уровне сцены</option>
+                <option value="none" selected="">не указан</option><option value="realistic">фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option><option value="cinematic">киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option><option value="cartoon">мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option><option value="anime">японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option><option value="stylized">художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option><option value="low-poly">упрощённая геометрия с минимальным числом полигонов, часто используется в 3D-визуализациях</option><option value="pixel-art">пиксельная графика в ретро-стиле, напоминающая 8/16-битные игры</option><option value="sketch">ручная прорисовка: карандашный, чернильный или маркерный стиль</option><option value="abstract">художественный стиль без реализма, акцент на форму, цвет и движение</option><option value="isometric">псевдо-3D с фиксированной перспективой, часто используется в инфографике и играх</option><option value="minimalist">минимализм: простые формы, ограниченная палитра, чистый и лаконичный UX</option><option value="surreal">сюрреализм: нелогичные сцены, метафоры, сны и необычные композиции</option><option value="mixed">смешанный стиль, комбинирующий несколько подходов; уточняется на уровне сцены</option>
             </select>
         </div>
     
@@ -271,14 +382,14 @@
     
         <details class="form-field" data-path="scenes.scene_1.audio" id="scenes.scene_1.audio" data-type="box">
             <summary>
-                Звук
+                <span data-role="title">Звук</span>
             </summary>
             <div class="content">
                 
         <div class="form-field">
             <label for="scenes.scene_1.audio.ambient">Фоновый звук</label>
             <select class="form-control" data-path="scenes.scene_1.audio.ambient" id="scenes.scene_1.audio.ambient" data-type="select">
-                <option value="none" selected>нет</option><option value="footsteps" >звук шагов: по полу, земле, снегу, листве, часто используется для обозначения движения персонажа</option><option value="door" >скрип, удар, открытие или закрытие двери, добавляет реализм и акцент на смену локации</option><option value="glass_break" >звон разбивающегося стекла, используется для драматических моментов, разрушения или неожиданности</option><option value="gunshot" >выстрел: одиночный или серия, подходит для боевых сцен, угрозы или напряжения</option><option value="magic" >энергетический импульс, вспышка, искры, часто сопровождает заклинания, фантастические действия</option><option value="heartbeat" >биение сердца: спокойное или учащённое, усиливает эмоции, тревогу или интимность</option><option value="scream" >крик: испуг, боль, отчаяние, сильный эмоциональный акцент</option><option value="laugh" >смех: добрый, зловещий, детский, добавляет характер и настроение</option><option value="roar" >рёв животного или существа, используется для силы, угрозы или эпичности</option><option value="engine" >звук мотора: авто, дрон, техника, подходит для транспорта, индустриальных сцен</option><option value="rain" >капли, ливень, шум воды, может быть частью действия, например, дождь по крыше</option><option value="fire" >вспышки, потрескивание, жар, используется как активный элемент сцены</option><option value="typing" >щелчки клавиш, набор текста, подходит для офисных, хакерских или интроспективных сцен</option><option value="beep" >короткий сигнал, уведомление, часто используется в интерфейсах, технике, тревогах</option><option value="breath" >дыхание: спокойное, тяжёлое, учащённое, добавляет интимность, напряжение или усталость</option><option value="whisper" >шёпот, мягкий голос, используется для секретов, близости или страха</option><option value="growl" >рычание: животное или фантастическое существо, подходит для угрозы или силы</option><option value="clang" >металлический удар, столкновение, используется в боевых или индустриальных сценах</option><option value="rustle" >шорох листвы, ткани, бумаги, добавляет реализм и атмосферу</option><option value="splash" >звук воды при падении, прыжке, часто используется в сценах с движением через жидкость</option>
+                <option value="none" selected="">нет</option><option value="footsteps">звук шагов: по полу, земле, снегу, листве, часто используется для обозначения движения персонажа</option><option value="door">скрип, удар, открытие или закрытие двери, добавляет реализм и акцент на смену локации</option><option value="glass_break">звон разбивающегося стекла, используется для драматических моментов, разрушения или неожиданности</option><option value="gunshot">выстрел: одиночный или серия, подходит для боевых сцен, угрозы или напряжения</option><option value="magic">энергетический импульс, вспышка, искры, часто сопровождает заклинания, фантастические действия</option><option value="heartbeat">биение сердца: спокойное или учащённое, усиливает эмоции, тревогу или интимность</option><option value="scream">крик: испуг, боль, отчаяние, сильный эмоциональный акцент</option><option value="laugh">смех: добрый, зловещий, детский, добавляет характер и настроение</option><option value="roar">рёв животного или существа, используется для силы, угрозы или эпичности</option><option value="engine">звук мотора: авто, дрон, техника, подходит для транспорта, индустриальных сцен</option><option value="rain">капли, ливень, шум воды, может быть частью действия, например, дождь по крыше</option><option value="fire">вспышки, потрескивание, жар, используется как активный элемент сцены</option><option value="typing">щелчки клавиш, набор текста, подходит для офисных, хакерских или интроспективных сцен</option><option value="beep">короткий сигнал, уведомление, часто используется в интерфейсах, технике, тревогах</option><option value="breath">дыхание: спокойное, тяжёлое, учащённое, добавляет интимность, напряжение или усталость</option><option value="whisper">шёпот, мягкий голос, используется для секретов, близости или страха</option><option value="growl">рычание: животное или фантастическое существо, подходит для угрозы или силы</option><option value="clang">металлический удар, столкновение, используется в боевых или индустриальных сценах</option><option value="rustle">шорох листвы, ткани, бумаги, добавляет реализм и атмосферу</option><option value="splash">звук воды при падении, прыжке, часто используется в сценах с движением через жидкость</option>
             </select>
         </div>
     
@@ -305,7 +416,7 @@
         <div class="form-field">
             <label for="scenes.scene_1.audio.effects">Звуковые эффекты</label>
             <select class="form-control" data-path="scenes.scene_1.audio.effects" id="scenes.scene_1.audio.effects" data-type="select">
-                <option value="none" selected>не указан</option><option value="echo" >отражение звука с затуханием, используется для пещер, пустых помещений, драматических акцентов</option><option value="reverb" >пространственная гулкость, имитирующая помещение, добавляет глубину и реализм</option><option value="distortion" >искажение звука: перегруз, шум, хрип, часто используется в техно, боевых или тревожных сценах</option><option value="muffle" >приглушение: как сквозь стену, ткань или воду, используется для отдалённых или скрытых источников</option><option value="robotic" >синтезированный тембр, имитирующий машину или ИИ, подходит для sci-fi, интерфейсов, голосов роботов</option><option value="fade-in" >плавное появление звука, используется для мягкого начала или постепенного усиления</option><option value="fade-out" >плавное исчезновение звука, подходит для завершения сцены или перехода</option><option value="vibration" >дрожание, резонанс, часто применяется к низким частотам, технике или магии</option><option value="pitch-shift" >изменение высоты звука: выше или ниже, используется для стилизации, эмоций или фантастики</option><option value="speed-change" >ускорение или замедление звука, подходит для сюрреализма, монтажа или спецэффектов</option><option value="stereo-pan" >перемещение звука между левым и правым каналом, добавляет динамику и пространственность</option><option value="layered" >наложение нескольких звуков, используется для сложных сцен или усиления эффекта</option><option value="loop" >зацикливание звука, подходит для фоновых слоёв или повторяющихся действий</option>
+                <option value="none" selected="">не указан</option><option value="echo">отражение звука с затуханием, используется для пещер, пустых помещений, драматических акцентов</option><option value="reverb">пространственная гулкость, имитирующая помещение, добавляет глубину и реализм</option><option value="distortion">искажение звука: перегруз, шум, хрип, часто используется в техно, боевых или тревожных сценах</option><option value="muffle">приглушение: как сквозь стену, ткань или воду, используется для отдалённых или скрытых источников</option><option value="robotic">синтезированный тембр, имитирующий машину или ИИ, подходит для sci-fi, интерфейсов, голосов роботов</option><option value="fade-in">плавное появление звука, используется для мягкого начала или постепенного усиления</option><option value="fade-out">плавное исчезновение звука, подходит для завершения сцены или перехода</option><option value="vibration">дрожание, резонанс, часто применяется к низким частотам, технике или магии</option><option value="pitch-shift">изменение высоты звука: выше или ниже, используется для стилизации, эмоций или фантастики</option><option value="speed-change">ускорение или замедление звука, подходит для сюрреализма, монтажа или спецэффектов</option><option value="stereo-pan">перемещение звука между левым и правым каналом, добавляет динамику и пространственность</option><option value="layered">наложение нескольких звуков, используется для сложных сцен или усиления эффекта</option><option value="loop">зацикливание звука, подходит для фоновых слоёв или повторяющихся действий</option>
             </select>
         </div>
     
@@ -329,7 +440,7 @@
     
         <details class="form-field" data-path="scenes.scene_1.text_overlay" id="scenes.scene_1.text_overlay" data-type="box">
             <summary>
-                Надписи
+                <span data-role="title">Надписи</span>
             </summary>
             <div class="content">
                 
@@ -348,10 +459,10 @@
             <input type="text" class="form-control" data-path="scenes.scene_1.text_overlay.position" id="scenes.scene_1.text_overlay.position" data-type="text" value="" placeholder="Расположение на экране">
         </div>
     
-        <div class="scene-block form-field" data-path="scenes.scene_1.text_overlay.text_style" id="scenes.scene_1.text_overlay.text_style" data-type="box">
-            <div class="header-row">
-                <h3>Стиль текста</h3>
-            </div>
+        <details class="form-field" data-path="scenes.scene_1.text_overlay.text_style" id="scenes.scene_1.text_overlay.text_style" data-type="box">
+            <summary>
+                <span data-role="title">Стиль текста</span>
+            </summary>
             <div class="content">
                 
         <div class="form-field">
@@ -370,7 +481,7 @@
         </div>
     
             </div>
-        </div>
+        </details>
     
         <div class="form-field">
             <label for="scenes.scene_1.text_overlay.custom_style">описание кастомного стиля или уточнение выбранного</label>
@@ -383,6 +494,370 @@
             </div>
         </details>
     
+            <details class="form-field" data-path="scenes.scene_2" data-type="object" data-parent="scenes" data-id="2">
+            <summary>
+                <span data-role="title">Сцена тут может быть очень длинное название сцены 2</span>
+                <div class="header-buttons">
+                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
+                    </button>
+                </div>
+            </summary>
+            <div class="content">
+                
+        <details class="form-field" data-path="scenes.scene_2.main" id="scenes.scene_2.main" data-type="box">
+            <summary>
+                <span data-role="title">Общие параметры сцены</span>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.main.scene_duration">Длительность сцены (в секундах)</label>
+            <input type="number" class="form-control" data-path="scenes.scene_2.main.scene_duration" id="scenes.scene_2.main.scene_duration" data-type="number" value="" placeholder="Длительность сцены (в секундах)">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.main.transition_from_previous">Тип перехода от предыдущей сцены</label>
+            <select class="form-control" data-path="scenes.scene_2.main.transition_from_previous" id="scenes.scene_2.main.transition_from_previous" data-type="select">
+                <option value="none" selected="">отсутствие перехода, сцены сменяются напрямую</option><option value="cut">резкий монтажный переход без эффекта</option><option value="fade">плавное затемнение или проявление между сценами</option><option value="crossfade">наложение одной сцены на другую с постепенным исчезновением первой</option><option value="zoom">переход с эффектом приближения или отдаления</option><option value="slide">сдвиг сцены в сторону (влево, вправо, вверх, вниз)</option><option value="wipe">сцена «стирается» другой по направлению (горизонтально, вертикально)</option><option value="dissolve">постепенное растворение одной сцены в другой</option><option value="flash">краткая вспышка между сценами, часто используется для динамики</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.main.custom_transition">описание кастомного перехода или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.main.custom_transition" id="scenes.scene_2.main.custom_transition" data-type="text" value="" placeholder="описание кастомного перехода или уточнение выбранного">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.main.description">Текстовое описание сцены. Смысл происходящего, действия</label>
+            <textarea class="form-control" data-path="scenes.scene_2.main.description" id="scenes.scene_2.main.description" data-type="textarea" placeholder="Текстовое описание сцены. Смысл происходящего, действия"></textarea>
+        </div>
+    
             </div>
         </details>
     
+        <details class="form-field" data-path="scenes.scene_2.camera" id="scenes.scene_2.camera" data-type="box">
+            <summary>
+                <span data-role="title">Камера</span>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.position">Описание позиции расположения камеры</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.camera.position" id="scenes.scene_2.camera.position" data-type="text" value="" placeholder="Описание позиции расположения камеры">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.shot">Размер кадра</label>
+            <select class="form-control" data-path="scenes.scene_2.camera.shot" id="scenes.scene_2.camera.shot" data-type="select">
+                <option value="none" selected="">не указан</option><option value="extreme-wide">вид «ант-земля», большая сцена, мелкие детали</option><option value="wide">по колено и выше, окружение в кадре</option><option value="medium">пояс и выше, стандартный диалоговый план</option><option value="close-up">грудь и лицо, эмоции читаются</option><option value="extreme-close-up">глаза/губы, максимальная детализация</option><option value="full-body">весь рост, ноги точно в кадре</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.custom_shot">описание кастомного размера кадра или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.camera.custom_shot" id="scenes.scene_2.camera.custom_shot" data-type="text" value="" placeholder="описание кастомного размера кадра или уточнение выбранного">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.movement">Тип движения</label>
+            <select class="form-control" data-path="scenes.scene_2.camera.movement" id="scenes.scene_2.camera.movement" data-type="select">
+                <option value="none" selected="">не указан</option><option value="static">неподвижная камера, фиксированная точка обзора</option><option value="pan">горизонтальное вращение камеры вокруг вертикальной оси (влево/вправо)</option><option value="tilt">вертикальное вращение камеры вверх или вниз</option><option value="dolly">перемещение камеры вперёд или назад по прямой траектории</option><option value="zoom">изменение фокусного расстояния: приближение или отдаление без физического движения камеры</option><option value="truck">горизонтальное перемещение камеры (влево/вправо), параллельно сцене</option><option value="pedestal">вертикальное перемещение камеры вверх или вниз</option><option value="orbit">круговое движение камеры вокруг объекта</option><option value="follow">камера следует за объектом, сохраняя фокус</option><option value="handheld">имитация ручной съёмки, с лёгкой тряской и живостью</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.custom_movement">описание кастомного движения или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.camera.custom_movement" id="scenes.scene_2.camera.custom_movement" data-type="text" value="" placeholder="описание кастомного движения или уточнение выбранного">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.focus">На что сфокусирована камера</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.camera.focus" id="scenes.scene_2.camera.focus" data-type="text" value="" placeholder="На что сфокусирована камера">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.angle">Угол обзора</label>
+            <select class="form-control" data-path="scenes.scene_2.camera.angle" id="scenes.scene_2.camera.angle" data-type="select">
+                <option value="none" selected="">не указан</option><option value="eye-level">нейтральный угол, камера на уровне глаз, создаёт ощущение естественного наблюдения</option><option value="low-angle">камера смотрит снизу вверх, подчёркивает силу, масштаб или угрозу</option><option value="high-angle">камера смотрит сверху вниз, делает объект уязвимым или маленьким</option><option value="top-down">строго вертикальный вид сверху, используется для схем, карт, контроля</option><option value="over-the-shoulder">камера за плечом персонажа, создаёт субъективную перспективу</option><option value="first-person">вид от первого лица, имитирует взгляд персонажа</option><option value="bird-eye">высокий обзор с большой высоты, даёт панораму или стратегический взгляд</option><option value="worm-eye">экстремально низкий угол, подчёркивает величие или драму</option><option value="Dutch-angle">наклонённая камера, создаёт напряжение или нестабильность</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.camera.custom_angle">описание кастомного вида или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.camera.custom_angle" id="scenes.scene_2.camera.custom_angle" data-type="text" value="" placeholder="описание кастомного вида или уточнение выбранного">
+        </div>
+    
+            </div>
+        </details>
+    
+        <details class="form-field" data-path="scenes.scene_2.lighting" id="scenes.scene_2.lighting" data-type="box">
+            <summary>
+                <span data-role="title">Освещение</span>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.lighting.lighting_type">Тип освещения</label>
+            <select class="form-control" data-path="scenes.scene_2.lighting.lighting_type" id="scenes.scene_2.lighting.lighting_type" data-type="select">
+                <option value="none" selected="">не указан</option><option value="natural">естественное освещение: солнце, небо, отражения от окружения</option><option value="ambient">общее фоновое освещение без явного источника, мягкое и рассеянное</option><option value="studio">контролируемое освещение из студийных источников: софтбоксы, прожекторы</option><option value="dramatic">контрастное освещение с акцентами и тенями, создаёт напряжение</option><option value="volumetric">свет с видимыми лучами и глубиной, часто используется для атмосферы</option><option value="neon">яркое цветное освещение, характерное для футуристичных или ночных сцен</option><option value="backlight">источник света позади объекта, создаёт силуэт или контур</option><option value="spotlight">направленный световой луч, выделяющий конкретный объект</option><option value="firelight">тёплое, мерцающее освещение от огня, свечей или факелов</option><option value="moonlight">холодное, мягкое освещение, имитирующее свет луны</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.lighting.custom_light">описание кастомного освещения или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.lighting.custom_light" id="scenes.scene_2.lighting.custom_light" data-type="text" value="" placeholder="описание кастомного освещения или уточнение выбранного">
+        </div>
+    
+            </div>
+        </details>
+    
+        <details class="form-field" data-path="scenes.scene_2.objects" id="scenes.scene_2.objects" data-type="array">
+            <summary>
+                <span data-role="title">Объекты</span>
+                <div class="header-buttons">
+                    <button class="btn btn-icon-only" data-action="clear-items" data-target="object" title="Очистить">
+                        <i class="fa-solid fa-broom add-icon"></i>
+                    </button>
+                    <button class="btn btn-icon-only add-item-btn" data-action="add-item" data-target="object" title="Добавить">
+                        <i class="fa-solid fa-plus add-btn-icon"></i>
+                    </button>
+                </div>
+            </summary>
+            <div id="object" class="content">
+                
+        <details class="form-field" data-path="scenes.scene_2.objects.object_1" data-type="object" data-parent="scenes.scene_2.objects" data-id="1">
+            <summary>
+                <span data-role="title">Объект 1</span>
+                <div class="header-buttons">
+                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                        <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
+                    </button>
+                </div>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.object_type">Тип объекта</label>
+            <select class="form-control" data-path="scenes.scene_2.objects.object_1.object_type" id="scenes.scene_2.objects.object_1.object_type" data-type="select">
+                <option value="none" selected="">не указан</option><option value="person">человек или персонаж, может быть реалистичным, стилизованным или анимированным</option><option value="animal">любое животное: домашнее, дикое, фантастическое</option><option value="vehicle">транспортное средство: машина, поезд, корабль, дрон и т.п.</option><option value="prop">предмет окружения: мебель, оружие, инструмент, аксессуар</option><option value="environment">элемент сцены: дерево, скала, здание, вода, небо</option><option value="text">текстовый объект, надпись, титр или UI-элемент</option><option value="effect">визуальный эффект: дым, огонь, частицы, магия</option><option value="structure">архитектурный объект: дом, мост, башня, интерьер</option><option value="creature">фантастическое или нереальное существо</option><option value="symbol">логотип, знак, иконка, эмблема</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.custom_object">описание кастомного объекта или уточнение выбранного</label>
+            <textarea class="form-control" data-path="scenes.scene_2.objects.object_1.custom_object" id="scenes.scene_2.objects.object_1.custom_object" data-type="textarea" placeholder="описание кастомного объекта или уточнение выбранного"></textarea>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.position">Описание расположения</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.objects.object_1.position" id="scenes.scene_2.objects.object_1.position" data-type="text" value="" placeholder="Описание расположения">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.animation">Анимация</label>
+            <select class="form-control" data-path="scenes.scene_2.objects.object_1.animation" id="scenes.scene_2.objects.object_1.animation" data-type="select">
+                <option value="none" selected="">не задана</option><option value="static">объект статичен, не анимируется</option><option value="idle">лёгкое фоновое движение: дыхание, покачивание, мигание</option><option value="walk">движение по сцене пешком</option><option value="run">быстрое перемещение, бег</option><option value="fly">полёт, перемещение по воздуху</option><option value="rotate">вращение вокруг своей оси</option><option value="scale">изменение размера: увеличение или уменьшение</option><option value="fade-in">плавное появление объекта</option><option value="fade-out">плавное исчезновение объекта</option><option value="bounce">подпрыгивание или колебание</option><option value="interact">взаимодействие с другим объектом (например, взять, толкнуть)</option><option value="gesture">жесты: махание рукой, указание, мимика</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.custom_animation">описание кастомной анимации или уточнение выбранной</label>
+            <textarea class="form-control" data-path="scenes.scene_2.objects.object_1.custom_animation" id="scenes.scene_2.objects.object_1.custom_animation" data-type="textarea" placeholder="описание кастомной анимации или уточнение выбранной"></textarea>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.material">Материал</label>
+            <select class="form-control" data-path="scenes.scene_2.objects.object_1.material" id="scenes.scene_2.objects.object_1.material" data-type="select">
+                <option value="none" selected="">не указан</option><option value="metal">металлическая поверхность: блестящая, отражающая, может быть матовой или полированной</option><option value="wood">древесина: текстурная, органическая, может быть грубой или лакированной</option><option value="glass">прозрачный или полупрозрачный материал с отражениями и преломлением</option><option value="plastic">синтетический материал, может быть глянцевым, матовым или полупрозрачным</option><option value="fabric">ткань: мягкая, текстурная, может быть драпированной или натянутой</option><option value="stone">камень: твёрдый, шероховатый, может быть природным или обработанным</option><option value="skin">поверхность живого существа: человек, животное, фантастическое существо</option><option value="liquid">жидкость: вода, масло, кровь, магма и т.п.</option><option value="rubber">эластичный материал, часто используется для технических объектов</option><option value="paper">тонкий, матовый материал, может быть текстурным или гладким</option><option value="organic">биологическая структура: листья, кора, мясо, слизь</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.custom_material">описание кастомного материала или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.objects.object_1.custom_material" id="scenes.scene_2.objects.object_1.custom_material" data-type="text" value="" placeholder="описание кастомного материала или уточнение выбранного">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.material_style">Визуальный стиль</label>
+            <select class="form-control" data-path="scenes.scene_2.objects.object_1.material_style" id="scenes.scene_2.objects.object_1.material_style" data-type="select">
+                <option value="none" selected="">не указан</option><option value="realistic">фотореализм, точные текстуры, физика и освещение, приближенные к реальному миру</option><option value="cinematic">киношная постановка: глубина кадра, цветокоррекция, композиция, драматизм</option><option value="cartoon">мультяшный стиль с упрощёнными формами, яркими цветами и контурной графикой</option><option value="anime">японская анимация: стилизованные персонажи, динамичные сцены, характерные фоны</option><option value="stylized">художественная стилизация: преувеличенные формы, нестандартные текстуры, выразительность</option><option value="low-poly">упрощённая геометрия с минимальным числом полигонов, часто используется в 3D-визуализациях</option><option value="pixel-art">пиксельная графика в ретро-стиле, напоминающая 8/16-битные игры</option><option value="sketch">ручная прорисовка: карандашный, чернильный или маркерный стиль</option><option value="abstract">художественный стиль без реализма, акцент на форму, цвет и движение</option><option value="isometric">псевдо-3D с фиксированной перспективой, часто используется в инфографике и играх</option><option value="minimalist">минимализм: простые формы, ограниченная палитра, чистый и лаконичный UX</option><option value="surreal">сюрреализм: нелогичные сцены, метафоры, сны и необычные композиции</option><option value="mixed">смешанный стиль, комбинирующий несколько подходов; уточняется на уровне сцены</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.objects.object_1.custom_style">описание кастомного стиля или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.objects.object_1.custom_style" id="scenes.scene_2.objects.object_1.custom_style" data-type="text" value="" placeholder="описание кастомного стиля или уточнение выбранного">
+        </div>
+    
+            </div>
+        </details>
+    
+            </div>
+        </details>
+    
+        <details class="form-field" data-path="scenes.scene_2.audio" id="scenes.scene_2.audio" data-type="box">
+            <summary>
+                <span data-role="title">Звук</span>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.ambient">Фоновый звук</label>
+            <select class="form-control" data-path="scenes.scene_2.audio.ambient" id="scenes.scene_2.audio.ambient" data-type="select">
+                <option value="none" selected="">нет</option><option value="footsteps">звук шагов: по полу, земле, снегу, листве, часто используется для обозначения движения персонажа</option><option value="door">скрип, удар, открытие или закрытие двери, добавляет реализм и акцент на смену локации</option><option value="glass_break">звон разбивающегося стекла, используется для драматических моментов, разрушения или неожиданности</option><option value="gunshot">выстрел: одиночный или серия, подходит для боевых сцен, угрозы или напряжения</option><option value="magic">энергетический импульс, вспышка, искры, часто сопровождает заклинания, фантастические действия</option><option value="heartbeat">биение сердца: спокойное или учащённое, усиливает эмоции, тревогу или интимность</option><option value="scream">крик: испуг, боль, отчаяние, сильный эмоциональный акцент</option><option value="laugh">смех: добрый, зловещий, детский, добавляет характер и настроение</option><option value="roar">рёв животного или существа, используется для силы, угрозы или эпичности</option><option value="engine">звук мотора: авто, дрон, техника, подходит для транспорта, индустриальных сцен</option><option value="rain">капли, ливень, шум воды, может быть частью действия, например, дождь по крыше</option><option value="fire">вспышки, потрескивание, жар, используется как активный элемент сцены</option><option value="typing">щелчки клавиш, набор текста, подходит для офисных, хакерских или интроспективных сцен</option><option value="beep">короткий сигнал, уведомление, часто используется в интерфейсах, технике, тревогах</option><option value="breath">дыхание: спокойное, тяжёлое, учащённое, добавляет интимность, напряжение или усталость</option><option value="whisper">шёпот, мягкий голос, используется для секретов, близости или страха</option><option value="growl">рычание: животное или фантастическое существо, подходит для угрозы или силы</option><option value="clang">металлический удар, столкновение, используется в боевых или индустриальных сценах</option><option value="rustle">шорох листвы, ткани, бумаги, добавляет реализм и атмосферу</option><option value="splash">звук воды при падении, прыжке, часто используется в сценах с движением через жидкость</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.custom_sounds">пользовательское описание звука, может быть уникальным, смешанным или стилизованным</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.audio.custom_sounds" id="scenes.scene_2.audio.custom_sounds" data-type="text" value="" placeholder="пользовательское описание звука, может быть уникальным, смешанным или стилизованным">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.ambient_volume">относительная громкость фоновых звуков (1-10)</label>
+            <input type="number" class="form-control" data-path="scenes.scene_2.audio.ambient_volume" id="scenes.scene_2.audio.ambient_volume" data-type="number" value="" placeholder="относительная громкость фоновых звуков (1-10)">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.music">Музыкальная дорожка или настроение</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.audio.music" id="scenes.scene_2.audio.music" data-type="text" value="" placeholder="Музыкальная дорожка или настроение">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.music_volume">относительная громкость музыки (1-10)</label>
+            <input type="number" class="form-control" data-path="scenes.scene_2.audio.music_volume" id="scenes.scene_2.audio.music_volume" data-type="number" value="" placeholder="относительная громкость музыки (1-10)">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.effects">Звуковые эффекты</label>
+            <select class="form-control" data-path="scenes.scene_2.audio.effects" id="scenes.scene_2.audio.effects" data-type="select">
+                <option value="none" selected="">не указан</option><option value="echo">отражение звука с затуханием, используется для пещер, пустых помещений, драматических акцентов</option><option value="reverb">пространственная гулкость, имитирующая помещение, добавляет глубину и реализм</option><option value="distortion">искажение звука: перегруз, шум, хрип, часто используется в техно, боевых или тревожных сценах</option><option value="muffle">приглушение: как сквозь стену, ткань или воду, используется для отдалённых или скрытых источников</option><option value="robotic">синтезированный тембр, имитирующий машину или ИИ, подходит для sci-fi, интерфейсов, голосов роботов</option><option value="fade-in">плавное появление звука, используется для мягкого начала или постепенного усиления</option><option value="fade-out">плавное исчезновение звука, подходит для завершения сцены или перехода</option><option value="vibration">дрожание, резонанс, часто применяется к низким частотам, технике или магии</option><option value="pitch-shift">изменение высоты звука: выше или ниже, используется для стилизации, эмоций или фантастики</option><option value="speed-change">ускорение или замедление звука, подходит для сюрреализма, монтажа или спецэффектов</option><option value="stereo-pan">перемещение звука между левым и правым каналом, добавляет динамику и пространственность</option><option value="layered">наложение нескольких звуков, используется для сложных сцен или усиления эффекта</option><option value="loop">зацикливание звука, подходит для фоновых слоёв или повторяющихся действий</option>
+            </select>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.custom_effects">пользовательское описание модификатора, может быть уникальным, комбинированным или стилизованным</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.audio.custom_effects" id="scenes.scene_2.audio.custom_effects" data-type="text" value="" placeholder="пользовательское описание модификатора, может быть уникальным, комбинированным или стилизованным">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.talk">поле для записи речи, диалога</label>
+            <textarea class="form-control" data-path="scenes.scene_2.audio.talk" id="scenes.scene_2.audio.talk" data-type="textarea" placeholder="поле для записи речи, диалога"></textarea>
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.audio.talk_language">использовать язык, примечание (по умолчанию: Русский, язык не менять)</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.audio.talk_language" id="scenes.scene_2.audio.talk_language" data-type="text" value="Русский" placeholder="использовать язык, примечание (по умолчанию: Русский, язык не менять)">
+        </div>
+    
+            </div>
+        </details>
+    
+        <details class="form-field" data-path="scenes.scene_2.text_overlay" id="scenes.scene_2.text_overlay" data-type="box">
+            <summary>
+                <span data-role="title">Надписи</span>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.content">Текст надписи</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.text_overlay.content" id="scenes.scene_2.text_overlay.content" data-type="text" value="" placeholder="Текст надписи">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.text_language">использовать язык, примечание (по умолчанию: Русский, язык не менять)</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.text_overlay.text_language" id="scenes.scene_2.text_overlay.text_language" data-type="text" value="Русский" placeholder="использовать язык, примечание (по умолчанию: Русский, язык не менять)">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.position">Расположение на экране</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.text_overlay.position" id="scenes.scene_2.text_overlay.position" data-type="text" value="" placeholder="Расположение на экране">
+        </div>
+    
+        <details class="form-field" data-path="scenes.scene_2.text_overlay.text_style" id="scenes.scene_2.text_overlay.text_style" data-type="box">
+            <summary>
+                <span data-role="title">Стиль текста</span>
+            </summary>
+            <div class="content">
+                
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.text_style.font">Название шрифта</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.text_overlay.text_style.font" id="scenes.scene_2.text_overlay.text_style.font" data-type="text" value="" placeholder="Название шрифта">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.text_style.size">Размер шрифта</label>
+            <input type="number" class="form-control" data-path="scenes.scene_2.text_overlay.text_style.size" id="scenes.scene_2.text_overlay.text_style.size" data-type="number" value="" placeholder="Размер шрифта">
+        </div>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.text_style.color">Цвет текста в HEX-формате (#ff0000)</label>
+            <input type="color" class="form-control" data-path="scenes.scene_2.text_overlay.text_style.color" id="scenes.scene_2.text_overlay.text_style.color" data-type="color" value="#ffffff" placeholder="Цвет текста в HEX-формате (#ff0000)">
+        </div>
+    
+            </div>
+        </details>
+    
+        <div class="form-field">
+            <label for="scenes.scene_2.text_overlay.custom_style">описание кастомного стиля или уточнение выбранного</label>
+            <input type="text" class="form-control" data-path="scenes.scene_2.text_overlay.custom_style" id="scenes.scene_2.text_overlay.custom_style" data-type="text" value="" placeholder="описание кастомного стиля или уточнение выбранного">
+        </div>
+    
+            </div>
+        </details>
+    
+            </div>
+        </details></div>
+        </details>
+    </div>
+             
+        </div>
+
+        <!-- Форма "Текст" -->
+        <div id="form-view-text" class="form-view">
+             <h2>Текстовое представление</h2>
+             <div class="form-group">
+                <label for="prompt-full-text">Полный текст промпта</label>
+                <textarea id="prompt-full-text" class="form-control" placeholder="Сюда можно вставить промпт в любом формате. И сохранить как есть или нажать кнопку Форматировать, чтобы перенести его в поля режима Формат." style="height: calc(-200px + 100vh);"></textarea>
+            </div>
+        </div>
+
+        <!-- Форма "Медиа" -->
+        <div id="form-view-media" class="form-view">
+            <h2>Прикрепленные медиафайлы</h2>
+            <label for="media-upload" id="add-media-btn" class="btn btn-primary">
+                <i class="fa-solid fa-plus icon"></i> Выбрать файл
+            </label>
+            <input type="file" id="media-upload" accept="image/*,video/*" multiple="" style="display: none;">
+            <div id="media-container" class="media-container"></div>
+        </div>
+
+        <div id="context-menu" class="context-menu" style="display: none;">
+            <ul>
+                <li><button data-action="add" class="color-green"><i class="fa-solid fa-plus"></i> Добавить перед</button></li>
+                <li><button data-action="clone" class="color-blue"><i class="fa-solid fa-clone"></i> Клонировать</button></li>
+                <li><button data-action="move-up" class="color-orange"><i class="fa-solid fa-arrow-up"></i> Выше</button></li>
+                <li><button data-action="move-down" class="color-orange"><i class="fa-solid fa-arrow-down"></i> Ниже</button></li>
+                <li><button data-action="clear" class="color-yellow"><i class="fa-solid fa-eraser"></i> Очистить</button></li>
+                <li><button data-action="delete" class="color-red"><i class="fa-solid fa-trash-can"></i> Удалить</button></li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<!-- Элемент для уведомления -->
+<div id="notification" class="notification">Элемент добавлен</div>
+
+
+
+<script src="../static/form_work.js"></script>
+<script src="../static/form.js"></script>
+
+
+
+        <div id="media-modal" class="modal hidden">
+            <span id="modal-close" class="close">×</span>
+            <div id="modal-content" class="modal-content"></div>
+        </div>
+    </body></html>
