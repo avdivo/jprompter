@@ -1,3 +1,19 @@
+/**
+ * Показывает временное уведомление внизу экрана.
+ * @param {string} message - Сообщение для отображения.
+ * @param {number} [duration=1500] - Длительность отображения в миллисекундах.
+ */
+function showNotification(message, duration = 1500) {
+    const notification = document.getElementById('notification');
+    if (notification) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, duration);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // --- Cache DOM elements ---
     const spoilerToggleBtn = document.getElementById('spoiler-toggle-btn');
@@ -116,17 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
             textarea.style.height = 'calc(100vh - 100px)';
         } else if (textarea) {
             textarea.style.height = 'calc(100vh - 200px)';
-        }
-    }
-
-    function showNotification(message, duration = 1500) {
-        const notification = document.getElementById('notification');
-        if (notification) {
-            notification.textContent = message;
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, duration);
         }
     }
 
