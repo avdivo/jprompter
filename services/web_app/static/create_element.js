@@ -101,11 +101,11 @@ function prepareElementData(element, formPath, content, defaultDataId) {
         }
     }
 
-    // Для массивов, находим имя шаблона объекта
+    // Для массивов, формируем полный путь к объекту
     if (element._type === 'array') {
         const objectTemplateKey = Object.keys(element).find(key => !key.startsWith('_'));
         if (objectTemplateKey) {
-            data._obj = objectTemplateKey;
+            data._obj = `${formPath}.${objectTemplateKey}`;
         }
     }
 
