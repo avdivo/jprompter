@@ -190,7 +190,7 @@ const formTemplates = {
             <summary>
                 <span data-role="title">{{_label}} {{data-id}}</span>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                    <button class="btn btn-icon-only context-menu-btn" data-action="object-menu" title="Действия">
                         <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                     </button>
                 </div>
@@ -207,7 +207,7 @@ const formTemplates = {
             <div class="header-row">
                 <h3><span data-role="title">{{_label}} {{data-id}}</span></h3>
                 <div class="header-buttons">
-                    <button class="btn btn-icon-only context-menu-btn" title="Действия">
+                    <button class="btn btn-icon-only context-menu-btn" data-action="object-menu" title="Действия">
                         <i class="fa-solid fa-ellipsis-vertical fa-fw"></i>
                     </button>
                 </div>
