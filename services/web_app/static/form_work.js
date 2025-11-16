@@ -54,6 +54,137 @@ async function createAndBuildElement(path) {
     }
 }
 
+/**
+ * Рекурсивно обновляет пути и идентификаторы в атрибутах DOM-элементов.
+ * Используется при изменении порядка элементов в массиве.
+ * @param {HTMLElement} element - Родительский элемент, с которого начинается обход.
+ * @param {string} oldPathPart - Часть пути, которую нужно заменить (например, "scene_1").
+ * @param {string} newPathPart - Новая часть пути (например, "scene_2").
+ * @param {number} newIndex - Новый индекс для data-id.
+ */
+function newPath(element, oldPathPart, newPathPart, newIndex, isTopLevel = true, depth = 0) {
+    const logPrefix = '  '.repeat(depth);
+    if (isTopLevel) {
+        logToTextarea(`-- Начало: newPath для элемента ${element.tagName} (old: ${oldPathPart}, new: ${newPathPart}, index: ${newIndex}) --`);
+    }
+    const attributesToUpdate = ['data-path', 'id', 'data-target', 'data-parent', 'for'];
+
+    // Обновляем атрибуты самого элемента
+    attributesToUpdate.forEach(attr => {
+        if (element.hasAttribute(attr)) {
+            const oldValue = element.getAttribute(attr);
+            if (oldValue && oldValue.includes(oldPathPart)) {
+                const newValue = oldValue.replace(new RegExp(oldPathPart.replace('.', '\\.'), 'g'), newPathPart);
+                element.setAttribute(attr, newValue);
+                logToTextarea(`${logPrefix}Обновлен атрибут ${attr}: ${oldValue} -> ${newValue}`);
+            }
+        }
+    });
+
+    // Обновляем data-id и title только для элемента верхнего уровня
+    if (isTopLevel) {
+        if (element.hasAttribute('data-id')) {
+            const oldDataId = element.getAttribute('data-id');
+            element.setAttribute('data-id', newIndex);
+            logToTextarea(`${logPrefix}Обновлен data-id: ${oldDataId} -> ${newIndex}`);
+        }
+
+        const titleElement = element.querySelector('[data-role="title"]');
+        // Проверяем, что titleElement принадлежит текущему элементу, а не вложенному
+        if (titleElement && titleElement.closest('[data-path]') === element) {
+            const text = titleElement.textContent.trim();
+            const baseName = text.replace(/\s+\d+$/, ''); // Удаляем старый номер
+            titleElement.textContent = `${baseName} ${newIndex}`;
+            logToTextarea(`${logPrefix}Обновлен заголовок (data-role="title"): ${text} -> ${titleElement.textContent}`);
+        }
+    }
+
+
+    // Рекурсивно обходим дочерние элементы
+    element.childNodes.forEach(child => {
+        if (child.nodeType === Node.ELEMENT_NODE) {
+            // Старая проверка, которая была слишком агрессивной, удалена.
+            // Предыдущий фикс с isTopLevel делает ее ненужной.
+            newPath(child, oldPathPart, newPathPart, newIndex, false, depth + 1);
+        }
+    });
+    if (isTopLevel) {
+        logToTextarea(`-- Конец: newPath для элемента ${element.tagName} --`);
+    }
+}
+
+/**
+ * Сдвигает элементы массива "вниз" (увеличивает их индекс), начиная с указанного элемента.
+ * Используется, например, при добавлении нового элемента перед существующим.
+ * @param {HTMLElement} container - Контейнер, содержащий элементы массива.
+ * @param {number} startIndexInDOM - Индекс элемента в DOM-структуре контейнера, с которого начинается сдвиг (0-based).
+ */
+function shiftUp(container, startIndexInDOM) {
+    logToTextarea(`--- Начало: shiftUp для контейнера ${container.id}, startIndexInDOM: ${startIndexInDOM} ---`);
+    const items = Array.from(container.children);
+    for (let i = items.length - 1; i >= startIndexInDOM; i--) {
+        const item = items[i];
+        const oldDataId = parseInt(item.getAttribute('data-id'));
+        const newDataId = oldDataId + 1;
+        logToTextarea(`  Обработка элемента с data-id: ${oldDataId}. Новый data-id: ${newDataId}`);
+        
+        const path = item.getAttribute('data-path'); // e.g., "scenes.scene_1"
+        const lastDotIndex = path.lastIndexOf('.');
+        const basePath = path.substring(0, lastDotIndex + 1); // e.g., "scenes."
+        const itemBaseName = path.substring(lastDotIndex + 1, path.lastIndexOf('_')); // e.g., "scene"
+
+        const oldPathPart = `${itemBaseName}_${oldDataId}`; // e.g., "scene_1"
+        const newPathPart = `${itemBaseName}_${newDataId}`; // e.g., "scene_2"
+
+        // Проверяем, существует ли уже элемент с новым путем/ID.
+        // Это может произойти, если мы сдвигаем элементы, и новый ID совпадает с ID уже существующего элемента.
+        // В таком случае, старый элемент с этим ID нужно удалить, чтобы избежать дублирования ID.
+        const existingElementWithNewPath = document.getElementById(`${basePath}${newPathPart}`);
+        if (existingElementWithNewPath) {
+            logToTextarea(`  Обнаружен существующий элемент с новым путем (${basePath}${newPathPart}). Удаляем его.`);
+            existingElementWithNewPath.remove();
+        }
+        
+        newPath(item, oldPathPart, newPathPart, newDataId);
+        logToTextarea(`  Элемент с data-id ${oldDataId} успешно сдвинут.`);
+    }
+    logToTextarea(`--- Конец: shiftUp ---`);
+}
+
+/**
+ * Сдвигает элементы массива "вверх" (уменьшает их индекс), начиная с указанного элемента.
+ * Используется, например, при удалении элемента.
+ * @param {HTMLElement} container - Контейнер, содержащий элементы массива.
+ * @param {number} startIndexInDOM - Индекс элемента в DOM-структуре контейнера, с которого начинается сдвиг (0-based).
+ */
+function shiftDown(container, startIndexInDOM) {
+    logToTextarea(`--- Начало: shiftDown для контейнера ${container.id}, startIndexInDOM: ${startIndexInDOM} ---`);
+    const items = Array.from(container.children);
+    for (let i = startIndexInDOM; i < items.length; i++) {
+        const item = items[i];
+        const oldDataId = parseInt(item.getAttribute('data-id'));
+        const newDataId = oldDataId - 1;
+
+        if (newDataId < 1) { // Индексы должны быть >= 1
+            logToTextarea(`  Пропуск элемента с data-id ${oldDataId}, так как новый data-id (${newDataId}) будет меньше 1.`);
+            continue; 
+        }
+        logToTextarea(`  Обработка элемента с data-id: ${oldDataId}. Новый data-id: ${newDataId}`);
+
+        const path = item.getAttribute('data-path'); // e.g., "scenes.scene_2"
+        const lastDotIndex = path.lastIndexOf('.');
+        const basePath = path.substring(0, lastDotIndex + 1); // e.g., "scenes."
+        const itemBaseName = path.substring(lastDotIndex + 1, path.lastIndexOf('_')); // e.g., "scene"
+
+        const oldPathPart = `${itemBaseName}_${oldDataId}`; // e.g., "scene_2"
+        const newPathPart = `${itemBaseName}_${newDataId}`; // e.g., "scene_1"
+
+        newPath(item, oldPathPart, newPathPart, newDataId);
+        logToTextarea(`  Элемент с data-id ${oldDataId} успешно сдвинут.`);
+    }
+    logToTextarea(`--- Конец: shiftDown ---`);
+}
+
 
 // =================================================================================
 // Функции-обработчики действий
@@ -159,12 +290,56 @@ async function handleAddItem(button) {
 // =================================================================================
 
 /**
- * @param {HTMLElement} menuItem 
+ * Обработчик для пункта меню "Добавить перед" (data-action="add").
+ * Добавляет новый элемент массива перед активным элементом.
+ * @param {HTMLElement} menuItem - Пункт контекстного меню, вызвавший действие.
  */
-function handleAdd(menuItem) {
-    const activeObject = getActiveObject(menuItem);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Добавить перед, Путь: ${path}`);
+async function handleAdd(menuItem) {
+    logToTextarea('--- Начало: handleAdd (Добавить перед) ---');
+    const activeElement = getActiveObject(menuItem);
+    if (!activeElement) {
+        showNotification('Не удалось найти активный элемент.', true);
+        logToTextarea('--- Конец: handleAdd (ошибка) ---');
+        return;
+    }
+    logToTextarea(`Активный элемент найден: ${activeElement.id}`);
+
+    const parentContainer = activeElement.parentNode; // Контейнер, содержащий элементы массива
+    if (!parentContainer) {
+        showNotification('Не удалось найти родительский контейнер активного элемента.', true);
+        logToTextarea('--- Конец: handleAdd (ошибка) ---');
+        return;
+    }
+    logToTextarea(`Родительский контейнер найден: ${parentContainer.id}`);
+
+    const elementIndexInDOM = Array.from(parentContainer.children).indexOf(activeElement);
+    logToTextarea(`Индекс активного элемента в DOM: ${elementIndexInDOM}`);
+
+    const currentPath = activeElement.dataset.path; // Путь активного элемента (например, "scenes.scene_1")
+    logToTextarea(`Путь активного элемента: ${currentPath}`);
+
+    // Сдвигаем все элементы, начиная с активного, на одну позицию вниз
+    logToTextarea('Вызов shiftUp для сдвига элементов...');
+    shiftUp(parentContainer, elementIndexInDOM);
+    logToTextarea('shiftUp завершен.');
+
+    // Создаем новый элемент с тем же путем, что был у активного элемента до сдвига
+    logToTextarea(`Создание нового элемента с путем: ${currentPath}`);
+    const newElement = await createAndBuildElement(currentPath);
+
+    if (newElement) {
+        logToTextarea('Новый элемент успешно создан. Вставка в DOM...');
+        // Вставляем новый элемент на место, где раньше был активный элемент.
+        // После shiftUp, элемент, который был на elementIndexInDOM, теперь находится на elementIndexInDOM + 1.
+        // Поэтому мы вставляем newElement перед элементом, который сейчас находится на elementIndexInDOM.
+        parentContainer.insertBefore(newElement, parentContainer.children[elementIndexInDOM]);
+        showNotification('Новый элемент успешно добавлен перед активным.');
+        logToTextarea('Новый элемент добавлен в DOM.');
+    } else {
+        showNotification('Не удалось добавить новый элемент.', true);
+        logToTextarea('Ошибка: createAndBuildElement не вернул элемент.');
+    }
+    logToTextarea('--- Конец: handleAdd ---');
 }
 
 /**

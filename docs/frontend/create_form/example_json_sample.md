@@ -297,7 +297,7 @@
 ```html
   <details class="form-field" data-path=data-path id=data-path data-type=_type>
     <summary>
-      <span data-role="title">_label</span> 
+      _label
     </summary>
     <div class="content">
       {{content}}
@@ -309,7 +309,7 @@
 ```html
   <div class="scene-block form-field" data-path=data-path id=data-path data-type=_type>
     <div class="header-row">
-      <h3><span data-role="title">_label</span></h3>
+      <h3>_label</h3>
     </div>
     <div class="content">
       {{content}}
