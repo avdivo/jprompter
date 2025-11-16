@@ -410,12 +410,68 @@ function handleClone(menuItem) {
 }
 
 /**
- * @param {HTMLElement} menuItem 
+ * Обработчик для пункта меню "Выше" (data-action="move-up").
+ * Перемещает активный элемент на одну позицию вверх в списке.
+ * @param {HTMLElement} menuItem - Пункт контекстного меню, вызвавший действие.
  */
 function handleMoveUp(menuItem) {
-    const activeObject = getActiveObject(menuItem);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Выше, Путь: ${path}`);
+    logToTextarea('--- Начало: handleMoveUp (Выше) ---');
+    const activeElement = getActiveObject(menuItem);
+    if (!activeElement) {
+        showNotification('Не удалось найти активный элемент.', true);
+        logToTextarea('--- Конец: handleMoveUp (ошибка: не найден активный элемент) ---');
+        return;
+    }
+
+    const activeId = parseInt(activeElement.getAttribute('data-id'));
+    if (activeId <= 1) {
+        showNotification('Элемент уже находится в самом верху.');
+        logToTextarea('--- Конец: handleMoveUp (элемент уже наверху) ---');
+        return;
+    }
+
+    const parentContainer = activeElement.parentNode;
+    const prevId = activeId - 1;
+    // Ищем элемент с предыдущим ID внутри того же родительского контейнера
+    const prevElement = Array.from(parentContainer.children).find(child => parseInt(child.getAttribute('data-id')) === prevId);
+
+
+    if (!prevElement) {
+        showNotification('Не удалось найти предыдущий элемент для обмена.', true);
+        logToTextarea(`--- Конец: handleMoveUp (ошибка: не найден элемент с data-id=${prevId}) ---`);
+        return;
+    }
+    
+    logToTextarea(`Перемещение элемента ${activeId} вверх. Обмен с элементом ${prevId}.`);
+
+    // Согласно документации, более простой способ - просто поменять их местами в DOM,
+    // а затем обновить пути. Это атомарно и меньше влияет на DOM.
+    
+    // 1. Запоминаем данные обоих элементов
+    const activePath = activeElement.getAttribute('data-path');
+    const activeNamePart = activePath.substring(0, activePath.lastIndexOf('_')); // "scenes.scene"
+    const activeOldPath = `${activeNamePart}_${activeId}`;
+    const activeNewPath = `${activeNamePart}_${prevId}`;
+
+    const prevPath = prevElement.getAttribute('data-path');
+    const prevNamePart = prevPath.substring(0, prevPath.lastIndexOf('_')); // "scenes.scene"
+    const prevOldPath = `${prevNamePart}_${prevId}`;
+    const prevNewPath = `${prevNamePart}_${activeId}`;
+
+    // 2. Меняем элементы местами в DOM
+    parentContainer.insertBefore(activeElement, prevElement);
+    logToTextarea(`Элементы ${activeId} и ${prevId} поменялись местами в DOM.`);
+
+    // 3. Обновляем пути в АКТИВНОМ элементе, присваивая ему ID ПРЕДЫДУЩЕГО
+    logToTextarea(`Обновление бывшего активного элемента (${activeId} -> ${prevId})...`);
+    newPath(activeElement, activeOldPath.split('.').pop(), activeNewPath.split('.').pop(), prevId);
+
+    // 4. Обновляем пути в ПРЕДЫДУЩЕМ элементе, присваивая ему ID АКТИВНОГО
+    logToTextarea(`Обновление бывшего предыдущего элемента (${prevId} -> ${activeId})...`);
+    newPath(prevElement, prevOldPath.split('.').pop(), prevNewPath.split('.').pop(), activeId);
+
+    showNotification('Элемент успешно перемещен вверх.');
+    logToTextarea('--- Конец: handleMoveUp ---');
 }
 
 /**
