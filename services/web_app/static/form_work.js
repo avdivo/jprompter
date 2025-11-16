@@ -343,12 +343,70 @@ async function handleAdd(menuItem) {
 }
 
 /**
- * @param {HTMLElement} menuItem 
+ * Обработчик для пункта меню "Клонировать" (data-action="clone").
+ * Создает копию активного элемента и вставляет ее после него.
+ * @param {HTMLElement} menuItem - Пункт контекстного меню, вызвавший действие.
  */
 function handleClone(menuItem) {
-    const activeObject = getActiveObject(menuItem);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Клонировать, Путь: ${path}`);
+    logToTextarea('--- Начало: handleClone (Клонировать) ---');
+    const activeElement = getActiveObject(menuItem);
+    if (!activeElement) {
+        showNotification('Не удалось найти активный элемент для клонирования.', true);
+        logToTextarea('--- Конец: handleClone (ошибка) ---');
+        return;
+    }
+    logToTextarea(`Активный элемент для клонирования найден: ${activeElement.id}`);
+
+    const parentContainer = activeElement.parentNode;
+    if (!parentContainer) {
+        showNotification('Не удалось найти родительский контейнер.', true);
+        logToTextarea('--- Конец: handleClone (ошибка) ---');
+        return;
+    }
+    logToTextarea(`Родительский контейнер найден: ${parentContainer.id}`);
+
+    const sourceDataId = parseInt(activeElement.getAttribute('data-id'));
+    const sourcePath = activeElement.getAttribute('data-path');
+    const elementIndexInDOM = Array.from(parentContainer.children).indexOf(activeElement);
+    logToTextarea(`Исходный data-id: ${sourceDataId}, исходный путь: ${sourcePath}, индекс в DOM: ${elementIndexInDOM}`);
+
+    // 1. Сдвигаем все элементы, идущие ПОСЛЕ активного, чтобы освободить место
+    // Индекс для сдвига - это индекс следующего элемента
+    const shiftStartIndex = elementIndexInDOM + 1;
+    if (shiftStartIndex < parentContainer.children.length) {
+        logToTextarea(`Вызов shiftUp для сдвига элементов, начиная с индекса ${shiftStartIndex}...`);
+        shiftUp(parentContainer, shiftStartIndex);
+        logToTextarea('shiftUp завершен.');
+    } else {
+        logToTextarea('Активный элемент является последним, сдвиг не требуется.');
+    }
+
+    // 2. Создаем глубокую копию активного элемента
+    const cloneElement = activeElement.cloneNode(true);
+    logToTextarea('Создана глубокая копия элемента.');
+
+    // 3. Обновляем пути и ID для клонированного элемента
+    const newDataId = sourceDataId + 1;
+    logToTextarea(`Новый data-id для клона: ${newDataId}`);
+
+    const lastDotIndex = sourcePath.lastIndexOf('.');
+    const basePath = sourcePath.substring(0, lastDotIndex + 1); // e.g., "scenes."
+    const itemBaseName = sourcePath.substring(lastDotIndex + 1, sourcePath.lastIndexOf('_')); // e.g., "scene"
+
+    const oldPathPart = `${itemBaseName}_${sourceDataId}`; // e.g., "scene_1"
+    const newPathPart = `${itemBaseName}_${newDataId}`;   // e.g., "scene_2"
+    logToTextarea(`Старая часть пути: ${oldPathPart}, новая: ${newPathPart}`);
+
+    logToTextarea('Вызов newPath для обновления путей в клоне...');
+    newPath(cloneElement, oldPathPart, newPathPart, newDataId);
+    logToTextarea('newPath для клона завершен.');
+
+    // 4. Вставляем обновленный клон в DOM после активного элемента
+    logToTextarea('Вставка клонированного элемента в DOM...');
+    activeElement.after(cloneElement);
+    showNotification('Элемент успешно клонирован.');
+    logToTextarea('Клон успешно вставлен в DOM.');
+    logToTextarea('--- Конец: handleClone ---');
 }
 
 /**
