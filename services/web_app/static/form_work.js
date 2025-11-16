@@ -573,10 +573,54 @@ async function handleClear(menuItem) {
 }
 
 /**
- * @param {HTMLElement} menuItem 
+ * Обработчик для пункта меню "Удалить" (data-action="delete").
+ * Удаляет активный элемент согласно документации: сдвигает последующие
+ * элементы и удаляет последний. Если элемент единственный в контейнере,
+ * то вместо удаления он очищается.
+ * @param {HTMLElement} menuItem - Пункт контекстного меню, вызвавший действие.
  */
 function handleDelete(menuItem) {
-    const activeObject = getActiveObject(menuItem);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Удалить, Путь: ${path}`);
+    logToTextarea('--- Начало: handleDelete (Удалить) ---');
+    const activeElement = getActiveObject(menuItem);
+    if (!activeElement) {
+        showNotification('Не удалось найти элемент для удаления.', true);
+        logToTextarea('--- Конец: handleDelete (ошибка: не найден активный элемент) ---');
+        return;
+    }
+    logToTextarea(`Элемент для удаления найден: ${activeElement.id}`);
+
+    const parentContainer = activeElement.parentNode;
+    if (!parentContainer) {
+        showNotification('Не удалось найти родительский контейнер.', true);
+        logToTextarea('--- Конец: handleDelete (ошибка: не найден родительский контейнер) ---');
+        return;
+    }
+    logToTextarea(`Родительский контейнер найден: ${parentContainer.id}`);
+
+    // НОВОЕ ТРЕБОВАНИЕ: Если элемент единственный в контейнере, то очистить его.
+    if (parentContainer.children.length === 1) {
+        logToTextarea('Элемент является единственным в контейнере. Вызов handleClear.');
+        handleClear(menuItem); // Используем существующую функцию очистки
+        logToTextarea('--- Конец: handleDelete (единственный элемент очищен) ---');
+        return;
+    }
+
+    const items = Array.from(parentContainer.children);
+    const elementIndexInDOM = items.indexOf(activeElement);
+
+    // Шаг 1: Удаляем активный элемент, чтобы создать "пробел" для сдвига.
+    activeElement.remove();
+    logToTextarea('Активный элемент удален из DOM.');
+
+    // Шаг 2: Сдвигаем все элементы, которые были после удаленного
+    if (elementIndexInDOM < parentContainer.children.length) {
+        logToTextarea(`Вызов shiftDown для сдвига элементов, начиная с индекса ${elementIndexInDOM}...`);
+        shiftDown(parentContainer, elementIndexInDOM);
+        logToTextarea('shiftDown завершен.');
+    } else {
+        logToTextarea('Удален последний элемент, сдвиг не требуется.');
+    }
+
+    showNotification('Элемент успешно удален.');
+    logToTextarea('--- Конец: handleDelete ---');
 }
