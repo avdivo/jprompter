@@ -13,10 +13,40 @@ function getActiveObject(element) {
 /**
  * @param {HTMLElement} button 
  */
-function handleClearItems(button) {
-    const activeObject = getActiveObject(button);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Очистить массив, Путь: ${path}`);
+async function handleClearItems(button) {
+    const arrayElement = getActiveObject(button);
+    if (!arrayElement) {
+        showNotification('Не удалось найти массив для очистки.', true);
+        return;
+    }
+
+    const path = arrayElement.dataset.path;
+    if (!path) {
+        showNotification('Не удалось определить путь к массиву.', true);
+        return;
+    }
+
+    try {
+        const newArrayHTML = createForm(path);
+        if (!newArrayHTML) {
+            showNotification('Не удалось создать новый массив.', true);
+            return;
+        }
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newArrayHTML;
+        const newArrayElement = tempDiv.firstElementChild;
+
+        if (newArrayElement) {
+            arrayElement.parentNode.replaceChild(newArrayElement, arrayElement);
+            showNotification('Массив успешно очищен.');
+        } else {
+            showNotification('Произошла ошибка при обновлении формы.', true);
+        }
+    } catch (error) {
+        console.error('Ошибка при очистке массива:', error);
+        showNotification('Произошла ошибка при очистке массива.', true);
+    }
 }
 
 /**
