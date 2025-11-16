@@ -1,3 +1,26 @@
+// Установите в true для включения режима отладки, который выводит подробные логи в текстовое поле.
+// В продакшене следует установить в false или удалить.
+window.DEBUG_MODE = true;
+
+/**
+ * Записывает отладочное сообщение в текстовое поле в режиме "Текст".
+ * Функция активна только если window.DEBUG_MODE === true.
+ * @param {string} message - Сообщение для логирования.
+ */
+function logToTextarea(message) {
+    if (!window.DEBUG_MODE) {
+        return;
+    }
+
+    const textarea = document.getElementById('prompt-full-text');
+    if (textarea) {
+        const timestamp = new Date().toLocaleTimeString();
+        textarea.value += `[${timestamp}] ${message}\n`;
+        // Автоматически прокручиваем вниз, чтобы видеть последние логи
+        textarea.scrollTop = textarea.scrollHeight;
+    }
+}
+
 /**
  * Показывает временное уведомление внизу экрана.
  * @param {string} message - Сообщение для отображения.
