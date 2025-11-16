@@ -475,12 +475,65 @@ function handleMoveUp(menuItem) {
 }
 
 /**
- * @param {HTMLElement} menuItem 
+ * Обработчик для пункта меню "Ниже" (data-action="move-down").
+ * Перемещает активный элемент на одну позицию вниз в списке.
+ * @param {HTMLElement} menuItem - Пункт контекстного меню, вызвавший действие.
  */
 function handleMoveDown(menuItem) {
-    const activeObject = getActiveObject(menuItem);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Ниже, Путь: ${path}`);
+    logToTextarea('--- Начало: handleMoveDown (Ниже) ---');
+    const activeElement = getActiveObject(menuItem);
+    if (!activeElement) {
+        showNotification('Не удалось найти активный элемент.', true);
+        logToTextarea('--- Конец: handleMoveDown (ошибка: не найден активный элемент) ---');
+        return;
+    }
+
+    const parentContainer = activeElement.parentNode;
+    const activeId = parseInt(activeElement.getAttribute('data-id'));
+    const itemCount = parentContainer.children.length;
+
+    if (activeId >= itemCount) {
+        showNotification('Элемент уже находится в самом низу.');
+        logToTextarea('--- Конец: handleMoveDown (элемент уже внизу) ---');
+        return;
+    }
+
+    const nextId = activeId + 1;
+    const nextElement = Array.from(parentContainer.children).find(child => parseInt(child.getAttribute('data-id')) === nextId);
+
+    if (!nextElement) {
+        showNotification('Не удалось найти следующий элемент для обмена.', true);
+        logToTextarea(`--- Конец: handleMoveDown (ошибка: не найден элемент с data-id=${nextId}) ---`);
+        return;
+    }
+    
+    logToTextarea(`Перемещение элемента ${activeId} вниз. Обмен с элементом ${nextId}.`);
+
+    // 1. Запоминаем данные обоих элементов
+    const activePath = activeElement.getAttribute('data-path');
+    const activeNamePart = activePath.substring(0, activePath.lastIndexOf('_')); // e.g. "scenes.scene"
+    const activeOldPathPart = `${activeNamePart.split('.').pop()}_${activeId}`;
+    const activeNewPathPart = `${activeNamePart.split('.').pop()}_${nextId}`;
+
+    const nextPath = nextElement.getAttribute('data-path');
+    const nextNamePart = nextPath.substring(0, nextPath.lastIndexOf('_')); // e.g. "scenes.scene"
+    const nextOldPathPart = `${nextNamePart.split('.').pop()}_${nextId}`;
+    const nextNewPathPart = `${nextNamePart.split('.').pop()}_${activeId}`;
+
+    // 2. Меняем элементы местами в DOM, вставляя следующий элемент перед активным
+    parentContainer.insertBefore(nextElement, activeElement);
+    logToTextarea(`Элементы ${activeId} и ${nextId} поменялись местами в DOM.`);
+
+    // 3. Обновляем пути в АКТИВНОМ элементе, присваивая ему ID СЛЕДУЮЩЕГО
+    logToTextarea(`Обновление бывшего активного элемента (${activeId} -> ${nextId})...`);
+    newPath(activeElement, activeOldPathPart, activeNewPathPart, nextId);
+
+    // 4. Обновляем пути в бывшем СЛЕДУЮЩЕМ элементе, присваивая ему ID АКТИВНОГО
+    logToTextarea(`Обновление бывшего следующего элемента (${nextId} -> ${activeId})...`);
+    newPath(nextElement, nextOldPathPart, nextNewPathPart, activeId);
+
+    showNotification('Элемент успешно перемещен вниз.');
+    logToTextarea('--- Конец: handleMoveDown ---');
 }
 
 /**
