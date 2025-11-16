@@ -537,12 +537,39 @@ function handleMoveDown(menuItem) {
 }
 
 /**
- * @param {HTMLElement} menuItem 
+ * Обработчик для пункта меню "Очистить" (data-action="clear").
+ * Заменяет содержимое активного элемента его "чистой" версией.
+ * @param {HTMLElement} menuItem - Пункт контекстного меню, вызвавший действие.
  */
-function handleClear(menuItem) {
-    const activeObject = getActiveObject(menuItem);
-    const path = activeObject ? activeObject.dataset.path : 'не найден';
-    showNotification(`Действие: Очистить, Путь: ${path}`);
+async function handleClear(menuItem) {
+    logToTextarea('--- Начало: handleClear (Очистить) ---');
+    const activeElement = getActiveObject(menuItem);
+    if (!activeElement) {
+        showNotification('Не удалось найти элемент для очистки.', true);
+        logToTextarea('--- Конец: handleClear (ошибка: не найден активный элемент) ---');
+        return;
+    }
+
+    const path = activeElement.dataset.path;
+    if (!path) {
+        showNotification('Не удалось определить путь элемента для его пересоздания.', true);
+        logToTextarea('--- Конец: handleClear (ошибка: отсутствует data-path) ---');
+        return;
+    }
+    
+    logToTextarea(`Очистка элемента с путем: ${path}`);
+
+    const newElement = await createAndBuildElement(path);
+
+    if (newElement && activeElement.parentNode) {
+        activeElement.parentNode.replaceChild(newElement, activeElement);
+        showNotification('Элемент успешно очищен.');
+        logToTextarea(`Элемент ${path} был заменен новой версией.`);
+    } else {
+        showNotification('Не удалось очистить элемент.', true);
+        logToTextarea(`Ошибка при замене элемента ${path}.`);
+    }
+    logToTextarea('--- Конец: handleClear ---');
 }
 
 /**
