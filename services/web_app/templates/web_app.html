@@ -9,8 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/menu.css">
+    
+    <!-- highlight.js для подсветки синтаксиса -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="../static/start.js"></script>
+    <script src="../static/json_prompt.js"></script>
     <script src="../static/templates.js"></script>
     <script src="../static/script.js"></script>
     <script src="../static/media.js"></script>
@@ -159,6 +165,20 @@
 <!-- Элемент для уведомления -->
 <div id="notification" class="notification">Скопировано</div>
 
+<!-- Модальное окно для просмотра JSON -->
+<div id="json-viewer-modal" class="modal hidden">
+    <div class="json-modal-content">
+        <div class="json-modal-header">
+            <button id="modal-copy-btn" class="btn btn-icon-only" title="Копировать">
+                <i class="fa-solid fa-copy icon"></i>
+            </button>
+            <button id="modal-close-btn" class="btn btn-danger btn-icon-only" title="Закрыть">
+                <i class="fa-solid fa-xmark icon"></i>
+            </button>
+        </div>
+        <pre><code id="json-code-container" class="language-json"></code></pre>
+    </div>
+</div>
 
 
 <script src="../static/form_work.js"></script>

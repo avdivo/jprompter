@@ -52,6 +52,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewSwitcher = document.getElementById('view-switcher');
     const formViews = document.querySelectorAll('.form-view');
 
+    // JSON Modal Elements
+    const jsonViewerModal = document.getElementById('json-viewer-modal');
+    const jsonCodeContainer = document.getElementById('json-code-container');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalCopyBtn = document.getElementById('modal-copy-btn');
+
+
     // --- State variables ---
     let spoilersExpanded = false;
 
@@ -221,29 +228,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (copyBtnMobile) {
         copyBtnMobile.addEventListener('click', () => {
-            document.getElementById('copy-btn')?.click();
+            // The mobile button now directly triggers the modal logic
+            // to avoid issues with the main button being hidden.
+            openJsonModal();
             mobileMenuDropdown.classList.remove('show');
             menuToggle.querySelector('i').className = 'fa-solid fa-bars';
         });
     }
 
-    // Copy button logic
+    // --- NEW Copy button logic ---
+    function openJsonModal() {
+        const jsonResult = getJsonFromForm();
+        if (jsonResult) {
+            const jsonString = JSON.stringify(jsonResult, null, 2);
+            jsonCodeContainer.textContent = jsonString;
+            hljs.highlightElement(jsonCodeContainer);
+            jsonViewerModal.classList.remove('hidden');
+        } else {
+            // Optional: Show a notification if the form is invalid or empty
+            showNotification('Нечего копировать. Заполните обязательные поля.', 2000);
+        }
+    }
+
     if (copyBtn) {
-        copyBtn.addEventListener('click', function() {
-            if (window.appData && window.appData.template && window.appData.prompt && window.appData.prompt_type) {
-                const textViewBtn = document.querySelector('#view-switcher .segmented-control-btn[data-view="text"]');
-                if (textViewBtn && !textViewBtn.classList.contains('active')) {
-                    textViewBtn.click();
-                }
-                if (textarea) {
-                    textarea.value = JSON.stringify({ Данные: window.appData }, null, 2);
-                }
-                showNotification('Данные загружены в текстовое поле');
-            } else {
-                showNotification('Данные не найдены');
-            }
+        copyBtn.addEventListener('click', openJsonModal);
+    }
+
+    // --- Modal listeners ---
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', () => {
+            jsonViewerModal.classList.add('hidden');
         });
     }
+
+    if (modalCopyBtn) {
+        modalCopyBtn.addEventListener('click', () => {
+            const codeToCopy = jsonCodeContainer.textContent;
+            navigator.clipboard.writeText(codeToCopy).then(() => {
+                showNotification('JSON скопирован в буфер обмена');
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+                showNotification('Ошибка при копировании', 2000);
+            });
+        });
+    }
+
 
     // Save button logic
     const saveButtons = document.querySelectorAll('button[title="Сохранить"]');

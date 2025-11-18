@@ -666,3 +666,41 @@ textarea#prompt-full-text {
 .notification.show {
     opacity: 1;
 }
+
+/* Стили для модального окна просмотра JSON */
+.json-modal-content {
+    background-color: var(--form-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.json-modal-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--panel-bg);
+}
+
+.json-modal-content pre {
+    flex-grow: 1;
+    margin: 0;
+    padding: 20px;
+    overflow: auto;
+    background-color: transparent; /* Фон уже задан в теме highlight.js */
+}
+
+.json-modal-content code.language-json {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    white-space: pre;
+    background: none !important; /* Убираем фон, который может добавить highlight.js */
+    padding: 0;
+}

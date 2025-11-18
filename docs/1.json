@@ -1,6 +1,21 @@
-{'query_id': 'AAHWHd8OAAAAANYd3w4Ydq6G', 
-'user': {'id': 249503190, 'first_name': 'Алексей', 'last_name': '', 'username': 'avdivos', 'language_code': 'ru', 'allows_write_to_pm': True, 
-'photo_url': 'https://t.me/i/userpic/320/fB3b4aWAjWL8Rm-podoaNgm9e2iy27Zm8xT76Br2_Ro.svg'}, 
-// 'auth_date': '1762169987', 
-// 'signature': '1rY3agsOovVsVuIq6TCdltrO0NC_0GppgiiFTiVQUX4vA9UdH3GnHuE60k_nke-R0XidBDLx1p_4EtO43JveAA', 
-// 'hash': '64f23783905092e047e575f9b6d2d8728c3b61566639024ffa0a6fe0ec621190'}
+{
+  "version": "video-1.0",
+  "title": "111",
+  "main": {
+    "visual_style": "realistic",
+    "prompt": "1111",
+    "target_audience": [
+      "all"
+    ]
+  },
+  "scenes": {
+    "scene_1": {
+      "main": {
+        "description": "111111"
+      },
+      "audio": {
+        "talk_language": "Русский"
+      }
+    }
+  }
+}
