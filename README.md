@@ -4,92 +4,81 @@
 
 ## Установка и запуск
 
-### 1. Клонирование репозитория
+### Конфигурация
 
-Склонируйте репозиторий с GitHub на ваш локальный компьютер:
+Для работы проекта требуется файл `.env` в корневой директории. Он используется для обоих режимов запуска.
 
+1.  **Клонируйте репозиторий** (если еще не сделали).
+2.  **Создайте файл `.env`**:
+    Скопируйте пример ниже. Главное, что `POSTGRES_HOST` должен быть `localhost`. Это значение будет использоваться для локальной разработки и автоматически переопределяться для Docker.
+
+    ```env
+    # Содержимое файла .env
+    BOT_TOKEN=your_telegram_bot_token
+    POSTGRES_USER=avdivo
+    POSTGRES_PASSWORD=65536
+    POSTGRES_DB=jprompter
+    POSTGRES_HOST=localhost
+    POSTGRES_PORT=5432
+    ```
+
+---
+
+### Способ 1: Запуск с помощью Docker (рекомендуемый)
+
+Этот способ автоматически поднимет и настроит приложение и базу данных.
+
+**Требования:**
+*   [Docker](https://www.docker.com/get-started)
+*   [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Запуск:**
+Выполните одну команду. `docker-compose` использует ваш `.env` файл, но для контейнера с приложением сам заменит `POSTGRES_HOST` на `db`.
 ```bash
-git clone <URL-вашего-репозитория>
-cd jprompter
+docker-compose up --build
 ```
-
-### 2. Создание и активация виртуального окружения
-
-Создайте виртуальное окружение для изоляции зависимостей проекта.
-
-**Для macOS и Linux:**
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-**Для Windows:**
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-### 3. Установка зависимостей
-
-Установите все необходимые библиотеки, указанные в файле `requirements.txt`:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Настройка переменных окружения
-
-Создайте файл `.env` в корне проекта, скопировав содержимое из `.env.example` (если он есть) или создав его с нуля. Заполните его необходимыми данными:
-
-```env
-# PostgreSQL
-POSTGRES_USER=your_db_user
-POSTGRES_PASSWORD=your_db_password
-POSTGRES_DB=your_db_name
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-
-# PgAdmin
-PGADMIN_EMAIL=admin@example.com
-PGADMIN_PASSWORD=admin_password
-
-# Telegram Bot
-BOT_TOKEN=your_telegram_bot_token
-```
-
-### 5. Запуск базы данных
-
-Проект использует Docker для запуска базы данных PostgreSQL. Убедитесь, что у вас установлен Docker и Docker Compose.
-
-Запустите контейнеры в фоновом режиме:
-
-```bash
-sudo docker-compose up -d
-```
-*Вам может потребоваться ввести пароль администратора.*
-
-### 6. Применение миграций базы данных
-
-После запуска контейнера с базой данных необходимо создать таблицы. Alembic управляет миграциями.
-
-Примените последнюю миграцию:
-
-```bash
-alembic upgrade head
-```
-
-### 7. Запуск приложения
-
-Теперь вы можете запустить основное приложение:
-
-```bash
-uvicorn main:app --reload
-```
-
 Приложение будет доступно по адресу `http://127.0.0.1:8000`.
 
 ---
-*Старая команда для туннелирования (может быть полезна):*
-`lt --port 8000 --subdomain jprompttr`
+
+### Способ 2: Локальный запуск (для разработки)
+
+Этот способ позволяет запустить приложение на вашем компьютере, а базу данных — в Docker-контейнере.
+
+**Требования:**
+*   Python 3.10+
+*   [Docker](https://www.docker.com/get-started)
+*   [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Шаги:**
+
+1.  **Запустите базу данных в Docker:**
+    Эта команда прочтет `.env` и запустит контейнер с PostgreSQL.
+    ```bash
+    docker-compose up -d db
+    ```
+
+2.  **Создайте и активируйте виртуальное окружение:**
+    ```bash
+    # Для macOS и Linux
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+
+3.  **Установите зависимости:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Примените миграции и запустите приложение:**
+    Ваше локальное приложение прочтет `.env` и подключится к базе данных в контейнере через `localhost`.
+    ```bash
+    alembic upgrade head
+    uvicorn main:app --reload
+    ```
+    Приложение будет доступно по адресу `http://127.0.0.1:8000`.
+
+---
+*Команда для туннелирования (может быть полезна при разработке):*
+`lt --port 8000 --subdomain jprompter`
+Если при открытии приложения требует пароль - это IP, его можно узнать так: https://loca.lt/mytunnelpassword

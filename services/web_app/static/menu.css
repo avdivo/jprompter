@@ -1,0 +1,52 @@
+/* Контейнер контекстного меню */
+.context-menu {
+    position: absolute; /* Позиционируется относительно ближайшего родителя с position: relative/absolute/fixed */
+    z-index: 1000;
+    width: 200px;
+    background-color: #3e3e3e;
+    border: 1px solid #555;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    padding: 8px 0;
+    font-size: 16px; /* Увеличен на 2px по запросу пользователя */
+}
+
+/* Убираем стандартные стили списка */
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Стили для кнопок внутри меню */
+.context-menu button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    text-align: left;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+/* Эффект при наведении на кнопку в меню */
+.context-menu button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* Стили для иконок в меню */
+.context-menu button i {
+    width: 16px;
+    text-align: center;
+}
+
+/* Цветовые классы для ИКОНОК внутри кнопок меню */
+.color-green i { color: #2ecc71; }
+.color-blue i { color: #3498db; }
+.color-orange i { color: #f39c12; }
+.color-yellow i { color: #f1c40f; }
+.color-red i { color: #e74c3c; }

@@ -9,14 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/menu.css">
-    
-    <!-- highlight.js для подсветки синтаксиса -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="../static/start.js"></script>
-    <script src="../static/json_prompt.js"></script>
     <script src="../static/templates.js"></script>
     <script src="../static/script.js"></script>
     <script src="../static/media.js"></script>
@@ -44,8 +38,8 @@
         <div class="control-group-separator"></div>
 
         <!-- Группа 3: Управление формой -->
-        <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Развернуть все спойлеры">
-             <i class="fa-solid fa-expand icon"></i>
+        <button id="spoiler-toggle-btn" class="btn btn-icon-only" title="Свернуть все спойлеры">
+             <i class="fa-solid fa-compress icon"></i>
         </button>
         <button class="btn btn-icon-only" title="Очистить форму">
             <i class="fa-solid fa-broom icon add-icon"></i>
@@ -77,46 +71,6 @@
     <button class="btn mobile-menu-toggle" id="mobile-menu-toggle">
         <i class="fa-solid fa-bars"></i>
     </button>
-
-    <!-- Контекстное мобильное меню -->
-    <div class="mobile-menu-dropdown" id="mobile-menu-dropdown">
-
-        <!-- Группа 2: Текстовые операции -->
-        <div class="dropdown-group">
-            <button id="transform-btn-mobile" class="btn btn-icon-only" title="Форматировать">
-                <i class="fa-solid fa-list icon"></i> Форматировать
-            </button>
-            <button id="spoiler-toggle-btn-mobile" class="btn btn-icon-only" title="Развернуть все спойлеры">
-                <i class="fa-solid fa-expand icon"></i> Развернуть спойлеры
-            </button>
-            <button class="btn btn-icon-only" title="Очистить форму">
-                <i class="fa-solid fa-broom icon add-icon"></i> Очистить форму
-            </button>
-        </div>
-
-        <!-- Группа 3: История -->
-        <div class="dropdown-group">
-            <button class="btn btn-icon-only" title="Запомнить">
-                <i class="fa-solid fa-right-to-bracket icon"></i> Запомнить
-            </button>
-            <button class="btn btn-icon-only" title="Перевести (RU/EN)">
-                <i class="fa-solid fa-language icon"></i> Перевести
-            </button>
-            <button class="btn btn-icon-only" title="Восстановить">
-                <i class="fa-solid fa-right-from-bracket icon"></i> Восстановить
-            </button>
-        </div>
-
-        <!-- Группа 4: Действия с файлом -->
-        <div class="dropdown-group">
-            <button id="copy-btn-mobile" class="btn btn-icon-only" title="Копировать">
-                <i class="fa-solid fa-copy icon"></i> Копировать
-            </button>
-            <button class="btn btn-primary btn-icon-only" title="Сохранить">
-                <i class="fa-solid fa-save icon"></i> Сохранить
-            </button>
-        </div>
-    </div>
 </header>
 
 <main class="content-wrapper">
@@ -142,16 +96,16 @@
         <!-- Форма "Медиа" -->
         <div id="form-view-media" class="form-view">
             <h2>Прикрепленные медиафайлы</h2>
-            <label for="media-upload" id="add-media-btn" class="btn btn-primary">
+            <button id="add-media-btn" class="btn btn-primary">
                 <i class="fa-solid fa-plus icon"></i> Выбрать файл
-            </label>
+            </button>
             <input type="file" id="media-upload" accept="image/*,video/*" multiple style="display: none;">
             <div id="media-container" class="media-container"></div>
         </div>
 
         <div id="context-menu" class="context-menu" style="display: none;">
             <ul>
-                <li><button data-action="add" class="color-green"><i class="fa-solid fa-plus"></i> Добавить перед</button></li>
+                <li><button data-action="add" class="color-green"><i class="fa-solid fa-plus"></i> Добавить</button></li>
                 <li><button data-action="clone" class="color-blue"><i class="fa-solid fa-clone"></i> Клонировать</button></li>
                 <li><button data-action="move-up" class="color-orange"><i class="fa-solid fa-arrow-up"></i> Выше</button></li>
                 <li><button data-action="move-down" class="color-orange"><i class="fa-solid fa-arrow-down"></i> Ниже</button></li>
@@ -165,23 +119,59 @@
 <!-- Элемент для уведомления -->
 <div id="notification" class="notification">Скопировано</div>
 
-<!-- Модальное окно для просмотра JSON -->
-<div id="json-viewer-modal" class="modal hidden">
-    <div class="json-modal-content">
-        <div class="json-modal-header">
-            <button id="modal-copy-btn" class="btn btn-icon-only" title="Копировать">
-                <i class="fa-solid fa-copy icon"></i>
-            </button>
-            <button id="modal-close-btn" class="btn btn-danger btn-icon-only" title="Закрыть">
-                <i class="fa-solid fa-xmark icon"></i>
-            </button>
-        </div>
-        <pre><code id="json-code-container" class="language-json"></code></pre>
+<!-- Оверлей для выбора шаблона -->
+<div id="template-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; color: #333; flex-direction: column; text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+    <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h2 style="margin-bottom: 20px;">Загрузка формы</h2>
+        <p style="margin-bottom: 25px;">Для начала работы выберите файл шаблона в формате JSON.</p>
+        <label for="template-loader-inline" class="btn btn-primary" style="cursor: pointer;">
+            <i class="fa-solid fa-file-upload icon"></i> Выбрать шаблон
+        </label>
+        <input type="file" id="template-loader-inline" accept=".json" style="display: none;">
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Глобальное состояние
+        window.appData = {
+            template: null
+        };
 
-<script src="../static/form_work.js"></script>
+        const templateLoader = document.getElementById('template-loader-inline');
+        const overlay = document.getElementById('template-overlay');
+        const formContainer = document.getElementById('dynamic-form-container');
+
+        templateLoader.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    window.appData.template = JSON.parse(content);
+                    
+                    // Генерируем и монтируем форму
+                    const formHtml = createForm();
+                    formContainer.innerHTML = formHtml;
+
+                    // Скрываем оверлей
+                    overlay.style.display = 'none';
+
+                } catch (error) {
+                    alert(`Ошибка чтения или парсинга JSON файла: ${error.message}`);
+                }
+            };
+            reader.onerror = () => {
+                alert('Не удалось прочитать файл.');
+            };
+            reader.readAsText(file);
+        });
+    });
+</script>
 <script src="../static/form.js"></script>
 
 </body>

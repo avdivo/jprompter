@@ -25,7 +25,7 @@ bot_config = BotConfig()
 app_config = AppConfig()
 
 # Настройка шаблонов Jinja2
-templates = Jinja2Templates(directory="services/web_app/templates")
+templates = Jinja2Templates(directory=app_config.templates_directory)
 
 
 # Инициализация FastAPI приложения с lifespan событиями
@@ -54,8 +54,8 @@ app = FastAPI(lifespan=lifespan)
 
 # Настройка статических файлов
 app.mount(
-    f"{app_config.app_path}/static",
-    StaticFiles(directory="services/web_app/static"),
+    app_config.static_mount_path,
+    StaticFiles(directory=app_config.static_directory),
     name="static",
 )
 
@@ -75,9 +75,9 @@ async def web_app_root(request: Request):
     Args:
         request (Request): Объект запроса FastAPI.
     Returns:
-        TemplateResponse: Шаблон Jinja2 для index.html.
+        TemplateResponse: Шаблон Jinja2 для главной страницы.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(app_config.index_template, {"request": request})
 
 
 if __name__ == "__main__":
@@ -86,4 +86,4 @@ if __name__ == "__main__":
     """
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host=app_config.server_host, port=app_config.server_port)

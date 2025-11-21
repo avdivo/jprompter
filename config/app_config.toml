@@ -3,3 +3,9 @@
 web_app_path = "/web_app" # Базовый путь для веб-приложения
 web_app_api_path = "/web_app/api" # Базовый путь для API веб-приложения
 jwt_lifetime_days = 7 # Время жизни JWT токена в днях
+static_mount_path = "/static" # Путь монтирования статических файлов
+static_directory = "services/web_app/static" # Директория со статическими файлами
+templates_directory = "services/web_app/templates" # Директория с шаблонами
+index_template = "web_app.html" # Имя шаблона для главной страницы
+server_host = "0.0.0.0" # Хост сервера
+server_port = 8000 # Порт сервера

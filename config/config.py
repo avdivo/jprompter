@@ -87,22 +87,28 @@ class AppConfig:
     """
 
     def __init__(self):
-        self.app_path = self._load_app_config("web_app_path")
-        self.api_path = self._load_app_config("web_app_api_path")
+        self.app_path: str = self._load_app_config_str("web_app_path")
+        self.api_path: str = self._load_app_config_str("web_app_api_path")
         self.greeting_endpoint = f"{self.api_path}/greeting"
         self.status_endpoint = f"{self.api_path}/status"
         self.button_click_endpoint = f"{self.api_path}/button_click"
-        self.jwt_lifetime_days = self._load_app_config("jwt_lifetime_days")
+        self.jwt_lifetime_days: int = self._load_app_config_int("jwt_lifetime_days")
+        self.static_mount_path: str = self._load_app_config_str("static_mount_path")
+        self.static_directory: str = self._load_app_config_str("static_directory")
+        self.templates_directory: str = self._load_app_config_str("templates_directory")
+        self.index_template: str = self._load_app_config_str("index_template")
+        self.server_host: str = self._load_app_config_str("server_host")
+        self.server_port: int = self._load_app_config_int("server_port")
 
-    def _load_app_config(self, key: str) -> str | int:
+    def _load_app_config_str(self, key: str) -> str:
         """
-        Загружает параметр конфигурации веб-приложения из файла app_config.toml.
+        Загружает строковый параметр конфигурации веб-приложения из файла app_config.toml.
         Args:
             key (str): Ключ параметра конфигурации.
         Returns:
-            str | int: Значение параметра конфигурации.
+            str: Значение параметра конфигурации.
         Raises:
-            ValueError: Если параметр конфигурации не найден.
+            ValueError: Если параметр конфигурации не найден или имеет неправильный тип.
         """
         try:
             with open("config/app_config.toml", "rb") as f:
@@ -113,8 +119,35 @@ class AppConfig:
         except KeyError:
             raise ValueError("Section 'app' not found in config/app_config.toml")
 
-        if not value:
+        if value is None:
             raise ValueError(f"{key} not found in config/app_config.toml")
+        if not isinstance(value, str):
+            raise ValueError(f"{key} must be a string")
+        return value
+
+    def _load_app_config_int(self, key: str) -> int:
+        """
+        Загружает числовой параметр конфигурации веб-приложения из файла app_config.toml.
+        Args:
+            key (str): Ключ параметра конфигурации.
+        Returns:
+            int: Значение параметра конфигурации.
+        Raises:
+            ValueError: Если параметр конфигурации не найден или имеет неправильный тип.
+        """
+        try:
+            with open("config/app_config.toml", "rb") as f:
+                config = tomllib.load(f)
+            value = config["app"].get(key)
+        except FileNotFoundError:
+            raise ValueError("config/app_config.toml not found")
+        except KeyError:
+            raise ValueError("Section 'app' not found in config/app_config.toml")
+
+        if value is None:
+            raise ValueError(f"{key} not found in config/app_config.toml")
+        if not isinstance(value, int):
+            raise ValueError(f"{key} must be an integer")
         return value
 
 

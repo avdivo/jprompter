@@ -1,3 +1,7 @@
+import json
+from pathlib import Path
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel
 
@@ -12,23 +16,47 @@ class ButtonClickMessage(BaseModel):
 
 class InitData(BaseModel):
     initData: str
-    message_id: str
+    message_id: Optional[str] = None
+    chat: Optional[str] = None
 
 
 @router.post("/init")
 async def init(data: InitData, response: Response):
     """
     Эндпоинт для получения авторизации (записи JWT токена с cookies).
+    Читает шаблон из docs/templates/template-video-1.0.json
+    и возвращает его с пустым промптом.
     Args:
         None
     Returns:
-        dict: Вывод сообщения вместо данных.
+        dict: Шаблон и пользовательские данные.
     """
     try:
-        user_data = validate_telegram_data(data.initData)
+        print(data)
+        all_data = validate_telegram_data(data.initData)
+        # print(f"Все полученные данные: {all_data}")
+        # print(f"message_id: {data.message_id}")
+        # print(f"chat: {data}")
+        user_data = all_data.get("user", {})
         jwt_token = create_jwt_token(user_data["id"])
         response.set_cookie(key="jwt", value=jwt_token, httponly=True)
-        return {"message": user_data}
+
+        # Читаем шаблон из файла
+        template_path = (
+            Path(__file__).parent.parent.parent.parent
+            / "services"
+            / "web_app"
+            / "static"
+            / "templates"
+            / "template-video-1.0.json"
+        )
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = json.load(f)
+
+        # Создаем пустой промпт (пока заглушка)
+        prompt = {}
+
+        return {"template": template, "prompt": prompt, "prompt_type": "json"}
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
