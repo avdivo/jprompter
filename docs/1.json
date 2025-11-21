@@ -1,21 +1,60 @@
-{
-  "version": "video-1.0",
-  "title": "111",
-  "main": {
-    "visual_style": "realistic",
-    "prompt": "1111",
-    "target_audience": [
-      "all"
-    ]
-  },
-  "scenes": {
-    "scene_1": {
-      "main": {
-        "description": "111111"
-      },
-      "audio": {
-        "talk_language": "Русский"
-      }
-    }
+server {
+  listen       80;
+  server_name  www.avdivo.ru avdivo.ru;
+
+
+  # ocrbot Бот для распознавания текста на изображениях
+  location /ocrbot/webhook {
+    proxy_pass  http://bot:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
   }
+
+
+  # Резюме
+  location / {
+#    root /data/www;
+     proxy_pass  http://resume:8000;
+  }
+
+
+  location /5letters {
+    proxy_pass  http://5letters:8000;
+#    proxy_http_version 1.1;
+#    proxy_set_header Upgrade $http_upgrade;
+#    proxy_set_header Connection 'upgrade';
+#    proxy_set_header Host $host;
+#    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#    proxy_cache_bypass $http_upgrade;
+  }
+  location /5 {
+    proxy_pass  http://5letters:8000;
+  }
+
+
+  # Чат
+  location /chat {
+    proxy_pass  http://chat:8000;
+  }
+
+  location /ws/chat {
+    proxy_pass  http://chat:8000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+
+  # С Новым Годом
+  location /hny {
+    proxy_pass  http://hny:8000;
+    proxy_set_header        X-Forwarded-Host   $host;
+  }
+
+
+  
 }
+
+
+
