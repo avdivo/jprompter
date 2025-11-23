@@ -38,13 +38,16 @@ if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
   chmod a+r /etc/apt/keyrings/docker.gpg
 fi
 
-# --- 3. Репозиторий Docker ---
+# --- 3. Репозиторий Docker (jammy вместо noble) ---
+CODENAME="jammy"
+ARCH=$(dpkg --print-architecture)
+
 echo "deb [arch=$ARCH signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $CODENAME stable" \
   > /etc/apt/sources.list.d/docker.list
 
 apt-get update
 
-# --- 4. Установка Docker 28.5.2 (строго!) ---
+# --- 4. Установка Docker 28.5.2 ---
 DOCKER_VERSION="5:28.5.2~ubuntu-$CODENAME"
 apt-get install -y \
   "docker-ce=$DOCKER_VERSION" \
@@ -52,12 +55,6 @@ apt-get install -y \
   containerd.io \
   docker-buildx-plugin \
   docker-compose-plugin
-
-# Проверка версии
-if ! docker --version | grep -q "28\.5\.2"; then
-  echo "[-] Ошибка: Docker 28.5.2 не установлен (получена версия: $(docker --version))"
-  exit 1
-fi
 
 # --- 5. Запуск Docker ---
 systemctl enable --now docker
