@@ -47,14 +47,21 @@ echo "deb [arch=$ARCH signed-by=/etc/apt/keyrings/docker.gpg] https://download.d
 
 apt-get update
 
-# --- 4. Установка Docker 28.5.2 ---
-DOCKER_VERSION="5:28.5.2~ubuntu-$CODENAME"
+# --- 4. Установка Docker 27.3.1 ---
+DOCKER_VERSION="5:27.3.1-1~ubuntu.22.04~jammy"
+
 apt-get install -y \
   "docker-ce=$DOCKER_VERSION" \
   "docker-ce-cli=$DOCKER_VERSION" \
   containerd.io \
   docker-buildx-plugin \
   docker-compose-plugin
+
+# Проверка версии
+if ! docker --version | grep -q "27\.3\.1"; then
+  echo "[-] Ошибка: Docker 27.3.1 не установлен (получена версия: $(docker --version))"
+  exit 1
+fi
 
 # --- 5. Запуск Docker ---
 systemctl enable --now docker
