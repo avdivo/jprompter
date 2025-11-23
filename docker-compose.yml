@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
 
-  jprompter:
+  app:
     build: .
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
@@ -35,6 +35,36 @@ services:
         condition: service_healthy
     restart: always
 
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - jprompter_net
+    depends_on:
+      - app
+
+  portainer-agent:
+    image: portainer/agent:2.33.4
+    container_name: portainer_agent
+    restart: always
+    ports:
+      - "9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host
+    environment:
+      - AGENT_SECRET=${PORTAINER_KEY}
+    networks:
+      - jprompter_net
+
 networks:
   jprompter_net:
     driver: bridge
@@ -42,3 +72,5 @@ networks:
 volumes:
   postgres_data:
     driver: local
+  caddy_data:
+  caddy_config:

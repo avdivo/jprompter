@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            PROJECT_DIR=~/project
+
+            # Создать директорию проекта, если её нет
+            mkdir -p $PROJECT_DIR
+            cd $PROJECT_DIR
+
+            # Если репо пустое — клонируем, иначе обновляем
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/${{ github.repository }} .
+            else
+              git fetch --all
+              git reset --hard origin/master
+            fi
+
+            # Записать .env из секрета
+            echo "${{ secrets.ENV_FILE }}" > .env
+
+            # Обновить образы и перезапустить проект
+            docker-compose pull
+            docker-compose up -d --build --remove-orphans
