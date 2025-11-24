@@ -1,4 +1,4 @@
 # Конфигурация Telegram-бота
 [bot]
 webhook_path = "/tbot" # Путь для вебхука Telegram
-webhook_url = "https://jprompttr.avdivo.ru" # Базовый URL для вебхука Telegram
+webhook_url = "https://jprompter.avdivo.ru" # Базовый URL для вебхука Telegram
