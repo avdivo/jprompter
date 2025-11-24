@@ -57,8 +57,10 @@ services:
       - "9001:9001"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/volumes:/var/lib/docker/volumes
       - /:/host
+      # ✅ УДАЛЕНО: - /var/lib/docker/volumes:/var/lib/docker/volumes — это избыточно и потенциально опасно
+      # ✅ ДОБАВЛЕНО: постоянный volume для сохранения состояния агента
+      - portainer_agent_data:/var/lib/portainer/agent
     environment:
       - AGENT_SECRET=${PORTAINER_KEY}
     networks:
@@ -73,3 +75,5 @@ volumes:
     driver: local
   caddy_data:
   caddy_config:
+  # ✅ ДОБАВЛЕНО: именованный volume для данных агента
+  portainer_agent_data:
