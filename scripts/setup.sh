@@ -88,3 +88,31 @@ chown -R "$DEPLOY_USER:$DEPLOY_USER" "$DEPLOY_HOME/.ssh"
 
 echo "[✓] Установка завершена!"
 echo "Лог: $LOG_FILE"
+
+# --- 8. Запрос публичного SSH-ключа ---
+echo
+read -p "[?] Введите публичный SSH-ключ для пользователя $DEPLOY_USER (или оставьте пустым): " PUBKEY
+if [ -n "$PUBKEY" ]; then
+  echo "$PUBKEY" >> "$DEPLOY_HOME/.ssh/authorized_keys"
+  chown "$DEPLOY_USER:$DEPLOY_USER" "$DEPLOY_HOME/.ssh/authorized_keys"
+  echo "[✓] Публичный ключ добавлен для $DEPLOY_USER."
+else
+  echo "[i] Публичный ключ не введён, доступ по SSH не настроен."
+fi
+
+# --- 9. Запрос репозитория GitHub ---
+echo
+read -p "[?] Введите адрес GitHub-репозитория для клонирования (или оставьте пустым): " REPO_URL
+if [ -n "$REPO_URL" ]; then
+  PROJECT_DIR="/home/$DEPLOY_USER/project"
+  echo "[+] Клонирую репозиторий $REPO_URL в $PROJECT_DIR..."
+  sudo -u "$DEPLOY_USER" git clone "$REPO_URL" "$PROJECT_DIR"
+  cd "$PROJECT_DIR" || { echo "[-] Ошибка: не удалось войти в папку проекта."; exit 1; }
+  echo "[+] Запускаю контейнеры..."
+  sudo -u "$DEPLOY_USER" docker compose up -d
+  echo "[✓] Репозиторий клонирован и контейнеры запущены."
+else
+  echo "[i] Репозиторий не указан. Установка завершена, контейнеры не запускались."
+fi
+
+echo "=== Установка полностью завершена: $(date) ==="
